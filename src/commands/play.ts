@@ -21,7 +21,7 @@ const PlayCommand: iCommand = {
     vc,
     client
   }: CommandArgs): Promise<Message> {
-    if (!args) {
+    if (!args[0]) {
       return message.channel.send({
         embeds: [
           new MessageEmbed()
@@ -32,24 +32,12 @@ const PlayCommand: iCommand = {
     }
     const search = args.join(' ') as string;
     let res;
-    var player: Player = client.manager.players.get(message.guild.id);
-    if (player && player.node && !player.node.connected)
-      await player.node.connect();
-    if (!player) {
-      player = await manager.create({
-        guild: message.guild.id,
-        voiceChannel: vc.id,
-        textChannel: message.channel.id,
-        selfDeafen: true
-      });
-      if (player && player.node && !player.node.connected)
-        await player.node.connect();
-    }
-    if (player.state !== 'CONNECTED') {
-      player.set('playerauthor', message.author.id);
-      player.connect();
-      player.stop();
-    }
+    let player: Player = await client.PlayerManager.connect(
+      message,
+      client,
+      manager,
+      vc
+    );
     try {
       //check if search is a url
       if (search.includes('open.spotify.com/') || validUrl.isUri(search)) {

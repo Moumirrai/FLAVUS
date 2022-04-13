@@ -9,6 +9,7 @@ import { resolve } from 'path';
 import type { iCommand } from 'my-module';
 import { connect, ConnectOptions } from 'mongoose';
 import * as Functions from './Functions';
+import * as PlayerManager from './PlayerManager';
 
 export class BotClient extends Client {
   constructor() {
@@ -42,6 +43,7 @@ export class BotClient extends Client {
   public guildDb = new Collection<string, any>();
 
   public functions = Functions;
+  public PlayerManager = PlayerManager;
   public async main() {
     try {
       this.logger.info('Initializing...');

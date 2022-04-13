@@ -30,12 +30,17 @@ const VolumeCommand: iCommand = {
             .setDescription(`Current volume is \`${player.volume}%\``)
         ]
       });
-    } else if (Number(args[0]) <= 0 || Number(args[0]) > 100) {
+    } else if (
+      Number(args[0]) <= 0 ||
+      Number(args[0]) > client.config.maxVolume
+    ) {
       return message.channel.send({
         embeds: [
           new MessageEmbed()
             .setColor(client.config.embed.errorcolor)
-            .setTitle('Volume must be between 0 and 150!')
+            .setTitle(
+              `Volume must be between 0 and ${client.config.maxVolume}!`
+            )
             .setDescription(`Current volume is \`${player.volume}%\``)
         ]
       });

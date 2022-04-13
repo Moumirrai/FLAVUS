@@ -27,6 +27,7 @@ export type BotConfig = {
       arrow: string;
     };
   };
+  maxVolume: number;
   port: number;
   leaveOnEmptyChannel: number;
 };
@@ -59,6 +60,7 @@ export const config: BotConfig = {
       arrow: ':blue_circle:'
     }
   },
+  maxVolume: 100,
   leaveOnEmptyChannel: parseInt(process.env.LEAVE_ON_EMPTY_CHANNEL),
   port: parseInt(process.env.PORT)
 };
