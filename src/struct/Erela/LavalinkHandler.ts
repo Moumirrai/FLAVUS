@@ -1,10 +1,8 @@
-import { MessageEmbed } from 'discord.js';
 import { Manager } from 'erela.js';
 import type { BotClient } from '../Client';
 const ErelaSpotify = require('erela.js-spotify');
 
 export class LavalinkHandler extends Manager {
-  embedReply: MessageEmbed;
   client: BotClient;
   constructor(client: BotClient) {
     super({
@@ -23,8 +21,6 @@ export class LavalinkHandler extends Manager {
         if (guild) guild.shard.send(payload);
       }
     });
-
-    this.embedReply = new MessageEmbed();
     this.client = client;
   }
 }

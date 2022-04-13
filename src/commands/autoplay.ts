@@ -2,7 +2,7 @@ import { Message, MessageEmbed } from 'discord.js';
 import { CommandArgs, iCommand } from 'my-module';
 import { GuildModel } from '../models/guildModel';
 
-const PingCommand: iCommand = {
+const AutoplayCommand: iCommand = {
   name: 'autoplay',
   aliases: [],
   voiceRequired: false,
@@ -35,4 +35,4 @@ const PingCommand: iCommand = {
   }
 };
 
-export default PingCommand;
+export default AutoplayCommand;

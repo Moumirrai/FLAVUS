@@ -85,7 +85,6 @@ export function createQueueEmbed(player: Player, index: number): MessageEmbed {
 
   if (player.queue.current && player.queue.current.isStream) tDuration.stream++;
   else if (player.queue.current) {
-    console.log(player.queue.current);
     let current =
       player.queue.current.duration !== 0
         ? player.position
