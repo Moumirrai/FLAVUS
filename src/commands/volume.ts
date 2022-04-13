@@ -30,7 +30,7 @@ const VolumeCommand: iCommand = {
             .setDescription(`Current volume is \`${player.volume}%\``)
         ]
       });
-    } else if (Number(args[0]) <= 0 || Number(args[0]) > 150) {
+    } else if (Number(args[0]) <= 0 || Number(args[0]) > 100) {
       return message.channel.send({
         embeds: [
           new MessageEmbed()
