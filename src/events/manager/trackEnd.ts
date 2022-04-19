@@ -9,7 +9,6 @@ const trackEndEvent: iManagerEvent = {
       if (!player || !player.playing) return
       player.pause(true);
     }
-    player.set(`previousTrack`, player.queue.current);
   }
 };
 
