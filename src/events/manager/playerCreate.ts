@@ -9,6 +9,7 @@ const playerMoveEvent: iManagerEvent = {
       if (!settings) return;
       player.setVolume(settings.volume);
     });
+    client.logger.info(`[EVENT] Player created: ${player.options.guild}`);
   }
 };
 
