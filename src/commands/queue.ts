@@ -7,7 +7,7 @@ import {
 import { CommandArgs, iCommand } from 'my-module';
 
 const QueueCommand: iCommand = {
-  name: 'resume',
+  name: 'queue',
   aliases: ['q', 'np'],
   voiceRequired: false,
   joinPermissionRequired: false,
