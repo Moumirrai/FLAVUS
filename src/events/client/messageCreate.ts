@@ -2,10 +2,11 @@
 import { Client, Message, MessageEmbed } from 'discord.js';
 import { iEvent } from 'my-module';
 import { Player } from 'erela.js';
+import { BotClient } from '../../struct/Client';
 
 const MessageEvent: iEvent = {
   name: 'messageCreate',
-  async execute(client, message: Message) {
+  async execute(client: BotClient, message: Message) {
     if (!message.content || !message.guild || message.author.bot) return;
     if (!message.content.startsWith(client.config.prefix)) return;
     const args = message.content

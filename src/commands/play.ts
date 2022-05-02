@@ -11,7 +11,7 @@ const PlayCommand: iCommand = {
   joinPermissionRequired: true,
   playerRequired: false,
   sameChannelRequired: false,
-  description: 'play_description',
+  description: 'Searches for a song or playlist and plays it in your channel',
   usage: '<prefix>play <search_query>',
   visible: true,
   async execute({

@@ -15,7 +15,7 @@ export const GuildSchema = new Schema({
   },
   volume: {
     type: Number,
-    default: 100
+    default: 70
   },
   autoplay: {
     type: Boolean,
