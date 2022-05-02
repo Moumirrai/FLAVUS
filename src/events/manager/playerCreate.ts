@@ -7,7 +7,7 @@ const playerMoveEvent: iManagerEvent = {
     GuildModel.findOne({ guildID: player.options.guild }, (err, settings) => {
       if (err) return client.logger.error(err);
       if (!settings) return;
-      player.setVolume(settings.volume);
+      if (player.volume !== settings.volume) player.setVolume(settings.volume);
     });
     client.logger.info(`[EVENT] Player created: ${player.options.guild}`);
   }

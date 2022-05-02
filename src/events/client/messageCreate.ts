@@ -13,7 +13,8 @@ const MessageEvent: iEvent = {
       .slice(client.config.prefix.length)
       .split(' ')
       .filter(Boolean);
-    const commandArg = args.shift().toLowerCase();
+    const commandArg = args.shift()?.toLowerCase();
+    if (!commandArg) return;
     const command =
       client.commands.get(commandArg) || client.aliases.get(commandArg);
     if (!command) return;
