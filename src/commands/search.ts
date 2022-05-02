@@ -247,7 +247,7 @@ const SearchCommand: iCommand = {
                 .addField(
                   'Duration: ',
                   `\`${
-                    track.isStream ? 'LIVE STREAM' : format(track.duration)
+                    track.isStream ? 'LIVE STREAM' : formatDuration(track.duration, { leading: true })
                   }\``,
                   true
                 )
