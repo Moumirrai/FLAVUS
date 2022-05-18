@@ -6,7 +6,7 @@ import {
   TextChannel
 } from 'discord.js';
 import { Player } from 'erela.js';
-import { GuildModel } from '../models/guildModel';
+import { GuildModel, IGuildModel } from '../models/guildModel';
 import Logger from './Logger';
 import { config } from '../config/config';
 import formatDuration = require('format-duration');
@@ -252,6 +252,25 @@ export function escapeRegex(string: string) {
   } catch (e) {
     Logger.error(e.stack);
   }
+}
+
+//create function that takes guild id and returns the guild's config from mongodb
+export function fetchGuildConfig(guildID: string) {
+  return new Promise<IGuildModel>((resolve, reject) => {
+    try {
+      GuildModel.findOne({ guildID: guildID }, (err, doc) => {
+        if (err) {
+          Logger.error(err);
+          reject(err);
+        } else {
+          resolve(doc);
+        }
+      });
+    } catch (e) {
+      Logger.error(e.stack);
+      reject(e);
+    }
+  });
 }
 
 export async function autoplay(client, player) {

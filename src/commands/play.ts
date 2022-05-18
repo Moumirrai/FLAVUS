@@ -1,6 +1,7 @@
 import { Message, MessageEmbed } from 'discord.js';
 import { Player } from 'erela.js';
 import { CommandArgs, iCommand } from 'my-module';
+import { IGuildModel } from '../models/guildModel';
 import formatDuration = require('format-duration');
 var validUrl = require('valid-url');
 
@@ -87,32 +88,46 @@ const PlayCommand: iCommand = {
           player.queue.add(res.tracks[0]);
           player.play();
           player.pause(false);
+          let config = await client.functions.fetchGuildConfig(
+            message.guild.id
+          );
+          const embed = new MessageEmbed()
+            .setColor(client.config.embed.color)
+            .setTitle(`Now Playing`)
+            .setDescription(
+              `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
+            )
+            .setThumbnail(res.tracks[0].thumbnail);
+          if (config.autoplay) {
+            embed.setFooter(
+              `Autoplay is enabled, the next song will start automatically`
+            );
+          }
           return message.channel.send({
-            embeds: [
-              new MessageEmbed()
-                .setColor(client.config.embed.color)
-                .setTitle(`Now Playing`)
-                .setDescription(
-                  `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
-                )
-                .setThumbnail(res.tracks[0].thumbnail)
-            ]
+            embeds: [embed]
           });
         } else if (!player.queue || !player.queue.current) {
           player.queue.add(res.tracks[0]);
           if (!player.playing && !player.paused && !player.queue.size)
             player.play();
           player.pause(false);
+          let config = await client.functions.fetchGuildConfig(
+            message.guild.id
+          );
+          const embed = new MessageEmbed()
+            .setColor(client.config.embed.color)
+            .setTitle(`Now Playing`)
+            .setDescription(
+              `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
+            )
+            .setThumbnail(res.tracks[0].thumbnail);
+          if (config.autoplay) {
+            embed.setFooter(
+              `Autoplay is enabled, the next song will start automatically`
+            );
+          }
           return message.channel.send({
-            embeds: [
-              new MessageEmbed()
-                .setColor(client.config.embed.color)
-                .setTitle(`Now Playing`)
-                .setDescription(
-                  `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
-                )
-                .setThumbnail(res.tracks[0].thumbnail)
-            ]
+            embeds: [embed]
           });
         } else {
           player.queue.add(res.tracks[0]);
