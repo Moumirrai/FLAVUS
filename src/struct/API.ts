@@ -2,6 +2,7 @@
 //aslo public async main() to start express server
 
 const express = require('express');
+var cors = require('cors');
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
 import type { APIInterface, APIEndpoint } from 'flavus-api';
@@ -19,6 +20,9 @@ export class APIClient implements APIInterface {
 
     const port = process.env.APIPORT || 3000;
 
+    app.use(cors());
+    
+
     app.get('/api/:path', async (req, res) => {
       const path = req.params.path;
       const endpoint = this.EndPoints.get(path);
@@ -32,7 +36,6 @@ export class APIClient implements APIInterface {
   private async loadEndpoints(): Promise<void> {
     const files = readdirSync(resolve(__dirname, '..', 'API'));
     for (const file of files) {
-      console.log(file);
       const endpoint: APIEndpoint = (await import(resolve(__dirname, '..', 'API', file)))
         .default;
       this.EndPoints.set(endpoint.path, endpoint);
