@@ -10,6 +10,7 @@ import type { iCommand } from 'my-module';
 import { connect, ConnectOptions } from 'mongoose';
 import * as Functions from './Functions';
 import * as PlayerManager from './PlayerManager';
+import { APIClient } from './API';
 
 export class BotClient extends Client {
   constructor() {
@@ -52,6 +53,7 @@ export class BotClient extends Client {
       await this.loadCommands();
       await this.mongoDB();
       await this.login(this.config.token);
+      if (process.env.API === 'true') new APIClient().main(this);
     } catch (error) {
       this.logger.error(error);
       this.destroy();

@@ -4,6 +4,7 @@ import type { DiscordTogether } from 'discord-together';
 import type { LavalinkHandler } from './structures/Music/LavalinkHandler';
 import type { iCommand } from 'my-module';
 import { Collection } from 'mongoose';
+impo
 
 declare module 'discord.js' {
   export interface Client {
