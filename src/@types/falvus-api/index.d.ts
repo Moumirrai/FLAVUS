@@ -6,8 +6,24 @@ declare module 'flavus-api' {
     execute: (
       client: import('../../struct/Client').BotClient,
       req: import('express').Request,
-      res: import('express').Response
+      res: import('express').Response,
+      user: User
     ) => Promise<unknown>;
+  }
+
+  export interface UserInterface {
+    id: string;
+    username: string;
+    avatar: string;
+    avatar_decoration: any;
+    discriminator: string;
+    public_flags: number;
+    flags: number;
+    banner: any;
+    banner_color: any;
+    accent_color: any;
+    locale: string;
+    mfa_enabled: boolean;
   }
 
   export interface APIInterface {

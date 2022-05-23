@@ -6,7 +6,7 @@ import { GuildModel } from '../models/guildModel';
 const AutoplayCommand: APIEndpoint = {
   path: 'debug',
   rateLimit: 0,
-  async execute(client, req, res): Promise<any> {
+  async execute(client, req, res, user): Promise<any> {
     await GuildModel.findOne(
       { guildID: req.query.id },
       (err, settings) => {
