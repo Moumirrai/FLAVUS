@@ -5,8 +5,9 @@ import {
   MessageEmbed,
   TextChannel
 } from 'discord.js';
-import { Player } from 'erela.js';
+import { Player, Track } from 'erela.js';
 import { GuildModel, IGuildModel } from '../models/guildModel';
+import { UserModel, IUserModel } from '../models/userModel';
 import Logger from './Logger';
 import { config } from '../config/config';
 import formatDuration = require('format-duration');
@@ -285,8 +286,12 @@ export async function autoplay(client, player) {
     player.get(`similarQueue`).length === 0
   ) {
     try {
-      const previoustrack = player.get(`previousTrack`);
+      const previoustrack: Track = player.get(`previousTrack`);
       if (!previoustrack) return;
+      //update owner
+      if (previoustrack.requester != client.user)
+        player.set(`autoplayOwner`, previoustrack.requester);
+
       const mixURL = `https://www.youtube.com/watch?v=${previoustrack.identifier}&list=RD${previoustrack.identifier}`;
       const response = await client.manager.search(mixURL, client.user);
       //if nothing is found, send error message
@@ -307,6 +312,30 @@ export async function autoplay(client, player) {
             ]
           })
           .catch(() => {});
+      }
+      const owner = player.get(`autoplayOwner`);
+      if (owner) {
+        let userConfig = await UserModel.findOne({
+          userID: owner.id
+        });
+        if (userConfig && userConfig.blacklist.length > 0) {
+          userConfig.blacklist = userConfig.blacklist.map(x => x.toLowerCase());
+          let split = [" ", "-", "/", "<", ">", "(", ")", "{", "}", "[", "]", ".", ",", "\\", "*", "-", "+", "=", "%", "´", "§", "_", ":", "?", "!", "°", "\"", "#", "&", "@", "|", "˛", "`", "˙", "˝", "¨", "¸", "~", "•"]
+          let filtered = response.tracks.filter(track => {
+            let title = track.title;
+            for (let i = 0; i < split.length; i++) {
+              let splitTitle = title.split(split[i]);
+              for (let j = 0; j < splitTitle.length; j++) {
+                if (userConfig.blacklist.includes(splitTitle[j].toLowerCase())) {
+                  return false;
+                }
+              }
+            }
+            return true;
+          });
+          response.tracks = filtered;
+          
+        }
       }
       //remove every track from response.tracks that has the same identifier as the previous track
       response.tracks = response.tracks.filter(
