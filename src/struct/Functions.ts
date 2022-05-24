@@ -318,8 +318,9 @@ export async function autoplay(client, player) {
         let userConfig = await UserModel.findOne({
           userID: owner.id
         });
-        if (userConfig && userConfig.blacklist.length > 0) {
-          userConfig.blacklist = userConfig.blacklist.map(x => x.toLowerCase());
+        //filter title
+        if (userConfig && userConfig.model.titleBlacklist.length > 0) {
+          userConfig.model.titleBlacklist = userConfig.model.titleBlacklist.map(x => x.toLowerCase());
           let split = [" ", "-", "/", "<", ">", "(", ")", "{", "}", "[", "]", ".", ",", "\\", "*", "-", "+", "=", "%", "´", "§", "_", ":", "?", "!", "°", "\"", "#", "&", "@", "|", "˛", "`", "˙", "˝", "¨", "¸", "~", "•"]
           let filtered = response.tracks.filter(track => {
             let title = track.title;
@@ -334,7 +335,6 @@ export async function autoplay(client, player) {
             return true;
           });
           response.tracks = filtered;
-          
         }
       }
       //remove every track from response.tracks that has the same identifier as the previous track
