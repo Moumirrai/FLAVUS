@@ -30,7 +30,7 @@ const QueueCommand: iCommand = {
         .setStyle('SECONDARY')
     );
     message.channel
-      .send({ embeds: [client.functions.createQueueEmbed(player, 0)] })
+      .send({ embeds: [client.functions.createQueueEmbed(player, 0, client)] })
       .then((message) => {
         var player = client.manager.players.get(message.guild.id);
         if (player.queue.length <= 15) return;
@@ -60,7 +60,7 @@ const QueueCommand: iCommand = {
               row.components[1].setDisabled(false);
             }
             await message.edit({
-              embeds: [client.functions.createQueueEmbed(player, currentIndex)],
+              embeds: [client.functions.createQueueEmbed(player, currentIndex, client)],
               components: [row]
             });
             await button.deferUpdate();
@@ -78,7 +78,7 @@ const QueueCommand: iCommand = {
             }
             row.components[0].setDisabled(false);
             await message.edit({
-              embeds: [client.functions.createQueueEmbed(player, currentIndex)],
+              embeds: [client.functions.createQueueEmbed(player, currentIndex, client)],
               components: [row]
             });
             await button.deferUpdate();
@@ -86,7 +86,7 @@ const QueueCommand: iCommand = {
         });
         collector.on('end', async (button) => {
           await message.edit({
-            embeds: [client.functions.createQueueEmbed(player, 0)],
+            embeds: [client.functions.createQueueEmbed(player, 0, client)],
             components: []
           });
         });

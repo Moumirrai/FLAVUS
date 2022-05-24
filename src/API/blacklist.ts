@@ -3,7 +3,7 @@ import { Response } from 'express';
 import { APIEndpoint } from 'flavus-api';
 import { UserModel } from '../models/userModel';
 
-const AutoplayCommand: APIEndpoint = {
+const UserEndpoint: APIEndpoint = {
   path: 'user',
   rateLimit: 0,
   async execute(client, req, res, user): Promise<any> {
@@ -67,4 +67,4 @@ const AutoplayCommand: APIEndpoint = {
   }
 };
 
-export default AutoplayCommand;
+export default UserEndpoint;

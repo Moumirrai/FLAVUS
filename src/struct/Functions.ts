@@ -12,68 +12,11 @@ import Logger from './Logger';
 import { config } from '../config/config';
 import formatDuration = require('format-duration');
 
-export function formatTime(milliseconds: number, minimal = false): string {
-  const times = {
-    years: 0,
-    months: 0,
-    weeks: 0,
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0
-  };
-  while (milliseconds > 0) {
-    if (milliseconds - 31557600000 >= 0) {
-      milliseconds -= 31557600000;
-      times.years++;
-    } else if (milliseconds - 2628000000 >= 0) {
-      milliseconds -= 2628000000;
-      times.months++;
-    } else if (milliseconds - 604800000 >= 0) {
-      milliseconds -= 604800000;
-      times.weeks += 7;
-    } else if (milliseconds - 86400000 >= 0) {
-      milliseconds -= 86400000;
-      times.days++;
-    } else if (milliseconds - 3600000 >= 0) {
-      milliseconds -= 3600000;
-      times.hours++;
-    } else if (milliseconds - 60000 >= 0) {
-      milliseconds -= 60000;
-      times.minutes++;
-    } else {
-      times.seconds = Math.round(milliseconds / 1000);
-      milliseconds = 0;
-    }
-  }
-  const finalTime = [];
-  let first = false;
-  for (const [k, v] of Object.entries(times)) {
-    if (minimal) {
-      if (v === 0 && !first) {
-        continue;
-      }
-      finalTime.push(v < 10 ? `0${v}` : `${v}`);
-      first = true;
-      continue;
-    }
-    if (v > 0) {
-      finalTime.push(`${v} ${v > 1 ? k : k.slice(0, -1)}`);
-    }
-  }
-  let time = finalTime.join(minimal ? ':' : ', ');
-  if (time.includes(',')) {
-    const pos = time.lastIndexOf(',');
-    time = `${time.slice(0, pos)} and ${time.slice(pos + 1)}`;
-  }
-  return time;
-}
-
 export function random<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-export function createQueueEmbed(player: Player, index: number): MessageEmbed {
+export function createQueueEmbed(player: Player, index: number, client:Client): MessageEmbed {
   const tracks = player.queue;
   let tDuration = { duration: 0, stream: 0 };
   //for each track in queue, if isStream = false, add its duration to total duration
@@ -83,7 +26,6 @@ export function createQueueEmbed(player: Player, index: number): MessageEmbed {
   });
   //if current track is a stream, add 1 to stream, if not, add its duration to total duration
   //check if current track has property isStream, if not, add its duration to total duration
-
   if (player.queue.current && player.queue.current.isStream) tDuration.stream++;
   else if (player.queue.current) {
     let current =
@@ -180,7 +122,7 @@ export function createQueueEmbed(player: Player, index: number): MessageEmbed {
       '\n' +
       'This is the end of the queue!' +
       '\n' +
-      'Use -play to add more :^)';
+      `Use ${client.config.prefix}play to add more :^)`;
     embed
       .setDescription(string + totalDuration)
       .setFooter({ text: 'Page 1 of 1' });
@@ -201,7 +143,7 @@ export function createQueueEmbed(player: Player, index: number): MessageEmbed {
         'This is the end of the queue!' +
         '\n' +
         '\n' +
-        'Use -play to add more :^)';
+        `Use ${client.config.prefix}play to add more :^)`;
     embed
       .setDescription(string + totalDuration)
       .setFooter({
@@ -294,7 +236,7 @@ export async function autoplay(client, player) {
 
       const mixURL = `https://www.youtube.com/watch?v=${previoustrack.identifier}&list=RD${previoustrack.identifier}`;
       const response = await client.manager.search(mixURL, client.user);
-      //if nothing is found, send error message
+      //if !response, send error embed
       if (
         !response ||
         response.loadType === 'LOAD_FAILED' ||
@@ -337,7 +279,7 @@ export async function autoplay(client, player) {
           response.tracks = filtered;
         }
       }
-      //remove every track from response.tracks that has the same identifier as the previous track
+      //remove previous track from tracks, if present
       response.tracks = response.tracks.filter(
         (track) => track.identifier !== previoustrack.identifier
       );
@@ -358,7 +300,7 @@ export async function autoplay(client, player) {
       }
       player.set(`similarQueue`, response.tracks); //set the similar queue
     } catch (e) {
-      client.logger.error(e.stack);
+      Logger.error(e.stack);
     }
   }
   try {
@@ -381,7 +323,7 @@ export async function autoplay(client, player) {
       .catch(() => {});
     return player.play();
   } catch (e) {
-    client.logger.error(e.stack);
+    Logger.error(e.stack);
   }
   return;
 }
