@@ -76,7 +76,7 @@ const PlayCommand: iCommand = {
               .setColor(client.config.embed.errorcolor)
               .setTitle(
                 String('Found nothing for: **`' + search).substr(0, 256 - 3) +
-                  '`**'
+                '`**'
               )
           ]
         });
@@ -100,7 +100,7 @@ const PlayCommand: iCommand = {
             .setThumbnail(res.tracks[0].thumbnail);
           if (config.autoplay) {
             embed.setFooter(
-              `Autoplay is enabled, the next song will start automatically`
+              { text: `Autoplay is enabled, the next song will start automatically`, iconURL: message.guild.iconURL() }
             );
           }
           return message.channel.send({
@@ -123,7 +123,7 @@ const PlayCommand: iCommand = {
             .setThumbnail(res.tracks[0].thumbnail);
           if (config.autoplay) {
             embed.setFooter(
-              `Autoplay is enabled, the next song will start automatically`
+              { text: `Autoplay is enabled, the next song will start automatically`, iconURL: message.guild.iconURL() }
             );
           }
           return message.channel.send({
@@ -164,8 +164,8 @@ const PlayCommand: iCommand = {
               .setURL(res.playlist.uri)
               .setTitle(
                 `Playlist  **\`${res.playlist.name}`.substr(0, 256 - 3) +
-                  '`**' +
-                  ' added to the Queue'
+                '`**' +
+                ' added to the Queue'
               )
               .setThumbnail(res.tracks[0].thumbnail)
               .addField(

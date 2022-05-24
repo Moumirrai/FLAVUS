@@ -51,7 +51,7 @@ const MessageEvent: iEvent = {
   }
 };
 
-private function errorEmbed(title:String) {
+function errorEmbed(title: string) {
   return {
     embeds: [
       new MessageEmbed()
