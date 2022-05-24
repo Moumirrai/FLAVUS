@@ -4,7 +4,7 @@ import { APIEndpoint } from 'flavus-api';
 import { UserModel } from '../models/userModel';
 
 const AutoplayCommand: APIEndpoint = {
-  path: 'blacklist',
+  path: 'user',
   rateLimit: 0,
   async execute(client, req, res, user): Promise<any> {
     switch (req.headers.method) {
@@ -16,15 +16,19 @@ const AutoplayCommand: APIEndpoint = {
             if (!settings) {
               settings = new UserModel({
                 userID: user.id,
-                blacklist: []
+                model: {
+                  titleBlacklist: [],
+                  authorBlacklist: [],
+                  uriBlacklist: [],
+                },
               });
               settings.save().catch((err) => console.log(err));
-              return res.json(settings.blacklist);
+              return res.json(settings.model);
             } else {
-              return res.json(settings.blacklist);
+              return res.json(settings.model);
             }
           }
-        ).clone().catch(function(err){ console.log(err)})
+        ).clone().catch(function (err) { console.log(err) })
         break;
       case 'WRITE':
         await UserModel.findOne(
@@ -34,27 +38,31 @@ const AutoplayCommand: APIEndpoint = {
             if (!settings) {
               settings = new UserModel({
                 userID: user.id,
-                blacklist: req.body.list ? req.body.list : []
+                model: req.body.model ? req.body.model : {
+                  titleBlacklist: [],
+                  authorBlacklist: [],
+                  uriBlacklist: [],
+                },
               });
               settings.save().catch((err) => console.log(err));
               return res.json({
                 success: true,
-                message: 'Blacklist updated'
+                message: 'Model updated'
               });
             } else {
-              settings.blacklist = req.body.list ? req.body.list : []
+              settings.model = req.body.list ? req.body.list : []
               settings.save().catch((err) => console.log(err));
               return res.json({
                 success: true,
-                message: 'Blacklist updated'
+                message: 'Model updated'
               });
             }
           }
-        ).clone().catch(function(err){ console.log(err)})
+        ).clone().catch(function (err) { console.log(err) })
         break;
       default:
         return res.status(401).send('Invalid method')
-      break;
+        break;
     }
   }
 };
