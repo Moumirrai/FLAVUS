@@ -11,7 +11,6 @@ import type { APIInterface, APIEndpoint, UserInterface } from 'flavus-api';
 import { Collection } from 'discord.js';
 import type { BotClient } from './Client';
 import Logger from './Logger';
-import { Client } from 'genius-lyrics';
 
 export class APIClient implements APIInterface {
   EndPoints = new Collection<string, APIEndpoint>();

@@ -41,7 +41,6 @@ export class BotClient extends Client {
   public logger = Logger;
   public aliases = new Collection<string, iCommand>();
   public commands = new Collection<string, iCommand>();
-  public guildDb = new Collection<string, any>();
 
   public functions = Functions;
   public PlayerManager = PlayerManager;

@@ -38,6 +38,14 @@ const SearchCommand: iCommand = {
     const search = args.join(' ') as string;
     try {
       var res;
+      var player: Player = await client.PlayerManager.connect(
+        message,
+        client,
+        manager,
+        vc
+      );
+      //probably could be deleted
+      /*
       var player: Player = client.manager.players.get(message.guild.id);
       if (player && player.node && !player.node.connected)
         await player.node.connect();
@@ -56,6 +64,7 @@ const SearchCommand: iCommand = {
         player.connect();
         player.stop();
       }
+      */
       try {
         // Search for tracks using a query or url, using a query searches youtube automatically and the track requester object
         res = await client.manager.search(

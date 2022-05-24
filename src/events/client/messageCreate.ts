@@ -23,50 +23,22 @@ const MessageEvent: iEvent = {
     const { channel } = message.member.voice;
 
     if (command.playerRequired && !player) {
-      return message.channel.send({
-        embeds: [
-          new MessageEmbed()
-            .setColor(client.config.embed.errorcolor)
-            .setTitle('You cant use this command since nothing is playing!')
-        ]
-      });
+      return message.channel.send(errorEmbed('You cant use this command since nothing is playing!'))
     }
     if (command.voiceRequired && !channel) {
-      return message.channel.send({
-        embeds: [
-          new MessageEmbed()
-            .setColor(client.config.embed.errorcolor)
-            .setTitle('You must be in a voice channel to use this command!')
-        ]
-      });
+      return message.channel.send(errorEmbed('You must be in a voice channel to use this command!'))
     }
     if (
       command.sameChannelRequired &&
       (!player || channel.id !== player.voiceChannel)
     ) {
-      return message.channel.send({
-        embeds: [
-          new MessageEmbed()
-            .setColor(client.config.embed.errorcolor)
-            .setTitle(
-              'You must be in a same voice channel as me to use this command!'
-            )
-        ]
-      });
+      return message.channel.send(errorEmbed('You must be in a same voice channel as me to use this command!'))
     }
     if (
       command.joinPermissionRequired &&
       !channel.permissionsFor(client.user).has('CONNECT')
     ) {
-      return message.channel.send({
-        embeds: [
-          new MessageEmbed()
-            .setColor(client.config.embed.errorcolor)
-            .setTitle(
-              "I don't have the permissions to join your voice channel!"
-            )
-        ]
-      });
+      return message.channel.send(errorEmbed("I don't have the permissions to join your voice channel!"))
     }
     await command.execute({
       client,
@@ -78,5 +50,15 @@ const MessageEvent: iEvent = {
     });
   }
 };
+
+private function errorEmbed(title:String) {
+  return {
+    embeds: [
+      new MessageEmbed()
+      .setColor(client.config.embed.errorcolor)
+      .setTitle(title)
+    ]
+  }
+}
 
 export default MessageEvent;
