@@ -327,7 +327,7 @@ export async function autoplay(client, player) {
             for (let i = 0; i < split.length; i++) {
               let splitTitle = title.split(split[i]);
               for (let j = 0; j < splitTitle.length; j++) {
-                if (userConfig.blacklist.includes(splitTitle[j].toLowerCase())) {
+                if (userConfig.model.titleBlacklist.includes(splitTitle[j].toLowerCase())) {
                   return false;
                 }
               }

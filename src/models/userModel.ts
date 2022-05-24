@@ -1,8 +1,14 @@
 import { Document, Schema, model } from 'mongoose';
 
+export interface Imodel {
+  titleBlacklist: Array<String>
+  authorBlacklist: Array<String>
+  uriBlacklist: Array<String>
+}
+
 export interface IUserModel extends Document {
   userID: string;
-  model: Object<Array>;
+  model: Imodel;
   timestamp: Date;
 }
 
