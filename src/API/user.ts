@@ -17,6 +17,7 @@ const UserEndpoint: APIEndpoint = {
               settings = new UserModel({
                 userID: user.id,
                 model: {
+                  blacklist: false,
                   titleBlacklist: [],
                   authorBlacklist: [],
                   uriBlacklist: [],
@@ -39,6 +40,7 @@ const UserEndpoint: APIEndpoint = {
               settings = new UserModel({
                 userID: user.id,
                 model: req.body.model ? req.body.model : {
+                  blacklist: false,
                   titleBlacklist: [],
                   authorBlacklist: [],
                   uriBlacklist: [],
@@ -50,7 +52,12 @@ const UserEndpoint: APIEndpoint = {
                 message: 'Model updated'
               });
             } else {
-              settings.model = req.body.list ? req.body.list : []
+              settings.model = req.body.model ? req.body.model : {
+                blacklist: false,
+                titleBlacklist: [],
+                authorBlacklist: [],
+                uriBlacklist: [],
+              },
               settings.save().catch((err) => console.log(err));
               return res.json({
                 success: true,

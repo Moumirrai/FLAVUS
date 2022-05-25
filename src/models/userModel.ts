@@ -1,6 +1,7 @@
 import { Document, Schema, model } from 'mongoose';
 
 export interface Imodel {
+  blacklist: Boolean;
   titleBlacklist: Array<String>
   authorBlacklist: Array<String>
   uriBlacklist: Array<String>
@@ -21,6 +22,7 @@ export const UserSchema = new Schema({
   model: {
     type: Object,
     default: {
+      blacklist: false,
       titleBlacklist: [],
       authorBlacklist: [],
       uriBlacklist: [],

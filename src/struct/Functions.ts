@@ -16,7 +16,11 @@ export function random<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-export function createQueueEmbed(player: Player, index: number, client:Client): MessageEmbed {
+export function createQueueEmbed(
+  player: Player,
+  index: number,
+  client: Client
+): MessageEmbed {
   const tracks = player.queue;
   let tDuration = { duration: 0, stream: 0 };
   //for each track in queue, if isStream = false, add its duration to total duration
@@ -262,14 +266,60 @@ export async function autoplay(client, player) {
         });
         //filter title
         if (userConfig && userConfig.model.titleBlacklist.length > 0) {
-          userConfig.model.titleBlacklist = userConfig.model.titleBlacklist.map(x => x.toLowerCase());
-          let split = [" ", "-", "/", "<", ">", "(", ")", "{", "}", "[", "]", ".", ",", "\\", "*", "-", "+", "=", "%", "´", "§", "_", ":", "?", "!", "°", "\"", "#", "&", "@", "|", "˛", "`", "˙", "˝", "¨", "¸", "~", "•"]
-          let filtered = response.tracks.filter(track => {
+          userConfig.model.titleBlacklist = userConfig.model.titleBlacklist.map(
+            (x) => x.toLowerCase()
+          );
+          let split = [
+            ' ',
+            '-',
+            '/',
+            '<',
+            '>',
+            '(',
+            ')',
+            '{',
+            '}',
+            '[',
+            ']',
+            '.',
+            ',',
+            '\\',
+            '*',
+            '-',
+            '+',
+            '=',
+            '%',
+            '´',
+            '§',
+            '_',
+            ':',
+            '?',
+            '!',
+            '°',
+            '"',
+            '#',
+            '&',
+            '@',
+            '|',
+            '˛',
+            '`',
+            '˙',
+            '˝',
+            '¨',
+            '¸',
+            '~',
+            '•'
+          ];
+          let filtered = response.tracks.filter((track) => {
             let title = track.title;
             for (let i = 0; i < split.length; i++) {
               let splitTitle = title.split(split[i]);
               for (let j = 0; j < splitTitle.length; j++) {
-                if (userConfig.model.titleBlacklist.includes(splitTitle[j].toLowerCase())) {
+                if (
+                  userConfig.model.titleBlacklist.includes(
+                    splitTitle[j].toLowerCase()
+                  )
+                ) {
                   return false;
                 }
               }

@@ -64,6 +64,7 @@ export class APIClient implements APIInterface {
 
   private async auth(req: any): Promise<UserInterface> {
     let returnRes;
+    if (!req.headers.authorization) return null;
     await axios
       .get('https://discord.com/api/users/@me', {
         headers: {
