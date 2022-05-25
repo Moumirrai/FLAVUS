@@ -2,15 +2,15 @@ import { Message, MessageEmbed } from 'discord.js';
 import { CommandArgs, iCommand } from 'my-module';
 
 const BlacklistCommand: iCommand = {
-  name: 'blacklist',
-  aliases: ["bl"],
+  name: 'config',
+  aliases: ["cf", "cfg"],
   voiceRequired: false,
   joinPermissionRequired: false,
   playerRequired: false,
   sameChannelRequired: false,
   visible: true,
   description: 'Sends a dashboard url',
-  usage: 'ping',
+  usage: 'config',
   async execute({ client, message }: CommandArgs): Promise<Message> {
     return message.channel.send({
       embeds: [
