@@ -264,69 +264,46 @@ export async function autoplay(client, player) {
         let userConfig = await UserModel.findOne({
           userID: owner.id
         });
-        //filter title
-        if (userConfig && userConfig.model.titleBlacklist.length > 0) {
-          userConfig.model.titleBlacklist = userConfig.model.titleBlacklist.map(
-            (x) => x.toLowerCase()
-          );
-          let split = [
-            ' ',
-            '-',
-            '/',
-            '<',
-            '>',
-            '(',
-            ')',
-            '{',
-            '}',
-            '[',
-            ']',
-            '.',
-            ',',
-            '\\',
-            '*',
-            '-',
-            '+',
-            '=',
-            '%',
-            '´',
-            '§',
-            '_',
-            ':',
-            '?',
-            '!',
-            '°',
-            '"',
-            '#',
-            '&',
-            '@',
-            '|',
-            '˛',
-            '`',
-            '˙',
-            '˝',
-            '¨',
-            '¸',
-            '~',
-            '•'
-          ];
-          let filtered = response.tracks.filter((track) => {
-            let title = track.title;
-            for (let i = 0; i < split.length; i++) {
-              let splitTitle = title.split(split[i]);
-              for (let j = 0; j < splitTitle.length; j++) {
-                if (
-                  userConfig.model.titleBlacklist.includes(
-                    splitTitle[j].toLowerCase()
-                  )
-                ) {
+        if (userConfig && userConfig.model.blacklist === true) {
+          //filter title
+          if (userConfig.model.titleBlacklist.length > 0) {
+            userConfig.model.titleBlacklist =
+              userConfig.model.titleBlacklist.map((x) => x.toLowerCase());
+            let filtered = response.tracks.filter((track) => {
+              let title = track.title;
+              for (let i = 0; i < client.config.split.length; i++) {
+                let splitTitle = title.split(client.config.split[i]);
+                for (let j = 0; j < splitTitle.length; j++) {
+                  if (
+                    userConfig.model.titleBlacklist.includes(
+                      splitTitle[j].toLowerCase()
+                    )
+                  ) {
+                    return false;
+                  }
+                }
+              }
+              return true;
+            });
+            response.tracks = filtered;
+          }
+          //filter author
+          console.log("before author filter" + response.tracks.length);
+          if (userConfig.model.authorBlacklist.length > 0) {
+            userConfig.model.authorBlacklist =
+              userConfig.model.authorBlacklist.map((x) => x.toLowerCase());
+            let filtered = response.tracks.filter((track) => {
+              let authors = track.author.toLowerCase().split(' ');
+              for (let i = 0; i < authors.length; i++) {
+                if (userConfig.model.authorBlacklist.includes(authors[i])) {
                   return false;
                 }
               }
-            }
-            return true;
-          });
-          response.tracks = filtered;
+              return true;
+            });
+            response.tracks = filtered;
+          }
+          console.log("after author filter" + response.tracks.length);
         }
       }
       //remove previous track from tracks, if present

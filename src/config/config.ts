@@ -30,6 +30,7 @@ export type BotConfig = {
   maxVolume: number;
   port: number;
   leaveOnEmptyChannel: number;
+  split: Array<string>;
 };
 
 export const config: BotConfig = {
@@ -62,5 +63,46 @@ export const config: BotConfig = {
   },
   maxVolume: 100,
   leaveOnEmptyChannel: parseInt(process.env.LEAVE_ON_EMPTY_CHANNEL),
-  port: parseInt(process.env.PORT)
+  port: parseInt(process.env.PORT),
+  split: [
+    ' ',
+    '-',
+    '/',
+    '<',
+    '>',
+    '(',
+    ')',
+    '{',
+    '}',
+    '[',
+    ']',
+    '.',
+    ',',
+    '\\',
+    '*',
+    '-',
+    '+',
+    '=',
+    '%',
+    '´',
+    '§',
+    '_',
+    ':',
+    '?',
+    '!',
+    '°',
+    '"',
+    '#',
+    '&',
+    '@',
+    '|',
+    '˛',
+    '`',
+    '˙',
+    '˝',
+    '¨',
+    '¸',
+    '~',
+    '•'
+  ]
 };
