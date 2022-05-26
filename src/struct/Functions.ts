@@ -288,7 +288,6 @@ export async function autoplay(client, player) {
             response.tracks = filtered;
           }
           //filter author
-          console.log("before author filter" + response.tracks.length);
           if (userConfig.model.authorBlacklist.length > 0) {
             userConfig.model.authorBlacklist =
               userConfig.model.authorBlacklist.map((x) => x.toLowerCase());
@@ -303,7 +302,16 @@ export async function autoplay(client, player) {
             });
             response.tracks = filtered;
           }
-          console.log("after author filter" + response.tracks.length);
+          if (userConfig.model.uriBlacklist.length > 0) {
+            let filtered = response.tracks.filter((track) => {
+              if (userConfig.model.uriBlacklist.includes(track.uri)) {
+                return false;
+              }
+              return true;
+            }
+            );
+            response.tracks = filtered;
+          }
         }
       }
       //remove previous track from tracks, if present
