@@ -30,7 +30,7 @@ export type BotConfig = {
   maxVolume: number;
   port: number;
   leaveOnEmptyChannel: number;
-  split: Array<string>;
+  split: RegExp;
 };
 
 export const config: BotConfig = {
@@ -64,45 +64,5 @@ export const config: BotConfig = {
   maxVolume: 100,
   leaveOnEmptyChannel: parseInt(process.env.LEAVE_ON_EMPTY_CHANNEL),
   port: parseInt(process.env.PORT),
-  split: [
-    ' ',
-    '-',
-    '/',
-    '<',
-    '>',
-    '(',
-    ')',
-    '{',
-    '}',
-    '[',
-    ']',
-    '.',
-    ',',
-    '\\',
-    '*',
-    '-',
-    '+',
-    '=',
-    '%',
-    '´',
-    '§',
-    '_',
-    ':',
-    '?',
-    '!',
-    '°',
-    '"',
-    '#',
-    '&',
-    '@',
-    '|',
-    '˛',
-    '`',
-    '˙',
-    '˝',
-    '¨',
-    '¸',
-    '~',
-    '•'
-  ]
+  split: new RegExp(/[ -/<>(){}\[\].,\\*-+=%'´§_:?!°"#&@|˛`˙˝¨¸~•]+/)
 };

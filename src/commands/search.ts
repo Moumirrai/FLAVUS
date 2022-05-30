@@ -115,7 +115,7 @@ const SearchCommand: iCommand = {
         .map(
           (track, index) =>
             `**${++index})** [\`${String(
-              client.functions.escapeBacktick(track.title)
+              client.functions.escapeRegex(track.title)
             )
               .substr(0, 60)
               .split('[')
@@ -203,7 +203,7 @@ const SearchCommand: iCommand = {
               toAddTracks.push(track);
               picked_songs.push(
                 `**${songIndex + 1})** [\`${String(
-                  client.functions.escapeBacktick(track.title)
+                  client.functions.escapeRegex(track.title)
                 )
                   .substr(0, 60)
                   .split('[')

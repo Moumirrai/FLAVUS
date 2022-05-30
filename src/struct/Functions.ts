@@ -3,9 +3,10 @@ import {
   ColorResolvable,
   Message,
   MessageEmbed,
-  TextChannel
+  TextChannel,
+  User
 } from 'discord.js';
-import { Player, Track } from 'erela.js';
+import { Player, Track, SearchResult } from 'erela.js';
 import { GuildModel, IGuildModel } from '../models/guildModel';
 import { UserModel, IUserModel } from '../models/userModel';
 import Logger from './Logger';
@@ -15,7 +16,10 @@ import formatDuration = require('format-duration');
 export function random<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
 }
-
+/**
+ * Creates a queue embed for given index
+ * @returns {MessageEmbed} embed
+ */
 export function createQueueEmbed(
   player: Player,
   index: number,
@@ -23,13 +27,10 @@ export function createQueueEmbed(
 ): MessageEmbed {
   const tracks = player.queue;
   let tDuration = { duration: 0, stream: 0 };
-  //for each track in queue, if isStream = false, add its duration to total duration
   tracks.forEach((track) => {
     if (!track.isStream) tDuration.duration += track.duration;
     else tDuration.stream++;
   });
-  //if current track is a stream, add 1 to stream, if not, add its duration to total duration
-  //check if current track has property isStream, if not, add its duration to total duration
   if (player.queue.current && player.queue.current.isStream) tDuration.stream++;
   else if (player.queue.current) {
     let current =
@@ -68,9 +69,7 @@ export function createQueueEmbed(
   var titles = [];
   var durations = [];
   tracks.map((track, index) => {
-    //load indexes
     indexes.push(`${++index}`);
-    //load titles
     let string = `${escapeRegex(
       track.title.substr(0, 60).replace(/\[/giu, '\\[').replace(/\]/giu, '\\]')
     )}`;
@@ -78,7 +77,6 @@ export function createQueueEmbed(
       string = `${string.substr(0, 37)}...`;
     }
     titles.push(string);
-    //load durations
     durations.push(
       `${
         track.isStream
@@ -118,7 +116,6 @@ export function createQueueEmbed(
   if (indexes.length <= 15) {
     string += `\n`;
     for (let i = 0; i < tracks.length; i++) {
-      //check if any index in track is longer than 1 digit
       let line = `**${indexes[i]})** ${titles[i]} - [${durations[i]}]`;
       string += line + '\n';
     }
@@ -161,8 +158,11 @@ export function createQueueEmbed(
   }
   return embed;
 }
-
-export function createProgressBar(player: Player) {
+/**
+ * Create a progress bar for the current track
+ * @returns {string} progress bar
+ */
+export function createProgressBar(player: Player): string {
   let { size, arrow, block } = config.embed.progress_bar;
   if (!player.queue.current) return '';
   let current =
@@ -174,7 +174,6 @@ export function createProgressBar(player: Player) {
   const emptyProgress = size - progress;
   const progressString =
     block.repeat(progress) + arrow + block.repeat(emptyProgress);
-  const bar = progressString;
   const times = `${
     new Date(player.position).toISOString().substr(11, 8) +
     ' / ' +
@@ -182,26 +181,26 @@ export function createProgressBar(player: Player) {
       ? ' ◉ LIVE'
       : new Date(player.queue.current.duration).toISOString().substr(11, 8))
   }`;
-  return `[${bar}][${times}]`;
+  return `[${progressString}][${times}]`;
 }
 
-export function escapeBacktick(string: string) {
-  try {
-    return string.replace(/`/g, '');
-  } catch (e) {
-    Logger.error(e.stack);
-  }
-}
-
+/**
+ * Escapes regex characters in a string
+ * @param  {string} string
+ * @returns {string}
+ */
 export function escapeRegex(string: string) {
   try {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, `\\$&`);
+    return string.replace(/[.*+?^$`{}()|[\]\\]/g, `\\$&`);
   } catch (e) {
     Logger.error(e.stack);
   }
 }
 
-//create function that takes guild id and returns the guild's config from mongodb
+/**
+ * Fetches a guild's config from mongodb
+ * @returns {Promise<IGuildModel>} GuildModel
+ */
 export function fetchGuildConfig(guildID: string) {
   return new Promise<IGuildModel>((resolve, reject) => {
     try {
@@ -219,17 +218,76 @@ export function fetchGuildConfig(guildID: string) {
     }
   });
 }
-
-export async function autoplay(client, player) {
+/**
+ * If enabled, filters out tracks from autoplay search according to the user's config
+ * @returns {Promise<SearchResult>} filtered response
+ */
+async function blacklist(
+  client: Client,
+  player: Player,
+  response: SearchResult
+): Promise<SearchResult> {
+  const owner: User = player.get(`autoplayOwner`);
+  if (owner) {
+    let userConfig = await UserModel.findOne({
+      userID: owner.id
+    });
+    if (userConfig && userConfig.model.blacklist === true) {
+      //filter tracks
+      if (userConfig.model.titleBlacklist.length > 0) {
+        response.tracks.forEach((track) => {
+          let title = track.title.split(client.config.split);
+          for (let i = 0; i < title.length; i++) {
+            if (userConfig.model.titleBlacklist.includes(title[i])) {
+              response.tracks.splice(response.tracks.indexOf(track), 1);
+              break;
+            }
+          }
+        });
+      }
+      //filter author
+      if (userConfig.model.authorBlacklist.length > 0) {
+        userConfig.model.authorBlacklist = userConfig.model.authorBlacklist.map(
+          (x) => x.toLowerCase()
+        );
+        let filtered = response.tracks.filter((track) => {
+          let authors = track.author.toLowerCase().split(' ');
+          for (let i = 0; i < authors.length; i++) {
+            if (userConfig.model.authorBlacklist.includes(authors[i])) {
+              return false;
+            }
+          }
+          return true;
+        });
+        response.tracks = filtered;
+      }
+      //filter uri
+      if (userConfig.model.uriBlacklist.length > 0) {
+        let filtered = response.tracks.filter((track) => {
+          if (userConfig.model.uriBlacklist.includes(track.uri)) {
+            return false;
+          }
+          return true;
+        });
+        response.tracks = filtered;
+      }
+    }
+  }
+  return response;
+}
+/**
+ * If enabled, automatically adds tracks to the queue
+ */
+export async function autoplay(client: Client, player: Player): Promise<void | Message<boolean>> {
   let guildModel = await GuildModel.findOne({
     guildID: player.guild
   });
   if (!guildModel) return;
   if (!guildModel.autoplay) return;
   if (
-    player.get(`previousTrack`).requester != client.user ||
+    (player.get(`previousTrack`) as Track).requester != client.user ||
     !player.get(`similarQueue`) ||
-    player.get(`similarQueue`).length === 0
+    (player.get(`similarQueue`)  as Track[]).length === 0
   ) {
     try {
       const previoustrack: Track = player.get(`previousTrack`);
@@ -239,7 +297,10 @@ export async function autoplay(client, player) {
         player.set(`autoplayOwner`, previoustrack.requester);
 
       const mixURL = `https://www.youtube.com/watch?v=${previoustrack.identifier}&list=RD${previoustrack.identifier}`;
-      const response = await client.manager.search(mixURL, client.user);
+      const response: SearchResult = await client.manager.search(
+        mixURL,
+        client.user
+      );
       //if !response, send error embed
       if (
         !response ||
@@ -247,8 +308,7 @@ export async function autoplay(client, player) {
         response.loadType !== 'PLAYLIST_LOADED'
       ) {
         player.destroy();
-        return client.channels.cache
-          .get(player.textChannel)
+        return (client.channels.cache.get(player.textChannel) as TextChannel)
           .send({
             embeds: [
               new MessageEmbed()
@@ -259,61 +319,10 @@ export async function autoplay(client, player) {
           })
           .catch(() => {});
       }
-      const owner = player.get(`autoplayOwner`);
-      if (owner) {
-        let userConfig = await UserModel.findOne({
-          userID: owner.id
-        });
-        if (userConfig && userConfig.model.blacklist === true) {
-          //filter title
-          if (userConfig.model.titleBlacklist.length > 0) {
-            userConfig.model.titleBlacklist =
-              userConfig.model.titleBlacklist.map((x) => x.toLowerCase());
-            let filtered = response.tracks.filter((track) => {
-              let title = track.title;
-              for (let i = 0; i < client.config.split.length; i++) {
-                let splitTitle = title.split(client.config.split[i]);
-                for (let j = 0; j < splitTitle.length; j++) {
-                  if (
-                    userConfig.model.titleBlacklist.includes(
-                      splitTitle[j].toLowerCase()
-                    )
-                  ) {
-                    return false;
-                  }
-                }
-              }
-              return true;
-            });
-            response.tracks = filtered;
-          }
-          //filter author
-          if (userConfig.model.authorBlacklist.length > 0) {
-            userConfig.model.authorBlacklist =
-              userConfig.model.authorBlacklist.map((x) => x.toLowerCase());
-            let filtered = response.tracks.filter((track) => {
-              let authors = track.author.toLowerCase().split(' ');
-              for (let i = 0; i < authors.length; i++) {
-                if (userConfig.model.authorBlacklist.includes(authors[i])) {
-                  return false;
-                }
-              }
-              return true;
-            });
-            response.tracks = filtered;
-          }
-          if (userConfig.model.uriBlacklist.length > 0) {
-            let filtered = response.tracks.filter((track) => {
-              if (userConfig.model.uriBlacklist.includes(track.uri)) {
-                return false;
-              }
-              return true;
-            }
-            );
-            response.tracks = filtered;
-          }
-        }
-      }
+      console.log(response.tracks.length);
+      response.tracks = (await blacklist(client, player, response)).tracks;
+      console.log(response.tracks.length);
+
       //remove previous track from tracks, if present
       response.tracks = response.tracks.filter(
         (track) => track.identifier !== previoustrack.identifier
@@ -321,8 +330,7 @@ export async function autoplay(client, player) {
       //if there are no tracks left in the response, send error message
       if (!response.tracks.length) {
         player.destroy();
-        return client.channels.cache
-          .get(player.textChannel)
+        return (client.channels.cache.get(player.textChannel) as TextChannel)
           .send({
             embeds: [
               new MessageEmbed()
@@ -339,7 +347,8 @@ export async function autoplay(client, player) {
     }
   }
   try {
-    const similarQueue = player.get(`similarQueue`);
+    const similarQueue: Track[] = player.get(`similarQueue`);
+    console.log(typeof similarQueue);
     //pick and remove a random track from the similar queue
     const track = similarQueue.splice(
       Math.floor(Math.random() * similarQueue.length),
@@ -352,8 +361,7 @@ export async function autoplay(client, player) {
       .setDescription(`[${track.title}](${track.uri})`)
       .setColor(client.config.embed.color)
       .setThumbnail(track.thumbnail);
-    client.channels.cache
-      .get(player.textChannel)
+      (client.channels.cache.get(player.textChannel) as TextChannel)
       .send({ embeds: [embed] })
       .catch(() => {});
     return player.play();

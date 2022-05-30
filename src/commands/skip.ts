@@ -36,7 +36,8 @@ const SkipCommand: iCommand = {
         return;
       }
     }
-    player.set(`previousTrack`, player.queue.current);
+    //WHY?
+    //player.set(`previousTrack`, player.queue.current);
     if (args[0] && !isNaN(Number(args[0]))) {
       if (Number(args[0]) > player.queue.size || Number(args[0]) < 1) {
         //if the user wants to skip more tracks than are in the queue
