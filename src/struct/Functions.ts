@@ -62,7 +62,7 @@ export function createQueueEmbed(
     }
   }
   const embed = new MessageEmbed()
-    .setTitle('Queue' + queueLength)
+    .setTitle('Queue' + queueLength + (player.trackRepeat ? '  -  LOOP ENABLED' : ''))
     .setColor(config.embed.color as ColorResolvable);
   let string = '';
   var indexes = [];
@@ -319,9 +319,7 @@ export async function autoplay(client: Client, player: Player): Promise<void | M
           })
           .catch(() => {});
       }
-      console.log(response.tracks.length);
       response.tracks = (await blacklist(client, player, response)).tracks;
-      console.log(response.tracks.length);
 
       //remove previous track from tracks, if present
       response.tracks = response.tracks.filter(
@@ -348,7 +346,6 @@ export async function autoplay(client: Client, player: Player): Promise<void | M
   }
   try {
     const similarQueue: Track[] = player.get(`similarQueue`);
-    console.log(typeof similarQueue);
     //pick and remove a random track from the similar queue
     const track = similarQueue.splice(
       Math.floor(Math.random() * similarQueue.length),
