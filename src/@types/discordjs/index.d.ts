@@ -1,10 +1,7 @@
-import type { Message, Client } from 'discord.js';
-import type { BotConfig, config } from '../config/config';
+import type { Client } from 'discord.js';
+import type { BotConfig } from '../config/config';
 import type { DiscordTogether } from 'discord-together';
 import type { LavalinkHandler } from './structures/Music/LavalinkHandler';
-import type { iCommand } from 'my-module';
-import { Collection } from 'mongoose';
-impo
 
 declare module 'discord.js' {
   export interface Client {

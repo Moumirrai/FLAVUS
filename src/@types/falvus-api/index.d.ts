@@ -7,7 +7,23 @@ declare module 'flavus-api' {
       client: import('../../struct/Client').BotClient,
       req: import('express').Request,
       res: import('express').Response,
-      user: User
+    ) => Promise<unknown>;
+  }
+
+  export interface AuthRespose {
+    access_token: string;
+    expires_in: number;
+    refresh_token: string;
+    scope: string;
+    token_type: string;
+  }
+
+  export interface SocketEvent {
+    name: string;
+    execute: (
+      client: import('../../struct/Client').BotClient,
+      io: import('socket.io').Socket,
+      data: unknown
     ) => Promise<unknown>;
   }
 
@@ -27,6 +43,7 @@ declare module 'flavus-api' {
   }
 
   export interface APIInterface {
-    EndPoints: Collection<string, iCommand>
+    EndPoints: Collection<string, APIEndpoint>
+    SocketEvents: Collection<string, SocketEvent>
   }
 }
