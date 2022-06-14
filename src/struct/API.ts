@@ -91,6 +91,8 @@ export class APIClient implements APIInterface {
       }
     );
 
+    //TODO: fix typescript errors
+
     const wrap = (middleware: any) => (socket: Socket, next: any) => middleware(socket.request, {}, next);
 
     io.use(wrap(sessionMiddleware));
@@ -104,6 +106,10 @@ export class APIClient implements APIInterface {
       }
     });
 
+    //wrap sessions to sockets
+
+    /*
+
     io.on('connection', (socket: Socket) => {
       for (const [name, event] of this.SocketEvents) {
         socket.on(name, (data) => {
@@ -111,16 +117,13 @@ export class APIClient implements APIInterface {
         });
       }
       socket.emit('auth', this.AuthMap.get(socket.id));
-      /*
-      socket.interval = setInterval(() => {
-        socket.emit('debug', 'pong');
-      }, 1000);
-      */
       socket.on('disconnect', () => {
         this.AuthMap.delete(socket.id);
         //clearInterval(socket.interval);
       });
     });
+
+    */
 
     app.post('/api/:path', async (req, res) => {
       const path = req.params.path;

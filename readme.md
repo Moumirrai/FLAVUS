@@ -52,3 +52,13 @@ GENIUS = <GENIUS_CLIENT_ID>
 API=true
 APIPORT=3030
 ```
+
+# TODO
+
+- fix sockets and sessions
+- rework queue using (this)[https://guides.menudocs.org/topics/erelajs/advanced.html#extending]
+- add 'start on timestamp' support
+- create central functions that can be used from chat and dashbord e.g. play({query: string, id: string, voiceChannel: idk, options: any})
+    - volume, play, search, loop, autoplay etc.
+    - combine pause and resume to one function
+- add equalizer

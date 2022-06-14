@@ -9,16 +9,20 @@ const oauth = new DiscordOauth2({
 });
 import type { AuthRespose, UserInterface } from 'flavus-api';
 
-export async function authUser(code: string) {
+/*
+ * TODO: Use logger instead of console.log()
+*/
+
+export async function authUser(code: string): Promise<UserInterface | null> {
   try {
     const userAuth: IAuthModel = await AuthModel.findOne({
       code: code
     });
-    if (userAuth) {
+    if (userAuth) { //if code is already in database
       if (
         userAuth.timestamp.getTime() + userAuth.auth.expires_in * 1000 <
         new Date().getTime()
-      ) {
+      ) { //if access_toxen expired, use refresh_token
         const newCredentials: AuthRespose | null = await refreshToken(
           cryptr.decrypt(userAuth.auth.refresh_token)
         );
@@ -34,14 +38,14 @@ export async function authUser(code: string) {
     }
     //new auth
     const newCredentials: AuthRespose | null = await newAuth(code);
-    if (newCredentials) {
+    if (newCredentials) { //if code is valid
       const user = await getUser(newCredentials.access_token);
       if (user) {
         try {
           const newuserAuth: IAuthModel = await AuthModel.findOne({
             id: user.id
           });
-          if (newuserAuth) {
+          if (newuserAuth) { //if object with same id as new auth is already in database, overwrite it
             newuserAuth.code = code;
             newuserAuth.auth = encrypt(newCredentials);
             newuserAuth.timestamp = new Date();
@@ -85,7 +89,7 @@ async function newAuth(code: string): Promise<AuthRespose | null> {
     });
 }
 
-function encrypt(auth: AuthRespose) {
+function encrypt(auth: AuthRespose): AuthRespose {
     return {
         access_token: cryptr.encrypt(auth.access_token),
         refresh_token: cryptr.encrypt(auth.refresh_token),
@@ -108,7 +112,7 @@ async function refreshToken(
       return response;
     })
     .catch(function () {
-      console.log('logging error');
+      console.log('refresh error');
       return null;
     });
 }

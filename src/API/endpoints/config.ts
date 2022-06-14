@@ -1,7 +1,10 @@
 import { Message, MessageEmbed } from 'discord.js';
-import { Response } from 'express';
 import { APIEndpoint } from 'flavus-api';
 import { UserModel } from '../../models/userModel';
+
+//TODO: add type to promise
+
+//user status 201 instead of json message
 
 const UserEndpoint: APIEndpoint = {
   path: 'config',

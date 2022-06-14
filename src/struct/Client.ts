@@ -60,6 +60,8 @@ export class BotClient extends Client {
     }
   }
 
+  //TODO: implement or delete sleep function
+
   public sleep(ms: number) {
     return new Promise((res) => setTimeout(res, ms));
   }
@@ -71,12 +73,14 @@ export class BotClient extends Client {
       autoIndex: false
     } as ConnectOptions)
       .then(() => {
-        this.logger.info('Connected to MongoDB');
+        return this.logger.info('Connected to MongoDB');
       })
       .catch((err) => {
-        this.logger.error('MongoDB connection error: ' + err);
+        return this.logger.error('MongoDB connection error: ' + err);
       });
   }
+
+  //TODO: get rid of resolve 
 
   private async loadCommands(): Promise<void> {
     const files = readdirSync(resolve(__dirname, '..', 'commands'));
@@ -90,7 +94,7 @@ export class BotClient extends Client {
         });
       }
     }
-    this.logger.info(`${this.commands.size} commands loaded!`);
+    return this.logger.info(`${this.commands.size} commands loaded!`);
   }
 
   private async loadEvents(): Promise<void> {
@@ -101,7 +105,7 @@ export class BotClient extends Client {
       ).default;
       this.on(event.name, (...args) => event.execute(this, ...args));
     }
-    this.logger.info(`${files.length} events loaded!`);
+    return this.logger.info(`${files.length} events loaded!`);
   }
 
   private async loadManagerEvents(): Promise<void> {
@@ -114,6 +118,6 @@ export class BotClient extends Client {
         event.execute(this, this.manager, ...args)
       );
     }
-    this.logger.info(`${files.length} manager events loaded!`);
+    return this.logger.info(`${files.length} manager events loaded!`);
   }
 }
