@@ -13,6 +13,9 @@ const AutoplayCommand: SocketEvent = {
     if (player) {
       if (typeof data !== 'boolean') console.log('data is not boolean');
       player.pause(data);
+      socket.volatile.emit('playerData', {
+        paused: player.paused,
+      });
     }
   }
 };

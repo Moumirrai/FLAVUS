@@ -31,6 +31,7 @@ async function getPlayer(client, socket) {
         duration: player.queue.current.duration,
         author: player.queue.current.author,
         uri: player.queue.current.uri,
+        thumbnail: player.queue.current.thumbnail,
       },
       paused: player.paused,
       position: progress
