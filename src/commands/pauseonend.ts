@@ -1,5 +1,5 @@
 import { MessageReaction } from 'discord.js';
-import { CommandArgs, iCommand } from 'my-module';
+import { CommandArgs, iCommand } from 'flavus';
 
 const PauseOnEndCommand: iCommand = {
   name: 'pausedelayed',

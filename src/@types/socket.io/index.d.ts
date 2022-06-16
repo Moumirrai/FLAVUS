@@ -2,7 +2,7 @@ import type { Message, Client } from 'discord.js';
 import type { BotConfig, config } from '../config/config';
 import type { DiscordTogether } from 'discord-together';
 import type { LavalinkHandler } from './structures/Music/LavalinkHandler';
-import type { iCommand } from 'my-module';
+import type { iCommand } from 'flavus';
 import { Collection } from 'mongoose';
 impo;
 
@@ -15,7 +15,10 @@ declare module 'socket.io' {
         user: {
           id: string;
         };
+        code: string;
       };
     };
   }
 }
+
+

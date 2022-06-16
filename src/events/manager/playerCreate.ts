@@ -1,4 +1,4 @@
-import { iManagerEvent } from 'my-module';
+import { iManagerEvent } from 'flavus';
 import { GuildModel } from '../../models/guildModel';
 
 const playerMoveEvent: iManagerEvent = {

@@ -1,6 +1,6 @@
 //create messageCreate event
 import { Client, Message, MessageEmbed } from 'discord.js';
-import { iEvent } from 'my-module';
+import { iEvent } from 'flavus';
 import { Player } from 'erela.js';
 import { BotClient } from '../../struct/Client';
 

@@ -8,8 +8,14 @@ import { GuildModel } from '../../models/guildModel';
 const AutoplayCommand: SocketEvent = {
   name: 'test',
   async execute(client, socket, data): Promise<any> {
-    socket.emit('test', "test string")
-    console.log(data)
+    const userId = socket.request.session.user.id
+    //check if user is connected to voice channel
+    /*
+    const guild = client.guilds.cache.get(data.guildId)
+    const member = guild.members.cache.get(userId)
+    if (!member) return socket.emit('error', 'You are not in a voice channel!')
+    if (!member.voice.channel) return socket.emit('error', 'You are not in a voice channel!')
+    */
   }
 };
 

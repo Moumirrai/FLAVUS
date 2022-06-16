@@ -1,6 +1,6 @@
 import { Message, MessageEmbed } from 'discord.js';
 import { Player } from 'erela.js';
-import { CommandArgs, iCommand } from 'my-module';
+import { CommandArgs, iCommand } from 'flavus';
 import { IGuildModel } from '../models/guildModel';
 import formatDuration = require('format-duration');
 var validUrl = require('valid-url');

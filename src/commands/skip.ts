@@ -1,5 +1,5 @@
 import { Message, MessageEmbed } from 'discord.js';
-import { CommandArgs, iCommand } from 'my-module';
+import { CommandArgs, iCommand } from 'flavus';
 
 const SkipCommand: iCommand = {
   name: 'skip',

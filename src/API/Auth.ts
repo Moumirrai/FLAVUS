@@ -77,7 +77,7 @@ async function newAuth(code: string): Promise<AuthRespose | null> {
   return oauth
     .tokenRequest({
       code: code,
-      scope: 'identify guilds',
+      scope: 'identify guilds voice',
       grantType: 'authorization_code'
     })
     .then((response: AuthRespose) => {
@@ -106,7 +106,7 @@ async function refreshToken(
     .tokenRequest({
       refreshToken: refresh_token,
       grantType: 'refresh_token',
-      scope: 'identify guilds'
+      scope: 'identify guilds voice'
     })
     .then((response: AuthRespose) => {
       return response;

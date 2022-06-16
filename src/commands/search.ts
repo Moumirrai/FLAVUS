@@ -5,7 +5,7 @@ import {
   MessageSelectMenu
 } from 'discord.js';
 import { Player } from 'erela.js';
-import { CommandArgs, iCommand } from 'my-module';
+import { CommandArgs, iCommand } from 'flavus';
 import formatDuration = require('format-duration');
 import { format } from 'winston';
 

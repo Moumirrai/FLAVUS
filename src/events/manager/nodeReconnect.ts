@@ -1,5 +1,5 @@
 import { Node } from 'erela.js';
-import { iManagerEvent } from 'my-module';
+import { iManagerEvent } from 'flavus';
 
 const nodeReconnectEvent: iManagerEvent = {
   name: 'nodeReconnect',

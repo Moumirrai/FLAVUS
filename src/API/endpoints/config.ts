@@ -35,7 +35,6 @@ const UserEndpoint: APIEndpoint = {
         ).clone().catch(function (err) { console.log(err) })
         break;
       case 'WRITE':
-        console.log(req.body);
         await UserModel.findOne(
           { userID: req.session.user.id },
           (err, settings) => {

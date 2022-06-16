@@ -1,6 +1,5 @@
 var bodyParser = require('body-parser');
 var cors = require('cors');
-import axios from 'axios';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
 import type {
@@ -17,6 +16,12 @@ import http from 'http';
 import { Server, Socket } from 'socket.io';
 import { authUser } from '../API/Auth';
 import session, { Session, SessionData } from 'express-session';
+
+declare module 'http' {
+  interface IncomingMessage {
+    session: Session & SessionData;
+  }
+}
 
 export class APIClient implements APIInterface {
   EndPoints = new Collection<string, APIEndpoint>();
@@ -47,13 +52,13 @@ export class APIClient implements APIInterface {
     });
 
     const sessionMiddleware = session({
-      cookie: { 
-        maxAge: 3600000,
+      cookie: {
+        maxAge: 3600000
       },
       secret: process.env.SECRET,
       resave: false,
       saveUninitialized: false
-    })
+    });
 
     app.use(sessionMiddleware);
 
@@ -67,7 +72,8 @@ export class APIClient implements APIInterface {
         if (!req.url.startsWith('/api')) {
           return next();
         }
-        if (!req.headers.authorization) return res.status(401).send('Authentification failed!');
+        if (!req.headers.authorization)
+          return res.status(401).send('Authentification failed!');
         if (req.headers.authorization && req.session.code) {
           if (req.session.code !== req.headers.authorization) {
             const user = await authUser(req.headers.authorization);
@@ -86,29 +92,31 @@ export class APIClient implements APIInterface {
           req.session.user = user;
           return next();
         }
-        res.send
         return res.status(401).send('Authentification failed!');
       }
     );
 
-    //TODO: fix typescript errors
-
-    const wrap = (middleware: any) => (socket: Socket, next: any) => middleware(socket.request, {}, next);
+    const wrap = (middleware: any) => (socket: Socket, next: any) =>
+      middleware(socket.request, {}, next);
 
     io.use(wrap(sessionMiddleware));
 
-    io.use((socket, next) => {
-      const session = socket.request.session
-      if (session && session.authenticated) {
-        next();
-      } else {
-        next(new Error("unauthorized"));
+    io.use(async (socket, next) => {
+      const code = socket.handshake.query.code.toString();
+      if (!code) return next(new Error('Authentification failed!'));
+      if (socket.request.session && socket.request.session.code === code) {
+        return next();
       }
+      const user = await authUser(code);
+      if (user) {
+        socket.request.session.code = code;
+        socket.request.session.user = user;
+        return next();
+      }
+      return next(new Error('Authentification failed!'));
     });
 
     //wrap sessions to sockets
-
-    /*
 
     io.on('connection', (socket: Socket) => {
       for (const [name, event] of this.SocketEvents) {
@@ -119,11 +127,9 @@ export class APIClient implements APIInterface {
       socket.emit('auth', this.AuthMap.get(socket.id));
       socket.on('disconnect', () => {
         this.AuthMap.delete(socket.id);
-        //clearInterval(socket.interval);
+        clearInterval(socket.interval);
       });
     });
-
-    */
 
     app.post('/api/:path', async (req, res) => {
       const path = req.params.path;
@@ -131,7 +137,6 @@ export class APIClient implements APIInterface {
       if (!endpoint) return res.status(404).send('404 Not Found');
       await endpoint.execute(client, req, res);
     });
-
 
     server.listen(port, () => Logger.info(`API running on port ${port}`));
   }

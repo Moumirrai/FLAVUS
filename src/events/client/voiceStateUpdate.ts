@@ -4,7 +4,7 @@ import {
   Permissions,
   VoiceBasedChannel
 } from 'discord.js';
-import { iEvent } from 'my-module';
+import { iEvent } from 'flavus';
 
 //TODO: Fix this mess!!!
 
@@ -25,6 +25,23 @@ const VoiceStateUpdateEvent: iEvent = {
       ) {
         newState.guild.me.voice.setSuppressed(false).catch(() => {});
       }
+    }
+
+    //new newstate channel is null, and newstate has userid
+
+    if (
+      newState.channel &&
+      newState.channel.type == 'GUILD_VOICE' &&
+      newState.channel.members.filter((member) => !member.user.bot).size > 0
+    ) {
+      //if there is at least one non deafen member in the channel
+      if (
+        newState.channel.members.filter(
+          (member) => !member.voice.deaf || !member.voice.selfDeaf
+        ).size === 0
+      )
+        console.log('deafen');
+      //if the bot is not deaf
     }
 
     /**

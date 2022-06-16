@@ -6,7 +6,7 @@ import { Client, Intents, Collection } from 'discord.js';
 import { readdirSync } from 'fs';
 import Logger from './Logger';
 import { resolve } from 'path';
-import type { iCommand } from 'my-module';
+import type { iCommand, iVoiceCache } from 'flavus';
 import { connect, ConnectOptions } from 'mongoose';
 import * as Functions from './Functions';
 import * as PlayerManager from './PlayerManager';
@@ -41,6 +41,7 @@ export class BotClient extends Client {
   public logger = Logger;
   public aliases = new Collection<string, iCommand>();
   public commands = new Collection<string, iCommand>();
+  public voiceCache = new Collection<string, iVoiceCache>();
 
   public functions = Functions;
   public PlayerManager = PlayerManager;
@@ -80,8 +81,6 @@ export class BotClient extends Client {
       });
   }
 
-  //TODO: get rid of resolve 
-
   private async loadCommands(): Promise<void> {
     const files = readdirSync(resolve(__dirname, '..', 'commands'));
     for (const file of files) {
@@ -94,7 +93,7 @@ export class BotClient extends Client {
         });
       }
     }
-    return this.logger.info(`${this.commands.size} commands loaded!`);
+    this.logger.info(`${this.commands.size} commands loaded!`);
   }
 
   private async loadEvents(): Promise<void> {
@@ -105,7 +104,7 @@ export class BotClient extends Client {
       ).default;
       this.on(event.name, (...args) => event.execute(this, ...args));
     }
-    return this.logger.info(`${files.length} events loaded!`);
+    this.logger.info(`${files.length} events loaded!`);
   }
 
   private async loadManagerEvents(): Promise<void> {
@@ -118,6 +117,6 @@ export class BotClient extends Client {
         event.execute(this, this.manager, ...args)
       );
     }
-    return this.logger.info(`${files.length} manager events loaded!`);
+    this.logger.info(`${files.length} manager events loaded!`);
   }
 }

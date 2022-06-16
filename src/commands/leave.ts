@@ -1,4 +1,4 @@
-import { CommandArgs, iCommand } from 'my-module';
+import { CommandArgs, iCommand } from 'flavus';
 
 const LeaveCommand: iCommand = {
   name: 'stop',

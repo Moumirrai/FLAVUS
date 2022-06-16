@@ -1,5 +1,5 @@
 import { Message, MessageEmbed } from 'discord.js';
-import { CommandArgs, iCommand } from 'my-module';
+import { CommandArgs, iCommand } from 'flavus';
 import { GuildModel } from '../models/guildModel';
 
 const AutoplayCommand: iCommand = {

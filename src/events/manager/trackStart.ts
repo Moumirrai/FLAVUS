@@ -1,5 +1,5 @@
 import { Player } from 'erela.js';
-import { iManagerEvent } from 'my-module';
+import { iManagerEvent } from 'flavus';
 
 const trackStartEvent: iManagerEvent = {
   name: 'trackStart',

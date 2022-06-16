@@ -5,7 +5,7 @@ import {
   MessageEmbed,
   User
 } from 'discord.js';
-import { CommandArgs, iCommand } from 'my-module';
+import { CommandArgs, iCommand } from 'flavus';
 import formatDuration = require('format-duration');
 import { Player } from 'erela.js';
 
