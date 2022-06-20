@@ -62,7 +62,9 @@ export function createQueueEmbed(
     }
   }
   const embed = new MessageEmbed()
-    .setTitle('Queue' + queueLength + (player.trackRepeat ? '  -  LOOP ENABLED' : ''))
+    .setTitle(
+      'Queue' + queueLength + (player.trackRepeat ? '  -  LOOP ENABLED' : '')
+    )
     .setColor(config.embed.color as ColorResolvable);
   let string = '';
   var indexes = [];
@@ -201,22 +203,20 @@ export function escapeRegex(string: string) {
  * Fetches a guild's config from mongodb
  * @returns {Promise<IGuildModel>} GuildModel
  */
-export function fetchGuildConfig(guildID: string) {
-  return new Promise<IGuildModel>((resolve, reject) => {
-    try {
-      GuildModel.findOne({ guildID: guildID }, (err, doc) => {
-        if (err) {
-          Logger.error(err);
-          reject(err);
-        } else {
-          resolve(doc);
-        }
-      });
-    } catch (e) {
-      Logger.error(e.stack);
-      reject(e);
-    }
-  });
+export function fetchGuildConfig(guildID: string): Promise<IGuildModel | null> {
+  try {
+    GuildModel.findOne({ guildID: guildID }, (err, doc: IGuildModel) => {
+      if (err) {
+        Logger.error(err);
+        return null;
+      } else {
+        return doc;
+      }
+    });
+  } catch (e) {
+    Logger.error(e.stack);
+    return null;
+  }
 }
 /**
  * If enabled, filters out tracks from autoplay search according to the user's config
@@ -278,7 +278,10 @@ async function blacklist(
 /**
  * If enabled, automatically adds tracks to the queue
  */
-export async function autoplay(client: Client, player: Player): Promise<void | Message<boolean>> {
+export async function autoplay(
+  client: Client,
+  player: Player
+): Promise<void | Message<boolean>> {
   let guildModel = await GuildModel.findOne({
     guildID: player.guild
   });
@@ -287,7 +290,7 @@ export async function autoplay(client: Client, player: Player): Promise<void | M
   if (
     (player.get(`previousTrack`) as Track).requester != client.user ||
     !player.get(`similarQueue`) ||
-    (player.get(`similarQueue`)  as Track[]).length === 0
+    (player.get(`similarQueue`) as Track[]).length === 0
   ) {
     try {
       const previoustrack: Track = player.get(`previousTrack`);
@@ -358,7 +361,7 @@ export async function autoplay(client: Client, player: Player): Promise<void | M
       .setDescription(`[${track.title}](${track.uri})`)
       .setColor(client.config.embed.color)
       .setThumbnail(track.thumbnail);
-      (client.channels.cache.get(player.textChannel) as TextChannel)
+    (client.channels.cache.get(player.textChannel) as TextChannel)
       .send({ embeds: [embed] })
       .catch(() => {});
     return player.play();

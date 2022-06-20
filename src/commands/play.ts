@@ -76,7 +76,7 @@ const PlayCommand: iCommand = {
               .setColor(client.config.embed.errorcolor)
               .setTitle(
                 String('Found nothing for: **`' + search).substr(0, 256 - 3) +
-                '`**'
+                  '`**'
               )
           ]
         });
@@ -88,9 +88,6 @@ const PlayCommand: iCommand = {
           player.queue.add(res.tracks[0]);
           player.play();
           player.pause(false);
-          let config = await client.functions.fetchGuildConfig(
-            message.guild.id
-          );
           const embed = new MessageEmbed()
             .setColor(client.config.embed.color)
             .setTitle(`Now Playing`)
@@ -98,11 +95,6 @@ const PlayCommand: iCommand = {
               `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
             )
             .setThumbnail(res.tracks[0].thumbnail);
-          if (config.autoplay) {
-            embed.setFooter(
-              { text: `Autoplay is enabled, the next song will start automatically`, iconURL: message.guild.iconURL() }
-            );
-          }
           return message.channel.send({
             embeds: [embed]
           });
@@ -111,9 +103,6 @@ const PlayCommand: iCommand = {
           if (!player.playing && !player.paused && !player.queue.size)
             player.play();
           player.pause(false);
-          let config = await client.functions.fetchGuildConfig(
-            message.guild.id
-          );
           const embed = new MessageEmbed()
             .setColor(client.config.embed.color)
             .setTitle(`Now Playing`)
@@ -121,11 +110,6 @@ const PlayCommand: iCommand = {
               `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
             )
             .setThumbnail(res.tracks[0].thumbnail);
-          if (config.autoplay) {
-            embed.setFooter(
-              { text: `Autoplay is enabled, the next song will start automatically`, iconURL: message.guild.iconURL() }
-            );
-          }
           return message.channel.send({
             embeds: [embed]
           });
@@ -164,8 +148,8 @@ const PlayCommand: iCommand = {
               .setURL(res.playlist.uri)
               .setTitle(
                 `Playlist  **\`${res.playlist.name}`.substr(0, 256 - 3) +
-                '`**' +
-                ' added to the Queue'
+                  '`**' +
+                  ' added to the Queue'
               )
               .setThumbnail(res.tracks[0].thumbnail)
               .addField(

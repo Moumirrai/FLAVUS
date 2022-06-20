@@ -1,9 +1,7 @@
-import {
-  Client,
-  Message,
-  VoiceBasedChannel
-} from 'discord.js';
-import { Manager, Player } from 'erela.js';
+import { Client, Message, User, VoiceBasedChannel } from 'discord.js';
+import { Manager, Player, SearchResult } from 'erela.js';
+import { UserInterface } from 'flavus-api';
+var validUrl = require('valid-url');
 
 export async function connect(
   message: Message,
@@ -32,3 +30,40 @@ export async function connect(
   return player;
 }
 
+export async function search(
+  query: string,
+  player: Player,
+  author: UserInterface
+): Promise<SearchResult> {
+  let res: SearchResult;
+  try {
+    if (query.includes('open.spotify.com/') || validUrl.isUri(query)) {
+      res = await player.search(query, author);
+    } else {
+      res = await player.search(
+        {
+          query: query,
+          source: 'youtube'
+        },
+        author
+      );
+    }
+    if (res.loadType === 'LOAD_FAILED') {
+      throw res.exception;
+    }
+  } catch (err) {
+    console.log(err);
+    throw err.message;
+  }
+
+  switch (res.loadType) {
+    case 'NO_MATCHES':
+      throw 'No matches found!';
+    case 'TRACK_LOADED':
+    case 'SEARCH_RESULT':
+    case 'PLAYLIST_LOADED':
+      return res;
+    default:
+      throw 'Unknown load type!';
+  }
+}

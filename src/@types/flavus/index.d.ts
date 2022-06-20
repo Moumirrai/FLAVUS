@@ -27,10 +27,9 @@ declare module 'flavus' {
     ) => Promise<unknown>;
   }
   export interface iVoiceCache {
-    voiceChannel: import('discord.js').VoiceBasedChannel;
+    voiceChannel: import('discord.js').VoiceChannel;
     guildId: string;
-    //TODO: line below may be useless
-    connected: boolean;
+    deafened: boolean;
   }
   export interface iManagerEvent {
     name: string;

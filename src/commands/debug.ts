@@ -12,9 +12,9 @@ import { Player, Track, SearchResult } from 'erela.js';
 //define typo for player.queue.current.requester as User
 
 
-const GrabCommand: iCommand = {
+const DebugCommand: iCommand = {
   name: 'debug',
-  aliases: ['test'],
+  aliases: [],
   voiceRequired: true,
   joinPermissionRequired: false,
   playerRequired: true,
@@ -46,4 +46,4 @@ const GrabCommand: iCommand = {
   }
 };
 
-export default GrabCommand;
+export default DebugCommand;

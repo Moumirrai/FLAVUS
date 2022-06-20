@@ -2,7 +2,8 @@ import {
   TextChannel,
   VoiceState,
   Permissions,
-  VoiceBasedChannel
+  VoiceBasedChannel,
+  VoiceChannel
 } from 'discord.js';
 import { iEvent } from 'flavus';
 
@@ -34,14 +35,13 @@ const VoiceStateUpdateEvent: iEvent = {
       newState.channel.type == 'GUILD_VOICE' &&
       newState.channel.members.filter((member) => !member.user.bot).size > 0
     ) {
-      //if there is at least one non deafen member in the channel
-      if (
-        newState.channel.members.filter(
-          (member) => !member.voice.deaf || !member.voice.selfDeaf
-        ).size === 0
-      )
-        console.log('deafen');
-      //if the bot is not deaf
+      client.voiceCache.set(newState.member.id, {
+        voiceChannel: newState.channel as VoiceChannel,
+        guildId: newState.guild.id,
+        deafened: newState.member.voice.deaf || newState.member.voice.selfDeaf
+      });
+    } else {
+      client.voiceCache.delete(newState.member.id);
     }
 
     /**

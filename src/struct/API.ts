@@ -16,6 +16,7 @@ import http from 'http';
 import { Server, Socket } from 'socket.io';
 import { authUser } from '../API/Auth';
 import session, { Session, SessionData } from 'express-session';
+import { getPlayer } from '../API/player';
 
 declare module 'http' {
   interface IncomingMessage {
@@ -102,8 +103,8 @@ export class APIClient implements APIInterface {
     io.use(wrap(sessionMiddleware));
 
     io.use(async (socket, next) => {
+      if (!socket.handshake.query.code) return next(new Error('Authentification failed!'));
       const code = socket.handshake.query.code.toString();
-      if (!code) return next(new Error('Authentification failed!'));
       if (socket.request.session && socket.request.session.code === code) {
         return next();
       }
@@ -124,7 +125,9 @@ export class APIClient implements APIInterface {
           event.execute(client, socket, data);
         });
       }
-      socket.emit('auth', this.AuthMap.get(socket.id));
+      if (!socket.interval) {
+        socket.interval = setInterval(() => getPlayer(client, socket), 1000);
+      }
       socket.on('disconnect', () => {
         this.AuthMap.delete(socket.id);
         clearInterval(socket.interval);
