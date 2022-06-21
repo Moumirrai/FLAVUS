@@ -7,7 +7,6 @@ import {
 import { Player } from 'erela.js';
 import { CommandArgs, iCommand } from 'flavus';
 import formatDuration = require('format-duration');
-import { format } from 'winston';
 
 const SearchCommand: iCommand = {
   name: 'search',

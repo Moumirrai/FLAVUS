@@ -1,6 +1,6 @@
 import { iEvent } from 'flavus';
 
-const readyEvent: iEvent = {
+const ReadyEvent: iEvent = {
   name: 'ready',
   async execute(client) {
     client.manager.init(client.user.id);
@@ -8,4 +8,4 @@ const readyEvent: iEvent = {
   }
 };
 
-export default readyEvent;
+export default ReadyEvent;

@@ -1,9 +1,9 @@
 import { Message, MessageEmbed } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 
-const BlacklistCommand: iCommand = {
-  name: 'config',
-  aliases: ["cf", "cfg"],
+const DashboardCommand: iCommand = {
+  name: 'dashboard',
+  aliases: ["cf", "cfg", "config", "dsb", "web"],
   voiceRequired: false,
   joinPermissionRequired: false,
   playerRequired: false,
@@ -16,11 +16,11 @@ const BlacklistCommand: iCommand = {
       embeds: [
         new MessageEmbed()
           .setColor(client.config.embed.color)
-          .setTitle('Blacklist - Dashboard')
+          .setTitle('Dashboard')
           .setURL("http://130.61.29.155:8080/")
       ]
     });
   }
 };
 
-export default BlacklistCommand;
+export default DashboardCommand;

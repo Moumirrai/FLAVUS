@@ -1,16 +1,10 @@
 import {
   Message,
-  MessageActionRow,
-  MessageButton,
   MessageEmbed,
-  User
 } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 import formatDuration = require('format-duration');
 import { Player } from 'erela.js';
-
-//define typo for player.queue.current.requester as User
-
 
 const GrabCommand: iCommand = {
   name: 'grab',

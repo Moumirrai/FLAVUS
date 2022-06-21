@@ -1,16 +1,9 @@
 import {
   Message,
-  MessageActionRow,
-  MessageButton,
   MessageEmbed,
-  User
 } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
-import formatDuration = require('format-duration');
-import { Player, Track, SearchResult } from 'erela.js';
-
-//define typo for player.queue.current.requester as User
-
+import { Track } from 'erela.js';
 
 const DebugCommand: iCommand = {
   name: 'debug',

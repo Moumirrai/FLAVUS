@@ -5,6 +5,8 @@ import { IGuildModel } from '../models/guildModel';
 import formatDuration = require('format-duration');
 var validUrl = require('valid-url');
 
+//TODO: rework using playemanager search
+
 const PlayCommand: iCommand = {
   name: 'play',
   voiceRequired: true,

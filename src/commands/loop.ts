@@ -1,7 +1,7 @@
-import { Message, MessageEmbed, MessageReaction, ReactionEmoji } from 'discord.js';
+import { Message, MessageEmbed, MessageReaction } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 
-const PauseCommand: iCommand = {
+const LoopCommand: iCommand = {
   name: 'loop',
   aliases: ['ll', 'lo'],
   voiceRequired: true,
@@ -21,4 +21,4 @@ const PauseCommand: iCommand = {
   }
 };
 
-export default PauseCommand;
+export default LoopCommand;

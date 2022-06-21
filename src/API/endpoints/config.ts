@@ -6,7 +6,7 @@ import { UserModel } from '../../models/userModel';
 
 //user status 201 instead of json message
 
-const UserEndpoint: APIEndpoint = {
+const ConfigEndpoint: APIEndpoint = {
   path: 'config',
   rateLimit: 0,
   async execute(client, req, res): Promise<any> {
@@ -76,4 +76,4 @@ const UserEndpoint: APIEndpoint = {
   }
 };
 
-export default UserEndpoint;
+export default ConfigEndpoint;

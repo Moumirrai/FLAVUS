@@ -1,7 +1,7 @@
 import { Message, MessageEmbed } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 
-const PingCommand: iCommand = {
+const HelpCommand: iCommand = {
   name: 'help',
   aliases: [],
   voiceRequired: false,
@@ -57,4 +57,4 @@ const PingCommand: iCommand = {
   }
 };
 
-export default PingCommand;
+export default HelpCommand;

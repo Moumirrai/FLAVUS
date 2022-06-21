@@ -6,7 +6,7 @@ import type { Player } from 'erela.js';
 
 //TODO: fix or delete
 
-const AutoplayCommand: SocketEvent = {
+const SeekEvent: SocketEvent = {
   name: 'seek',
   async execute(client, socket, data: number): Promise<any> {
     const player: Player = client.manager.players.get('881805579469856769');
@@ -17,4 +17,4 @@ const AutoplayCommand: SocketEvent = {
   }
 };
 
-export default AutoplayCommand;
+export default SeekEvent;

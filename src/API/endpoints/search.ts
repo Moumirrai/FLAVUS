@@ -11,7 +11,7 @@ const SearchEndpoint: APIEndpoint = {
     const query = req.headers.query;
     if (!query || typeof query !== 'string') return res.status(400).send('Query is required');
     const voiceCache = client.voiceCache.get(req.session.user.id)
-    if (!voiceCache) return;
+    if (!voiceCache) return res.status(400).send('User is not connected');
     const player: Player = client.manager.players.get(
       client.voiceCache.get(req.session.user.id).voiceChannel.guild.id
     ) || await Connect(client, req.session);
