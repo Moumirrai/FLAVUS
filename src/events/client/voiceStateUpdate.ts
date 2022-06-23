@@ -110,7 +110,7 @@ const VoiceStateUpdateEvent: iEvent = {
               } catch (e) {
                 console.log(e);
               }
-            }, parseInt(client.config.leaveOnEmptyChannel) * 1000);
+            }, client.config.leaveOnEmptyChannel * 1000);
           }
         }
       }

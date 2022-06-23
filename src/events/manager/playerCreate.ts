@@ -9,8 +9,7 @@ const playerMoveEvent: iManagerEvent = {
       if (!settings) return;
       if (player.volume !== settings.volume) player.setVolume(settings.volume);
     });
-    //TODO: if debug mode
-    client.logger.info(`[EVENT] Player created: ${player.options.guild}`);
+    if (client.config.debugMode) client.logger.info(`[EVENT] Player created: ${player.options.guild}`);
   }
 };
 

@@ -1,4 +1,5 @@
 import { APIEndpoint } from 'flavus-api';
+import { UserModel, IUserModel } from '../../models/userModel';
 
 //TODO: add type to promise
 
@@ -12,7 +13,7 @@ const ConfigEndpoint: APIEndpoint = {
       case 'READ':
         await UserModel.findOne(
           { userID: req.session.user.id },
-          (err, settings) => {
+          (err, settings: IUserModel) => {
             if (err) return client.logger.error(err);
             if (!settings) {
               settings = new UserModel({

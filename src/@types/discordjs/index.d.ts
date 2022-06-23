@@ -1,5 +1,5 @@
 import type { Client } from 'discord.js';
-import type { BotConfig } from '../config/config';
+import type { BotConfig } from '../../config/config';
 import type { DiscordTogether } from 'discord-together';
 import type { LavalinkHandler } from './structures/Music/LavalinkHandler';
 

@@ -1,3 +1,4 @@
+import { config, BotConfig } from '../config/config';
 import { DiscordTogether } from 'discord-together';
 import { LavalinkHandler } from './Erela/LavalinkHandler';
 import Genius from 'genius-lyrics';
@@ -28,7 +29,7 @@ export class BotClient extends Client {
       }
     });
 
-    this.config = config;
+    this.config = config as BotConfig;
     this.manager = new LavalinkHandler(this);
     this.DiscordTogether = new DiscordTogether(this);
     if (process.env.GENIUS) {

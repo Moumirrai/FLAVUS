@@ -12,7 +12,7 @@ const SeekEvent: SocketEvent = {
       voiceCache.voiceChannel.guild.id
     )
     if (!player || !player.queue.current) return socket.emit('playerError', 'Nothing to seek!')
-    if (typeof data !== Number) return socket.emit('playerError', 'Seek data must be a number!')
+    if (typeof data !== "number") return socket.emit('playerError', 'Seek data must be a number!')
     if (data < 0 || data > player.queue.current.duration) return socket.emit('playerError', 'Seek is limited by track duration!')
     player.seek(data);
     getPlayer(client, socket)

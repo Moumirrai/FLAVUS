@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+import { ColorResolvable } from 'discord.js';
 dotenv.config();
 
 //TODO: no need for config folder - remove
@@ -14,14 +15,14 @@ export type BotConfig = {
       retryDelay: number;
       secure: boolean;
     }[];
-    shards: number | 'auto';
+    shards: number;
     clientName: string;
   };
   mongodb_uri: string;
   shard_count: number | 'auto';
   embed: {
-    color: string;
-    errorcolor: string;
+    color: ColorResolvable;
+    errorcolor: ColorResolvable;
     progress_bar: {
       size: number;
       block: string;
