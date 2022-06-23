@@ -1,6 +1,8 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
+//TODO: no need for config folder - remove
+
 export type BotConfig = {
   token: string;
   prefix: string;
@@ -31,6 +33,8 @@ export type BotConfig = {
   port: number;
   leaveOnEmptyChannel: number;
   split: RegExp;
+  anonymous: boolean,
+  debugMode: boolean
 };
 
 export const config: BotConfig = {
@@ -64,5 +68,7 @@ export const config: BotConfig = {
   maxVolume: 100,
   leaveOnEmptyChannel: parseInt(process.env.LEAVE_ON_EMPTY_CHANNEL),
   port: parseInt(process.env.PORT),
-  split: new RegExp(/[ -/<>(){}\[\].,\\*-+=%'´§_:?!°"#&@|˛`˙˝¨¸~•]+/)
+  split: new RegExp(/[ -/<>(){}\[\].,\\*-+=%'´§_:?!°"#&@|˛`˙˝¨¸~•]+/),
+  anonymous: process.env.ANONYMOUS === 'true',
+  debugMode: process.env.DEBUGMODE === 'true',
 };

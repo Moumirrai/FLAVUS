@@ -1,4 +1,3 @@
-import { config } from '../config/config';
 import { DiscordTogether } from 'discord-together';
 import { LavalinkHandler } from './Erela/LavalinkHandler';
 import Genius from 'genius-lyrics';

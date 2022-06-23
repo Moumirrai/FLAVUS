@@ -34,7 +34,7 @@ const GrabCommand: iCommand = {
         .setURL(player.queue.current.uri)
         .setColor(client.config.embed.color)
         .setTitle(`${player.queue.current.title}`)
-        .addField(`Duration:`, `\`-\``, true)
+        .addField(`Duration:`, `\`${formatDuration(player.current.duration, { leading: true })}\``, true)
         .addField(`Current timestamp`, `\`${formatDuration(player.position, { leading: true })}\` [LINK](${player.queue.current.uri + "&t=" + String(Math.round(player.position / 1000))})`, true)
         .addField(`Author`, `\`${player.queue.current.author}\``, true)
         .setTimestamp()

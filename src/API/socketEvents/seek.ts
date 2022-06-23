@@ -1,19 +1,21 @@
-import { Message, MessageEmbed } from 'discord.js';
-import { Response } from 'express';
 import { SocketEvent } from 'flavus-api';
-import { GuildModel } from '../../models/guildModel';
 import type { Player } from 'erela.js';
-
-//TODO: fix or delete
+import { getPlayer } from '../player';
 
 const SeekEvent: SocketEvent = {
   name: 'seek',
   async execute(client, socket, data: number): Promise<any> {
-    const player: Player = client.manager.players.get('881805579469856769');
-    if (player) {
-      if (typeof data !== 'number') console.log('data is not number');
-      player.seek(data);
-    }
+
+    const voiceCache = client.voiceCache.get(socket.request.session.user.id)
+    if (!voiceCache) return socket.emit('playerError', 'I can\'t see you connected!')
+    const player: Player = client.manager.players.get(
+      voiceCache.voiceChannel.guild.id
+    )
+    if (!player || !player.queue.current) return socket.emit('playerError', 'Nothing to seek!')
+    if (typeof data !== Number) return socket.emit('playerError', 'Seek data must be a number!')
+    if (data < 0 || data > player.queue.current.duration) return socket.emit('playerError', 'Seek is limited by track duration!')
+    player.seek(data);
+    getPlayer(client, socket)
   }
 };
 

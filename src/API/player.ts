@@ -1,13 +1,22 @@
 import { Message, MessageEmbed } from 'discord.js';
 import { Response } from 'express';
-import { SocketEvent } from 'flavus-api';
 import { GuildModel } from '../models/guildModel';
 import type { Player } from 'erela.js';
 import { Socket } from 'socket.io';
 import { BotClient } from '../struct/Client';
 import format from 'format-duration';
 
-//TODO: fix or delete
+//TODO: send less data per second - send only whats neaded, do not send something that does not need to update
+/*
+position - every second if not paused
+paused - send only if changed
+queue - send only on update (probably by comparing some hash or lenght)
+userConnected - only when changed
+deafened - probably remove
+guild - only if changed
+player - only if present, no need to send null
+volume - remove, useless
+*/
 
 export async function getPlayer(client: BotClient, socket: Socket) {
   const voiceState = client.voiceCache.get(socket.request.session.user.id);
