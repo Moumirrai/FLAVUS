@@ -25,6 +25,8 @@ const SearchEndpoint: APIEndpoint = {
     });
     if (!search) return res.status(400).send('No results found');
     if (search.loadType === 'TRACK_LOADED' || search.loadType === 'SEARCH_RESULT') {
+      res.json(search.tracks)
+      //TODO: remove
       if (player.state !== 'CONNECTED') {
         player.set('playerauthor', req.session.user.id);
         player.connect();
