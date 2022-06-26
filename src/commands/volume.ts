@@ -2,8 +2,6 @@ import { Message, MessageEmbed } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 import { GuildModel } from '../models/guildModel';
 
-//TODO: add central volume control for messages and web
-
 const VolumeCommand: iCommand = {
   name: 'volume',
   aliases: ['v', 'vol'],

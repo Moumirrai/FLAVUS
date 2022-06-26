@@ -28,7 +28,6 @@ export async function getPlayer(client: BotClient, socket: Socket) {
   if (player) {
     return socket.volatile.emit('playerData', {
       userConnected: true,
-      deafened: voiceState.deafened,
       ready: true,
       guild: {
         name: voiceState.voiceChannel.guild.name,
@@ -38,7 +37,7 @@ export async function getPlayer(client: BotClient, socket: Socket) {
         current: player.queue.current
           ? {
               title: player.queue.current.title,
-              artist: player.queue.current.author,
+              author: player.queue.current.author,
               length: player.queue.current.duration,
               thumbnail: player.queue.current.thumbnail,
               position: player.position,
@@ -52,13 +51,13 @@ export async function getPlayer(client: BotClient, socket: Socket) {
         queue: player.queue.map((song) => {
           return {
             title: song.title,
-            artist: song.author,
+            author: song.author,
             length: song.duration,
-            thumbnail: song.thumbnail
+            thumbnail: song.thumbnail,
+            duration: formatTime(song.duration)
           };
         }),
         paused: player.paused,
-        volume: player.volume
       }
     });
   }

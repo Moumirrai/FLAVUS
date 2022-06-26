@@ -25,8 +25,8 @@ export async function connect(
   //TODO: try to remove this, no need to connect if user is just searching and then cnacels 
   if (player.state !== 'CONNECTED') {
     player.set('playerauthor', message.author.id);
-    player.connect();
-    player.stop();
+    //player.connect();
+    //player.stop();
   }
   return player;
 }

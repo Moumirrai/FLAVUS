@@ -10,7 +10,7 @@ export async function Connect(
 ): Promise<Player | null> {
   const voiceCache = client.voiceCache.get(session.user.id);
   if (!voiceCache) return null;
-  const title = player.config.anonymous ? 'Player initialized' : `Player initialized by <@${session.user.id}>`
+  const title = client.config.anonymous ? 'Player initialized' : `Player initialized by <@${session.user.id}>`
   const msg = await voiceCache.voiceChannel.send({
     embeds: [
       new MessageEmbed()

@@ -8,7 +8,7 @@ const SearchEndpoint: APIEndpoint = {
   path: 'search',
   rateLimit: 0,
   async execute(client, req, res): Promise<Express.Response> {
-    const query = req.headers.query;
+    const query = req.body.query;
     if (!query || typeof query !== 'string') return res.status(400).send('Query is required');
     const voiceCache = client.voiceCache.get(req.session.user.id)
     if (!voiceCache) return res.status(400).send('User is not connected');
@@ -26,21 +26,6 @@ const SearchEndpoint: APIEndpoint = {
     if (!search) return res.status(400).send('No results found');
     if (search.loadType === 'TRACK_LOADED' || search.loadType === 'SEARCH_RESULT') {
       res.json(search.tracks)
-      //TODO: remove
-      if (player.state !== 'CONNECTED') {
-        player.set('playerauthor', req.session.user.id);
-        player.connect();
-        player.queue.add(search.tracks[0]);
-        player.play();
-        player.pause(false);
-      } else if (!player.queue || !player.queue.current) {
-        player.queue.add(search.tracks[0]);
-        if (!player.playing && !player.paused && !player.queue.size)
-          player.play();
-        player.pause(false);
-      } else {
-        player.queue.add(search.tracks[0]);
-      }
     }
   }
 };
