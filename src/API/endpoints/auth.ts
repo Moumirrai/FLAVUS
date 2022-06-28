@@ -1,7 +1,5 @@
 import { APIEndpoint } from 'flavus-api';
 
-//TODO: add type to promise
-
 const AuthEndpoint: APIEndpoint = {
   path: 'auth',
   rateLimit: 0,

@@ -55,6 +55,8 @@ APIPORT=3030
 
 # TODO
 
+### - **FIX PLAYERMANAGER!!!**
+
 - fix sockets and sessions
 - rework queue using (this)[https://guides.menudocs.org/topics/erelajs/advanced.html#extending]
 - add 'start on timestamp' support

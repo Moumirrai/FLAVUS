@@ -1,7 +1,8 @@
-import { Client, Message, User, VoiceBasedChannel } from 'discord.js';
-import { Manager, Player, SearchResult } from 'erela.js';
-import { UserInterface } from 'flavus-api';
-var validUrl = require('valid-url');
+import { Client, Message, VoiceBasedChannel, User, MessageEmbed } from 'discord.js';
+import { Manager, Player, SearchResult, Track } from 'erela.js';
+import { socketResponse } from 'flavus';
+
+const validUrl = require('valid-url');
 
 export async function connect(
   message: Message,
@@ -9,7 +10,7 @@ export async function connect(
   manager: Manager,
   vc: VoiceBasedChannel
 ): Promise<Player> {
-  var player: Player = client.manager.players.get(message.guild.id);
+  let player: Player = client.manager.players.get(message.guild.id);
   if (player && player.node && !player.node.connected)
     await player.node.connect();
   if (!player) {
@@ -34,7 +35,7 @@ export async function connect(
 export async function search(
   query: string,
   player: Player,
-  author: UserInterface
+  author: User
 ): Promise<SearchResult> {
   let res: SearchResult;
   try {
@@ -59,6 +60,8 @@ export async function search(
 
   switch (res.loadType) {
     case 'NO_MATCHES':
+      console.log('error101')
+      if (!player.queue.current) player.destroy();
       throw 'No matches found!';
     case 'TRACK_LOADED':
     case 'SEARCH_RESULT':
@@ -68,3 +71,59 @@ export async function search(
       throw 'Unknown load type!';
   }
 }
+
+export async function addToQueue(
+  tracks: Track[],
+  player: Player,
+  author: User,
+  client: Client,
+  web: boolean,
+  playlist?: boolean,
+  ): Promise<MessageEmbed | socketResponse> {
+  if (player.state !== 'CONNECTED') {
+    player.set('playerauthor', author);
+    player.connect();
+    player.queue.add(tracks);
+    player.play();
+    player.pause(false);
+    const embed = new MessageEmbed()
+      .setColor(client.config.embed.color)
+      .setTitle(`Now Playing`)
+      .setDescription(
+        `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
+      )
+      .setThumbnail(res.tracks[0].thumbnail);
+    return message.channel.send({
+      embeds: [embed]
+    });
+  } else if (!player.queue || !player.queue.current) {
+    player.queue.add(res.tracks[0]);
+    if (!player.playing && !player.paused && !player.queue.size)
+      player.play();
+    player.pause(false);
+    const embed = new MessageEmbed()
+      .setColor(client.config.embed.color)
+      .setTitle(`Now Playing`)
+      .setDescription(
+        `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
+      )
+      .setThumbnail(res.tracks[0].thumbnail);
+    return message.channel.send({
+      embeds: [embed]
+    });
+  } else {
+    player.queue.add(res.tracks[0]);
+    return message.channel.send({
+      embeds: [
+        new MessageEmbed()
+          .setColor(client.config.embed.color)
+          .setTitle(`Queued`)
+          .setDescription(
+            `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
+          )
+          .setThumbnail(res.tracks[0].thumbnail)
+      ]
+    });
+  }
+}
+

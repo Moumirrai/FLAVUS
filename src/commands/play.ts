@@ -35,12 +35,23 @@ const PlayCommand: iCommand = {
     }
     const search = args.join(' ') as string;
     let res;
-    let player: Player = await client.PlayerManager.connect(
+    let player = await client.PlayerManager.connect(
       message,
       client,
       manager,
       vc
-    );
+    )
+    if (!player) {
+      console.log('error100')
+      //TODO: create universal error embed
+    }
+    let result = await client.PlayerManager.search(
+      search,
+      player,
+      message.author
+    )
+    if (result.loadType === 'PLAYLIST_LOADED')
+    /*
     try {
       //check if search is a url
       if (search.includes('open.spotify.com/') || validUrl.isUri(search)) {
@@ -69,6 +80,8 @@ const PlayCommand: iCommand = {
       });
     }
 
+     */
+
     switch (res.loadType) {
       case 'NO_MATCHES':
         if (!player.queue.current) player.destroy();
@@ -77,8 +90,7 @@ const PlayCommand: iCommand = {
             new MessageEmbed()
               .setColor(client.config.embed.errorcolor)
               .setTitle(
-                String('Found nothing for: **`' + search).substr(0, 256 - 3) +
-                  '`**'
+                String('Found nothing for: **`' + search).substring(0, 253) + '`**'
               )
           ]
         });

@@ -26,6 +26,12 @@ declare module 'flavus' {
       ...args: any[]
     ) => Promise<unknown>;
   }
+
+  export interface socketResponse {
+    type: 'playerError' | 'playerMessage',
+    content: string,
+  }
+
   export interface iVoiceCache {
     voiceChannel: import('discord.js').VoiceChannel;
     guildId: string;

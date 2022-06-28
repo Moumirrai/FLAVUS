@@ -8,7 +8,7 @@ import { UserModel, IUserModel } from '../../models/userModel';
 const ConfigEndpoint: APIEndpoint = {
   path: 'config',
   rateLimit: 0,
-  async execute(client, req, res): Promise<any> {
+  async execute(client, req, res): Promise<Express.Response> {
     switch (req.headers.method) {
       case 'READ':
         await UserModel.findOne(
@@ -49,10 +49,7 @@ const ConfigEndpoint: APIEndpoint = {
                 },
               });
               settings.save().catch((err) => console.log(err));
-              return res.json({
-                success: true,
-                message: 'Model updated'
-              });
+              return res.status(200).send('ok')
             } else {
               settings.model = req.body.model ? req.body.model : {
                 blacklist: false,
@@ -60,11 +57,8 @@ const ConfigEndpoint: APIEndpoint = {
                 authorBlacklist: [],
                 uriBlacklist: [],
               },
-              settings.save().catch((err) => console.log(err));
-              return res.json({
-                success: true,
-                message: 'Model updated'
-              });
+                settings.save().catch((err) => console.log(err));
+              return res.status(200).send('ok')
             }
           }
         ).clone().catch(function (err) { console.log(err) })
