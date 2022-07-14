@@ -15,18 +15,23 @@ import type { AuthRespose, UserInterface } from 'flavus-api';
 
 export async function authUser(code: string): Promise<UserInterface | null> {
   try {
+    console.log('code 2 - ' + code);
     const userAuth: IAuthModel = await AuthModel.findOne({
       code: code
     });
     if (userAuth) { //if code is already in database
+      console.log('user is in database');
       if (
         userAuth.timestamp.getTime() + userAuth.auth.expires_in * 1000 <
         new Date().getTime()
       ) { //if access_toxen expired, use refresh_token
+        console.log('refreshing token');
         const newCredentials: AuthRespose | null = await refreshToken(
           cryptr.decrypt(userAuth.auth.refresh_token)
         );
         if (newCredentials) {
+          console.log('new credentials gotten');
+          console.log(newCredentials);
           userAuth.auth = encrypt(newCredentials);
           userAuth.timestamp = new Date();
           await userAuth.save();
@@ -34,12 +39,16 @@ export async function authUser(code: string): Promise<UserInterface | null> {
         }
         return null;
       }
+      console.log('using old credentials');
       return await getUser(cryptr.decrypt(userAuth.auth.access_token)) || null;
     }
     //new auth
+    console.log('new auth');
     const newCredentials: AuthRespose | null = await newAuth(code);
+    console.log('new creds - ' + newCredentials);
     if (newCredentials) { //if code is valid
       const user = await getUser(newCredentials.access_token);
+      console.log('user - ' + user);
       if (user) {
         try {
           const newuserAuth: IAuthModel = await AuthModel.findOne({
@@ -74,6 +83,7 @@ export async function authUser(code: string): Promise<UserInterface | null> {
 }
 
 async function newAuth(code: string): Promise<AuthRespose | null> {
+  console.log('code newauth - ' + code);
   return oauth
     .tokenRequest({
       code: code,
