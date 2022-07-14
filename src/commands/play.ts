@@ -34,7 +34,6 @@ const PlayCommand: iCommand = {
       });
     }
     const search = args.join(' ') as string;
-    let res;
     let player = await client.PlayerManager.connect(
       message,
       client,
@@ -45,12 +44,12 @@ const PlayCommand: iCommand = {
       console.log('error100')
       //TODO: create universal error embed
     }
-    let result = await client.PlayerManager.search(
+    let res = await client.PlayerManager.search(
       search,
       player,
       message.author
     )
-    if (result.loadType === 'PLAYLIST_LOADED')
+    //if (res.loadType === 'PLAYLIST_LOADED')
     /*
     try {
       //check if search is a url
@@ -159,7 +158,6 @@ const PlayCommand: iCommand = {
           embeds: [
             new MessageEmbed()
               .setColor(client.config.embed.color)
-              .setURL(res.playlist.uri)
               .setTitle(
                 `Playlist  **\`${res.playlist.name}`.substr(0, 256 - 3) +
                   '`**' +

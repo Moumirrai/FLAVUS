@@ -4,8 +4,7 @@ My personal music bot powered by lavalink. Based on [discord.js](https://discord
 
 ### Features
 - can play music from **YouTube**, **Spotify**, **Twitch**, and more
-- has command to launch discord watchtogether activity
-- stores settings in MongoDB database
+- has autoplay feature
 
 
 ### Lavalink server and MongoDB instance required

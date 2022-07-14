@@ -19,7 +19,7 @@ volume - remove, useless
 */
 
 export async function getPlayer(client: BotClient, socket: Socket) {
-  const voiceState = client.voiceCache.get(socket.request.session.user.id);
+  const voiceState = client.APICache.voice.get(socket.request.session.user.id);
   if (!voiceState)
     return socket.volatile.emit('playerData', { userConnected: false });
   const player: Player = client.manager.players.get(

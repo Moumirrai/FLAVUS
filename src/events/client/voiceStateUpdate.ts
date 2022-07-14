@@ -28,20 +28,27 @@ const VoiceStateUpdateEvent: iEvent = {
       }
     }
 
-    //new newstate channel is null, and newstate has userid
-
-    if (
-      newState.channel &&
-      newState.channel.type == 'GUILD_VOICE' &&
-      newState.channel.members.filter((member) => !member.user.bot).size > 0
-    ) {
-      client.voiceCache.set(newState.member.id, {
-        voiceChannel: newState.channel as VoiceChannel,
-        guildId: newState.guild.id,
-        deafened: newState.member.voice.deaf || newState.member.voice.selfDeaf
-      });
-    } else {
-      client.voiceCache.delete(newState.member.id);
+    if(client.config.api && !newState.member.user.bot) {
+      if (
+        newState.channel &&
+        newState.channel.type == 'GUILD_VOICE' &&
+        newState.channel.members.filter((member) => !member.user.bot).size > 0
+      ) {
+        client.emit('apiHandleConnect', newState);
+        /*
+        client.APICache.voice.set(newState.member.id, {
+          voiceChannel: newState.channel as VoiceChannel,
+          user: newState.member.user,
+          guildId: newState.guild.id,
+          deafened: newState.member.voice.deaf || newState.member.voice.selfDeaf
+        });
+        */
+      } else {
+        client.emit('apiHandleDisconnect', newState);
+        /*
+        client.APICache.voice.delete(newState.member.id);
+        */
+      }
     }
 
     /**

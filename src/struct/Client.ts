@@ -1,5 +1,4 @@
 import { config, BotConfig } from '../config/config';
-import { DiscordTogether } from 'discord-together';
 import { LavalinkHandler } from './Erela/LavalinkHandler';
 import Genius from 'genius-lyrics';
 import { Client, Intents, Collection } from 'discord.js';
@@ -10,7 +9,8 @@ import type { iCommand, iVoiceCache } from 'flavus';
 import { connect, ConnectOptions } from 'mongoose';
 import * as Functions from './Functions';
 import * as PlayerManager from './PlayerManager';
-import { APIClient } from './API';
+import { APIClient } from './APIClient';
+import { Socket } from 'socket.io';
 
 export class BotClient extends Client {
   constructor() {
@@ -31,7 +31,6 @@ export class BotClient extends Client {
 
     this.config = config as BotConfig;
     this.manager = new LavalinkHandler(this);
-    this.DiscordTogether = new DiscordTogether(this);
     if (process.env.GENIUS) {
       this.lyrics = new Genius.Client(process.env.GENIUS);
     } else {
@@ -41,7 +40,11 @@ export class BotClient extends Client {
   public logger = Logger;
   public aliases = new Collection<string, iCommand>();
   public commands = new Collection<string, iCommand>();
-  public voiceCache = new Collection<string, iVoiceCache>();
+  
+  public APICache = {
+    voice: new Collection<string, iVoiceCache>(),
+    socket: new Collection<string, Socket>()
+  }
 
   public functions = Functions;
   public PlayerManager = PlayerManager;
@@ -53,18 +56,12 @@ export class BotClient extends Client {
       await this.loadCommands();
       await this.mongoDB();
       await this.login(this.config.token);
-      if (process.env.API === 'true') new APIClient().main(this);
+      if (this.config) new APIClient().main(this);
     } catch (error) {
       this.logger.error(error);
       this.destroy();
       process.exit(1);
     }
-  }
-
-  //TODO: implement or delete sleep function
-
-  public sleep(ms: number) {
-    return new Promise((res) => setTimeout(res, ms));
   }
 
   private async mongoDB(): Promise<void> {

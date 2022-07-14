@@ -34,9 +34,11 @@ declare module 'flavus' {
 
   export interface iVoiceCache {
     voiceChannel: import('discord.js').VoiceChannel;
+    user: import('discord.js').User;
     guildId: string;
     deafened: boolean;
   }
+  
   export interface iManagerEvent {
     name: string;
     execute: (

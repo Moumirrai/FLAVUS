@@ -1,13 +1,33 @@
-import { createLogger, format, transports } from 'winston';
+import chalk from 'chalk';
 
-const WinstonLogger = createLogger({
-  transports: [new transports.Console()],
-  exitOnError: false,
-  format: format.printf((info) => {
-    const { level, message } = info;
-    const now = new Date().toLocaleString();
-    return `[${now}] | [${level.toUpperCase()}] ${message}`;
-  })
-});
+const logger = {
+  debug: (message: string) => {
+    console.log(
+      chalk.gray(new Date().toLocaleString()) +
+        ' ' +
+        chalk.blue('[DEBUG]') +
+        ' ' +
+        message
+    );
+  },
+  info: (message: string) => {
+    console.log(
+      chalk.gray(new Date().toLocaleString()) +
+        ' ' +
+        chalk.green('[INFO]') +
+        ' ' +
+        message
+    );
+  },
+  error: (message: string) => {
+    console.log(
+      chalk.gray(new Date().toLocaleString()) +
+        ' ' +
+        chalk.bgRed('[ERROR]') +
+        ' ' +
+        message
+    );
+  }
+};
 
-export default WinstonLogger;
+export default logger;

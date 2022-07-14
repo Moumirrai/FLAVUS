@@ -8,7 +8,7 @@ export async function Connect(
   client: BotClient,
   session: Session & SessionData
 ): Promise<Player | null> {
-  const voiceCache = client.voiceCache.get(session.user.id);
+  const voiceCache = client.APICache.voice.get(session.user.id);
   if (!voiceCache) return null;
   const title = client.config.anonymous ? 'Player initialized' : `Player initialized by <@${session.user.id}>`
   const msg = await voiceCache.voiceChannel.send({

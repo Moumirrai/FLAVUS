@@ -17,6 +17,7 @@ import { Server, Socket } from 'socket.io';
 import { authUser } from '../API/Auth';
 import session, { Session, SessionData } from 'express-session';
 import { getPlayer } from '../API/player';
+import type { iVoiceCache } from 'flavus';
 
 declare module 'http' {
   interface IncomingMessage {
@@ -27,9 +28,11 @@ declare module 'http' {
 export class APIClient implements APIInterface {
   EndPoints = new Collection<string, APIEndpoint>();
   SocketEvents = new Collection<string, SocketEvent>();
-  AuthMap = new Map<string, UserInterface>();
 
-  public async main(client: BotClient) {
+  public sokcetCache = new Collection<string, Socket>();
+  public voiceCache = new Collection<string, iVoiceCache>();
+
+  public async main(client: BotClient): Promise<APIClient> {
     const app = express();
     const server = http.createServer(app);
     const io = new Server(server, { cors: { origin: '*' } });
@@ -73,8 +76,10 @@ export class APIClient implements APIInterface {
         if (!req.url.startsWith('/api')) {
           return next();
         }
-        if (!req.headers.authorization)
+        if (!req.headers.authorization) {
+          client.logger.error('No authorization header found!');
           return res.status(401).send('Authentification failed!');
+        }
         if (req.headers.authorization && req.session.code) {
           if (req.session.code !== req.headers.authorization) {
             const user = await authUser(req.headers.authorization);
@@ -83,6 +88,7 @@ export class APIClient implements APIInterface {
               req.session.user = user;
               return next();
             }
+            client.logger.error('Authentification failed!');
             return res.status(401).send('Authentification failed!');
           }
           return next();
@@ -93,6 +99,7 @@ export class APIClient implements APIInterface {
           req.session.user = user;
           return next();
         }
+        client.logger.error('Authentification failed 2!');
         return res.status(401).send('Authentification failed!');
       }
     );
@@ -125,11 +132,11 @@ export class APIClient implements APIInterface {
           event.execute(client, socket, data);
         });
       }
+      client.emit('apiHandleConnect', socket);
       if (!socket.interval) {
         socket.interval = setInterval(() => getPlayer(client, socket), 1000);
       }
       socket.on('disconnect', () => {
-        this.AuthMap.delete(socket.id);
         clearInterval(socket.interval);
       });
     });
@@ -142,6 +149,7 @@ export class APIClient implements APIInterface {
     });
 
     server.listen(port, () => Logger.info(`API running on port ${port}`));
+    return this;
   }
 
   private async loadEndpoints(): Promise<void> {

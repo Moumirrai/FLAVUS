@@ -23,11 +23,8 @@ export async function connect(
     if (player && player.node && !player.node.connected)
       await player.node.connect();
   }
-  //TODO: try to remove this, no need to connect if user is just searching and then cnacels 
   if (player.state !== 'CONNECTED') {
     player.set('playerauthor', message.author.id);
-    //player.connect();
-    //player.stop();
   }
   return player;
 }
@@ -71,6 +68,8 @@ export async function search(
       throw 'Unknown load type!';
   }
 }
+
+/*
 
 export async function addToQueue(
   tracks: Track[],
@@ -126,4 +125,5 @@ export async function addToQueue(
     });
   }
 }
+ */
 

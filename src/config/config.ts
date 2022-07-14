@@ -36,6 +36,7 @@ export type BotConfig = {
   split: RegExp;
   anonymous: boolean,
   debugMode: boolean
+  api: boolean
 };
 
 export const config: BotConfig = {
@@ -72,4 +73,5 @@ export const config: BotConfig = {
   split: new RegExp(/[ -/<>(){}\[\].,\\*-+=%'´§_:?!°"#&@|˛`˙˝¨¸~•]+/),
   anonymous: process.env.ANONYMOUS === 'true',
   debugMode: process.env.DEBUGMODE === 'true',
+  api: process.env.API === 'true'
 };
