@@ -76,34 +76,29 @@ export class APIClient implements APIInterface {
         if (!req.url.startsWith('/api')) {
           return next();
         }
+        console.log(req)
+        console.log(req.headers)
         if (!req.headers.authorization) {
-          client.logger.error('No authorization header found!');
           return res.status(401).send('Authentification failed!');
         }
         if (req.headers.authorization && req.session.code) {
           if (req.session.code !== req.headers.authorization) {
-            client.logger.debug('req.session.code !== req.headers.authorization');
             const user = await authUser(req.headers.authorization);
             if (user) {
-              client.logger.debug('User found!');
               req.session.code = req.headers.authorization;
               req.session.user = user;
               return next();
             }
-            client.logger.error('Authentification failed!');
             return res.status(401).send('Authentification failed!');
           }
           return next();
         }
-        client.logger.debug('Auth - ' + req.headers.authorization);
         const user = await authUser(req.headers.authorization);
         if (user) {
-          client.logger.debug('User found!');
           req.session.code = req.headers.authorization;
           req.session.user = user;
           return next();
         }
-        client.logger.error('Authentification failed 2!');
         return res.status(401).send('Authentification failed!');
       }
     );
