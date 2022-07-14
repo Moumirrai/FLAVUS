@@ -82,8 +82,10 @@ export class APIClient implements APIInterface {
         }
         if (req.headers.authorization && req.session.code) {
           if (req.session.code !== req.headers.authorization) {
+            client.logger.debug('req.session.code !== req.headers.authorization');
             const user = await authUser(req.headers.authorization);
             if (user) {
+              client.logger.debug('User found!');
               req.session.code = req.headers.authorization;
               req.session.user = user;
               return next();
@@ -93,8 +95,10 @@ export class APIClient implements APIInterface {
           }
           return next();
         }
+        client.logger.debug('Auth - ' + req.headers.authorization);
         const user = await authUser(req.headers.authorization);
         if (user) {
+          client.logger.debug('User found!');
           req.session.code = req.headers.authorization;
           req.session.user = user;
           return next();
