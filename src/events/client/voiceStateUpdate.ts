@@ -28,11 +28,16 @@ const VoiceStateUpdateEvent: iEvent = {
       }
     }
 
-    if(client.config.api && !newState.member.user.bot) {
+    if (client.config.api && !newState.member.user.bot) {
       if (
         newState.channel &&
         newState.channel.type == 'GUILD_VOICE' &&
-        newState.channel.members.filter((member) => !member.user.bot).size > 0
+        newState.channel.members &&
+        (newState.channel.members.filter((member) => !member.user.bot).size >
+          0 ||
+          (newState.channel.members.filter((member) => !member.user.bot).size >
+            1 &&
+            newState.member.user === client.user))
       ) {
         client.emit('apiHandleConnect', newState);
         /*
@@ -44,7 +49,7 @@ const VoiceStateUpdateEvent: iEvent = {
         });
         */
       } else {
-        client.emit('apiHandleDisconnect', newState);
+        client.emit('apiHandleDisconnect', oldState);
         /*
         client.APICache.voice.delete(newState.member.id);
         */

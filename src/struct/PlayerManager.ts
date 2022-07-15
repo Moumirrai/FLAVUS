@@ -57,7 +57,6 @@ export async function search(
 
   switch (res.loadType) {
     case 'NO_MATCHES':
-      console.log('error101')
       if (!player.queue.current) player.destroy();
       throw 'No matches found!';
     case 'TRACK_LOADED':

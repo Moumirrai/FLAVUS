@@ -84,7 +84,6 @@ async function newAuth(code: string): Promise<AuthRespose | null> {
       return response;
     })
     .catch(function () {
-      console.log('logging error');
       return null;
     });
 }
@@ -112,7 +111,6 @@ async function refreshToken(
       return response;
     })
     .catch(function () {
-      console.log('refresh error');
       return null;
     });
 }
@@ -124,7 +122,6 @@ export async function getUser(token: string): Promise<UserInterface | null> {
       return response;
     })
     .catch(function () {
-      console.log('logging error');
       return null;
     });
 }

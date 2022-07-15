@@ -76,8 +76,6 @@ export class APIClient implements APIInterface {
         if (!req.url.startsWith('/api')) {
           return next();
         }
-        console.log(req)
-        console.log(req.headers)
         if (!req.headers.authorization) {
           return res.status(401).send('Authentification failed!');
         }
@@ -132,11 +130,14 @@ export class APIClient implements APIInterface {
         });
       }
       client.emit('apiHandleConnect', socket);
+      /*
       if (!socket.interval) {
         socket.interval = setInterval(() => getPlayer(client, socket), 1000);
       }
+      */
       socket.on('disconnect', () => {
-        clearInterval(socket.interval);
+        client.emit('apiHandleDisconnect', socket);
+        //clearInterval(socket.interval);
       });
     });
 
