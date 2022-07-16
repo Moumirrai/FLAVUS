@@ -1,11 +1,10 @@
 var bodyParser = require('body-parser');
 var cors = require('cors');
-import { readdirSync } from 'fs';
+import { readdirSync, existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
 import type {
   APIInterface,
   APIEndpoint,
-  UserInterface,
   SocketEvent
 } from 'flavus-api';
 import { Collection } from 'discord.js';
@@ -13,13 +12,19 @@ import type { BotClient } from './Client';
 import Logger from './Logger';
 import express, { request } from 'express';
 import http from 'http';
+import https from 'https';
 import { Server, Socket } from 'socket.io';
 import { authUser } from '../API/Auth';
 import session, { Session, SessionData } from 'express-session';
-import { getPlayer } from '../API/player';
 import type { iVoiceCache } from 'flavus';
 
 declare module 'http' {
+  interface IncomingMessage {
+    session: Session & SessionData;
+  }
+}
+
+declare module 'https' {
   interface IncomingMessage {
     session: Session & SessionData;
   }
@@ -33,8 +38,18 @@ export class APIClient implements APIInterface {
   public voiceCache = new Collection<string, iVoiceCache>();
 
   public async main(client: BotClient): Promise<APIClient> {
+
+    if (client.config.ssl && !existsSync(resolve(client.config.certPath, "privkey.pem")) ||
+    !existsSync(resolve(client.config.certPath, "fullchain.pem"))) {
+      Logger.error("SSL is enabled but the certs are missing! Switching to HTTP...");
+      client.config.ssl = false;
+    }
+
     const app = express();
-    const server = http.createServer(app);
+    const server = client.config.ssl ? https.createServer({
+      key: readFileSync(resolve(client.config.certPath, "privkey.pem")),
+      cert: readFileSync(resolve(client.config.certPath, "fullchain.pem"))
+    }, app) : http.createServer(app);
     const io = new Server(server, { cors: { origin: '*' } });
 
     await this.loadEndpoints();
@@ -73,6 +88,7 @@ export class APIClient implements APIInterface {
         res: express.Response,
         next: express.NextFunction
       ) => {
+        console.log('request');
         if (!req.url.startsWith('/api')) {
           return next();
         }
@@ -107,7 +123,8 @@ export class APIClient implements APIInterface {
     io.use(wrap(sessionMiddleware));
 
     io.use(async (socket, next) => {
-      if (!socket.handshake.query.code) return next(new Error('Authentification failed!'));
+      if (!socket.handshake.query.code)
+        return next(new Error('Authentification failed!'));
       const code = socket.handshake.query.code.toString();
       if (socket.request.session && socket.request.session.code === code) {
         return next();

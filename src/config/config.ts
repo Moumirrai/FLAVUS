@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import { ColorResolvable } from 'discord.js';
+import { resolve } from 'path';
 dotenv.config();
 
 //TODO: no need for config folder - remove
@@ -34,9 +35,11 @@ export type BotConfig = {
   port: number;
   leaveOnEmptyChannel: number;
   split: RegExp;
-  anonymous: boolean,
-  debugMode: boolean
-  api: boolean
+  anonymous: boolean;
+  debugMode: boolean;
+  api: boolean;
+  ssl: boolean;
+  certPath: string;
 };
 
 export const config: BotConfig = {
@@ -73,5 +76,7 @@ export const config: BotConfig = {
   split: new RegExp(/[ -/<>(){}\[\].,\\*-+=%'´§_:?!°"#&@|˛`˙˝¨¸~•]+/),
   anonymous: process.env.ANONYMOUS === 'true',
   debugMode: process.env.DEBUGMODE === 'true',
-  api: process.env.API === 'true'
+  api: process.env.API === 'true',
+  ssl: process.env.SSL === 'true',
+  certPath: process.env.CERT_PATH || resolve(__dirname, '..', '..', 'certs')
 };

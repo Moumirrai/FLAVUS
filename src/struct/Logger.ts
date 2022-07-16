@@ -23,7 +23,7 @@ const logger = {
     console.log(
       chalk.gray(new Date().toLocaleString()) +
         ' ' +
-        chalk.bgRed('[ERROR]') +
+        chalk.red('[ERROR]') +
         ' ' +
         message
     );
