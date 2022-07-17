@@ -7,9 +7,13 @@ import { GuildModel } from '../../models/guildModel';
 
 const DebugEvent: SocketEvent = {
   name: 'test',
+  rateLimit: {
+    points: 1,
+    duration: 1
+  },
   async execute(client, socket, data): Promise<any> {
-    console.log(socket.request.session.user.id)
-    console.log(data)
+    console.log(socket.request.session.user.id);
+    console.log(data);
   }
 };
 

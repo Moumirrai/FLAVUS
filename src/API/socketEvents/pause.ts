@@ -4,8 +4,14 @@ import { getPlayer } from '../player';
 
 const PauseEvent: SocketEvent = {
   name: 'pause',
+  rateLimit: {
+    points: 5,
+    duration: 1
+  },
   async execute(client, socket, data: boolean): Promise<any> {
-    const voiceCache = client.APICache.voice.get(socket.request.session.user.id);
+    const voiceCache = client.APICache.voice.get(
+      socket.request.session.user.id
+    );
     if (!voiceCache)
       return socket.emit('playerError', "I can't see you connected!");
     const player: Player = client.manager.players.get(

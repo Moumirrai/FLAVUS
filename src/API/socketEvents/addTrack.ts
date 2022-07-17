@@ -16,6 +16,10 @@ interface IUnresolvedTrack {
 
 const PauseEvent: SocketEvent = {
   name: 'addTrack',
+  rateLimit: {
+    points: 5,
+    duration: 1
+  },
   async execute(client, socket, data: IUnresolvedTrack): Promise<any> {
     if (!data || !data.author || !data.duration || !data.title)
       return socket.emit('playerError', 'Track is corrupted!');
@@ -29,14 +33,16 @@ const PauseEvent: SocketEvent = {
     );
     if (!resolved) return socket.emit('playerError', 'Track is corrupted!');
 
-    const voiceCache = client.APICache.voice.get(socket.request.session.user.id);
+    const voiceCache = client.APICache.voice.get(
+      socket.request.session.user.id
+    );
     if (!voiceCache)
       return socket.emit('playerError', "I can't see you connected!");
 
     const player: Player =
       client.manager.players.get(
-        client.APICache.voice.get(socket.request.session.user.id).voiceChannel.guild
-          .id
+        client.APICache.voice.get(socket.request.session.user.id).voiceChannel
+          .guild.id
       ) || (await Connect(client, socket.request.session));
 
     if (!player)

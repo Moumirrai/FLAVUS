@@ -1,7 +1,10 @@
 import chalk from 'chalk';
 
+const debugMode = process.env.DEBUGMODE === 'true';
+
 const logger = {
   debug: (message: string) => {
+    if (!debugMode) return;
     console.log(
       chalk.gray(new Date().toLocaleString()) +
         ' ' +

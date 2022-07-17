@@ -2,11 +2,7 @@ var bodyParser = require('body-parser');
 var cors = require('cors');
 import { readdirSync, existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
-import type {
-  APIInterface,
-  APIEndpoint,
-  SocketEvent
-} from 'flavus-api';
+import type { APIInterface, APIEndpoint, SocketEvent } from 'flavus-api';
 import { Collection } from 'discord.js';
 import type { BotClient } from './Client';
 import Logger from './Logger';
@@ -17,6 +13,8 @@ import { Server, Socket } from 'socket.io';
 import { authUser } from '../API/Auth';
 import session, { Session, SessionData } from 'express-session';
 import type { iVoiceCache } from 'flavus';
+import { RateLimiterMemory } from 'rate-limiter-flexible';
+import rateLimit from 'express-rate-limit'
 
 declare module 'http' {
   interface IncomingMessage {
@@ -38,18 +36,27 @@ export class APIClient implements APIInterface {
   public voiceCache = new Collection<string, iVoiceCache>();
 
   public async main(client: BotClient): Promise<APIClient> {
-
-    if (client.config.ssl && !existsSync(resolve(client.config.certPath, "privkey.pem")) ||
-    !existsSync(resolve(client.config.certPath, "fullchain.pem"))) {
-      Logger.error("SSL is enabled but the certs are missing! Switching to HTTP...");
+    if (
+      (client.config.ssl &&
+        !existsSync(resolve(client.config.certPath, 'privkey.pem'))) ||
+      !existsSync(resolve(client.config.certPath, 'fullchain.pem'))
+    ) {
+      Logger.error(
+        'SSL is enabled but the certs are missing! Switching to HTTP...'
+      );
       client.config.ssl = false;
     }
 
     const app = express();
-    const server = client.config.ssl ? https.createServer({
-      key: readFileSync(resolve(client.config.certPath, "privkey.pem")),
-      cert: readFileSync(resolve(client.config.certPath, "fullchain.pem"))
-    }, app) : http.createServer(app);
+    const server = client.config.ssl
+      ? https.createServer(
+          {
+            key: readFileSync(resolve(client.config.certPath, 'privkey.pem')),
+            cert: readFileSync(resolve(client.config.certPath, 'fullchain.pem'))
+          },
+          app
+        )
+      : http.createServer(app);
     const io = new Server(server, { cors: { origin: '*' } });
 
     await this.loadEndpoints();
@@ -59,6 +66,15 @@ export class APIClient implements APIInterface {
 
     app.use(cors());
     app.use(bodyParser.json());
+
+    const limiter = rateLimit({
+      windowMs: 10 * 1000,
+      max: 3,
+      standardHeaders: true,
+      legacyHeaders: false,
+    })
+
+    app.use(limiter)
 
     app.use(function (req, res, next) {
       //intercepts OPTIONS method
@@ -81,7 +97,6 @@ export class APIClient implements APIInterface {
 
     app.use(sessionMiddleware);
 
-    //create middleware that will check if request has 'code' header, if yes start session and store it in req.session
     app.use(
       async (
         req: express.Request,
@@ -138,23 +153,21 @@ export class APIClient implements APIInterface {
       return next(new Error('Authentification failed!'));
     });
 
-    //wrap sessions to sockets
-
     io.on('connection', (socket: Socket) => {
       for (const [name, event] of this.SocketEvents) {
-        socket.on(name, (data) => {
-          event.execute(client, socket, data);
+        const rateLimiter = new RateLimiterMemory(event.rateLimit);
+        socket.on(name, async (data) => {
+          try {
+            await rateLimiter.consume(socket.request.session.user.id);
+            event.execute(client, socket, data);
+          } catch (e) {
+            socket.emit('rateLimit', `Slow down!`);
+          }
         });
       }
       client.emit('apiHandleConnect', socket);
-      /*
-      if (!socket.interval) {
-        socket.interval = setInterval(() => getPlayer(client, socket), 1000);
-      }
-      */
       socket.on('disconnect', () => {
         client.emit('apiHandleDisconnect', socket);
-        //clearInterval(socket.interval);
       });
     });
 

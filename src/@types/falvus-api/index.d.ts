@@ -20,6 +20,10 @@ declare module 'flavus-api' {
 
   export interface SocketEvent {
     name: string;
+    rateLimit: {
+      points: number;
+      duration: number;
+    }
     execute: (
       client: import('../../struct/Client').BotClient,
       io: import('socket.io').Socket,

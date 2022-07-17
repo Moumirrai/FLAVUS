@@ -40,6 +40,28 @@ export type BotConfig = {
   api: boolean;
   ssl: boolean;
   certPath: string;
+  ratelimit: {
+    socket: {
+      hp: {
+        points: number;
+        duration: number;
+      }
+      lp: {
+        points: number;
+        duration: number;
+      }
+    },
+    api: {
+      hp: {
+        points: number;
+        duration: number;
+      }
+      lp: {
+        points: number;
+        duration: number;
+      }
+    }
+  }
 };
 
 export const config: BotConfig = {
@@ -78,5 +100,27 @@ export const config: BotConfig = {
   debugMode: process.env.DEBUGMODE === 'true',
   api: process.env.API === 'true',
   ssl: process.env.SSL === 'true',
-  certPath: process.env.CERT_PATH || resolve(__dirname, '..', '..', 'certs')
+  certPath: process.env.CERT_PATH || resolve(__dirname, '..', '..', 'certs'),
+  ratelimit: {
+    socket: {
+      hp: {
+        points: 1,
+        duration: 1
+      },
+      lp: {
+        points: 5,
+        duration: 1
+      }
+    },
+    api: {
+      hp: {
+        points: 1,
+        duration: 1
+      },
+      lp: {
+        points: 5,
+        duration: 1
+      }
+    }
+  }
 };
