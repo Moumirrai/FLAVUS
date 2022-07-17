@@ -68,8 +68,8 @@ export class APIClient implements APIInterface {
     app.use(bodyParser.json());
 
     const limiter = rateLimit({
-      windowMs: 10 * 1000,
-      max: 3,
+      windowMs: 1 * 1000,
+      max: 1,
       standardHeaders: true,
       legacyHeaders: false,
     })
@@ -103,7 +103,6 @@ export class APIClient implements APIInterface {
         res: express.Response,
         next: express.NextFunction
       ) => {
-        console.log('request');
         if (!req.url.startsWith('/api')) {
           return next();
         }

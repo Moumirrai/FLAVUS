@@ -22,7 +22,10 @@ const PauseEvent: SocketEvent = {
     duration: 1
   },
   async execute(client, socket, data: string): Promise<any> {
+    client.logger.debug(data)
     if (!data) return socket.emit('playerError', 'Track is corrupted!');
+
+    console.log(data)
 
     const voiceCache = client.APICache.voice.get(
       socket.request.session.user.id
