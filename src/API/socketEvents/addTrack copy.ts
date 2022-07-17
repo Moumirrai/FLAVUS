@@ -1,7 +1,6 @@
 import { SocketEvent } from 'flavus-api';
 import {
   Player,
-  SearchResult,
   Track,
   TrackUtils,
   UnresolvedQuery,
@@ -21,8 +20,18 @@ const PauseEvent: SocketEvent = {
     points: 5,
     duration: 1
   },
-  async execute(client, socket, data: string): Promise<any> {
-    if (!data) return socket.emit('playerError', 'Track is corrupted!');
+  async execute(client, socket, data: IUnresolvedTrack): Promise<any> {
+    if (!data || !data.author || !data.duration || !data.title)
+      return socket.emit('playerError', 'Track is corrupted!');
+    const resolved = TrackUtils.buildUnresolved(
+      {
+        title: data.title,
+        author: data.author,
+        duration: data.duration
+      },
+      socket.request.session.user
+    );
+    if (!resolved) return socket.emit('playerError', 'Track is corrupted!');
 
     const voiceCache = client.APICache.voice.get(
       socket.request.session.user.id
@@ -39,33 +48,22 @@ const PauseEvent: SocketEvent = {
     if (!player)
       return socket.emit('playerError', 'Cant add song, there is no player!');
 
-    let search = await client.PlayerManager.search(
-      data,
-      player,
-      client.config.anonymous ? voiceCache.user : client.user
-    ).catch((err) => {
-      return socket.emit('playerError', err.message);
-    });
-    if (!search) return socket.emit('playerError', 'Track is corrupted!');
-    if ((search as SearchResult).loadType !== 'TRACK_LOADED')
-      return socket.emit('playerError', 'Track is corrupted!');
-
     if (player.state !== 'CONNECTED') {
       player.set('playerauthor', socket.request.session.user.id);
       player.connect();
-      player.queue.add((search as SearchResult).tracks[0]);
-      socket.emit('trackAdded', (search as SearchResult).tracks[0].title);
+      player.queue.add(resolved);
+      socket.emit('trackAdded', resolved.title);
       player.play();
       player.pause(false);
     } else if (!player.queue || !player.queue.current) {
-      player.queue.add((search as SearchResult).tracks[0]);
-      socket.emit('trackAdded', (search as SearchResult).tracks[0].title);
+      player.queue.add(resolved);
+      socket.emit('trackAdded', resolved.title);
       if (!player.playing && !player.paused && !player.queue.size)
         player.play();
       player.pause(false);
     } else {
-      player.queue.add((search as SearchResult).tracks[0]);
-      socket.emit('trackAdded', (search as SearchResult).tracks[0].title);
+      player.queue.add(resolved);
+      socket.emit('trackAdded', resolved.title);
     }
   }
 };
