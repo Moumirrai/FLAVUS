@@ -1,5 +1,9 @@
 import * as dotenv from 'dotenv';
+import { ColorResolvable } from 'discord.js';
+import { resolve } from 'path';
 dotenv.config();
+
+//TODO: no need for config folder - remove
 
 export type BotConfig = {
   token: string;
@@ -12,14 +16,14 @@ export type BotConfig = {
       retryDelay: number;
       secure: boolean;
     }[];
-    shards: number | 'auto';
+    shards: number;
     clientName: string;
   };
   mongodb_uri: string;
   shard_count: number | 'auto';
   embed: {
-    color: string;
-    errorcolor: string;
+    color: ColorResolvable;
+    errorcolor: ColorResolvable;
     progress_bar: {
       size: number;
       block: string;
@@ -31,6 +35,33 @@ export type BotConfig = {
   port: number;
   leaveOnEmptyChannel: number;
   split: RegExp;
+  anonymous: boolean;
+  debugMode: boolean;
+  api: boolean;
+  ssl: boolean;
+  certPath: string;
+  ratelimit: {
+    socket: {
+      hp: {
+        points: number;
+        duration: number;
+      };
+      lp: {
+        points: number;
+        duration: number;
+      };
+    };
+    api: {
+      hp: {
+        points: number;
+        duration: number;
+      };
+      lp: {
+        points: number;
+        duration: number;
+      };
+    };
+  };
 };
 
 export const config: BotConfig = {
@@ -64,5 +95,32 @@ export const config: BotConfig = {
   maxVolume: 100,
   leaveOnEmptyChannel: parseInt(process.env.LEAVE_ON_EMPTY_CHANNEL),
   port: parseInt(process.env.PORT),
-  split: new RegExp(/[ -/<>(){}\[\].,\\*-+=%'´§_:?!°"#&@|˛`˙˝¨¸~•]+/)
+  split: new RegExp(/[ -/<>(){}\[\].,\\*-+=%'´§_:?!°"#&@|˛`˙˝¨¸~•]+/),
+  anonymous: process.env.ANONYMOUS === 'true',
+  debugMode: process.env.DEBUGMODE === 'true',
+  api: process.env.API === 'true',
+  ssl: process.env.SSL === 'true',
+  certPath: process.env.CERT_PATH || resolve(__dirname, '..', '..', 'certs'),
+  ratelimit: {
+    socket: {
+      hp: {
+        points: 1,
+        duration: 1
+      },
+      lp: {
+        points: 5,
+        duration: 1
+      }
+    },
+    api: {
+      hp: {
+        points: 1,
+        duration: 1
+      },
+      lp: {
+        points: 5,
+        duration: 1
+      }
+    }
+  }
 };

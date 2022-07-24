@@ -1,4 +1,4 @@
-import { iEvent } from 'my-module';
+import { iEvent } from 'flavus';
 
 const RawEvent: iEvent = {
   name: 'raw',

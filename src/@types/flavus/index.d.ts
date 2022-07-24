@@ -1,4 +1,4 @@
-declare module 'my-module' {
+declare module 'flavus' {
   export interface CommandArgs {
     client: import('../../struct/Client').BotClient;
     message: import('discord.js').Message;
@@ -26,6 +26,19 @@ declare module 'my-module' {
       ...args: any[]
     ) => Promise<unknown>;
   }
+
+  export interface socketResponse {
+    type: 'playerError' | 'playerMessage';
+    content: string;
+  }
+
+  export interface iVoiceCache {
+    voiceChannel: import('discord.js').VoiceChannel;
+    user: import('discord.js').User;
+    guildId: string;
+    deafened: boolean;
+  }
+
   export interface iManagerEvent {
     name: string;
     execute: (

@@ -1,16 +1,17 @@
-import { config } from '../config/config';
-import { DiscordTogether } from 'discord-together';
+import { config, BotConfig } from '../config/config';
 import { LavalinkHandler } from './Erela/LavalinkHandler';
 import Genius from 'genius-lyrics';
 import { Client, Intents, Collection } from 'discord.js';
 import { readdirSync } from 'fs';
 import Logger from './Logger';
 import { resolve } from 'path';
-import type { iCommand } from 'my-module';
+import type { iCommand, iVoiceCache } from 'flavus';
 import { connect, ConnectOptions } from 'mongoose';
 import * as Functions from './Functions';
+import * as Embeds from './Embeds';
 import * as PlayerManager from './PlayerManager';
-import { APIClient } from './API';
+import { APIClient } from './APIClient';
+import { Socket } from 'socket.io';
 
 export class BotClient extends Client {
   constructor() {
@@ -29,9 +30,8 @@ export class BotClient extends Client {
       }
     });
 
-    this.config = config;
+    this.config = config as BotConfig;
     this.manager = new LavalinkHandler(this);
-    this.DiscordTogether = new DiscordTogether(this);
     if (process.env.GENIUS) {
       this.lyrics = new Genius.Client(process.env.GENIUS);
     } else {
@@ -42,7 +42,13 @@ export class BotClient extends Client {
   public aliases = new Collection<string, iCommand>();
   public commands = new Collection<string, iCommand>();
 
+  public APICache = {
+    voice: new Collection<string, iVoiceCache>(),
+    socket: new Collection<string, Socket>()
+  };
+
   public functions = Functions;
+  public embeds = Embeds;
   public PlayerManager = PlayerManager;
   public async main() {
     try {
@@ -52,16 +58,12 @@ export class BotClient extends Client {
       await this.loadCommands();
       await this.mongoDB();
       await this.login(this.config.token);
-      if (process.env.API === 'true') new APIClient().main(this);
+      if (this.config.api) new APIClient().main(this);
     } catch (error) {
       this.logger.error(error);
       this.destroy();
       process.exit(1);
     }
-  }
-
-  public sleep(ms: number) {
-    return new Promise((res) => setTimeout(res, ms));
   }
 
   private async mongoDB(): Promise<void> {
@@ -71,10 +73,10 @@ export class BotClient extends Client {
       autoIndex: false
     } as ConnectOptions)
       .then(() => {
-        this.logger.info('Connected to MongoDB');
+        return this.logger.info('Connected to MongoDB');
       })
       .catch((err) => {
-        this.logger.error('MongoDB connection error: ' + err);
+        return this.logger.error('MongoDB connection error: ' + err);
       });
   }
 

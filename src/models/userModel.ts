@@ -2,9 +2,9 @@ import { Document, Schema, model } from 'mongoose';
 
 export interface Imodel {
   blacklist: Boolean;
-  titleBlacklist: Array<String>
-  authorBlacklist: Array<String>
-  uriBlacklist: Array<String>
+  titleBlacklist: Array<String>;
+  authorBlacklist: Array<String>;
+  uriBlacklist: Array<String>;
 }
 
 export interface IUserModel extends Document {
@@ -25,7 +25,7 @@ export const UserSchema = new Schema({
       blacklist: false,
       titleBlacklist: [],
       authorBlacklist: [],
-      uriBlacklist: [],
+      uriBlacklist: []
     }
   },
   timestamp: { type: Date, default: Date.now }

@@ -1,7 +1,7 @@
 import { MessageReaction } from 'discord.js';
-import { CommandArgs, iCommand } from 'my-module';
+import { CommandArgs, iCommand } from 'flavus';
 
-const PingCommand: iCommand = {
+const ClearCommand: iCommand = {
   name: 'clear',
   aliases: [],
   voiceRequired: true,
@@ -23,4 +23,4 @@ const PingCommand: iCommand = {
   }
 };
 
-export default PingCommand;
+export default ClearCommand;

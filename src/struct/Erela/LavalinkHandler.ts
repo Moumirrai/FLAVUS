@@ -1,6 +1,6 @@
 import { Manager } from 'erela.js';
 import type { BotClient } from '../Client';
-const ErelaSpotify = require('erela.js-spotify');
+import Spotify from 'better-erela.js-spotify';
 
 export class LavalinkHandler extends Manager {
   client: BotClient;
@@ -8,10 +8,11 @@ export class LavalinkHandler extends Manager {
     super({
       nodes: client.config.erela.nodes,
       plugins: [
-        new ErelaSpotify({
-          clientID: process.env.SPOTIFY_ID!,
+        new Spotify({
+          clientId: process.env.SPOTIFY_ID!,
           clientSecret: process.env.SPOTIFY_SECRET!,
-          convertUnresolved: false
+          convertUnresolved: false,
+          strategy: process.env.SPOTIFY_SECRET ? 'API' : 'SCRAPE'
         })
       ],
       shards: client.config.erela.shards,

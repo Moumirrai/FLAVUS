@@ -4,8 +4,7 @@ My personal music bot powered by lavalink. Based on [discord.js](https://discord
 
 ### Features
 - can play music from **YouTube**, **Spotify**, **Twitch**, and more
-- has command to launch discord watchtogether activity
-- stores settings in MongoDB database
+- has autoplay feature
 
 
 ### Lavalink server and MongoDB instance required
@@ -52,3 +51,17 @@ GENIUS = <GENIUS_CLIENT_ID>
 API=true
 APIPORT=3030
 ```
+
+# TODO
+
+### - **FIX PLAYERMANAGER!!!**
+
+- fix dashboard error handling
+
+- fix sockets and sessions
+- rework queue using (this)[https://guides.menudocs.org/topics/erelajs/advanced.html#extending]
+- add 'start on timestamp' support
+- create central functions that can be used from chat and dashbord e.g. play({query: string, id: string, voiceChannel: idk, options: any})
+    - volume, play, search, loop, autoplay etc.
+    - combine pause and resume to one function
+- add equalizer

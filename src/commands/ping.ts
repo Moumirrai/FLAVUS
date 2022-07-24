@@ -1,5 +1,5 @@
 import { Message, MessageEmbed } from 'discord.js';
-import { CommandArgs, iCommand } from 'my-module';
+import { CommandArgs, iCommand } from 'flavus';
 
 const PingCommand: iCommand = {
   name: 'ping',
@@ -10,7 +10,7 @@ const PingCommand: iCommand = {
   sameChannelRequired: false,
   visible: true,
   description: 'ping_description',
-  usage: 'ping',
+  usage: '<prefix>ping',
   async execute({ client, message }: CommandArgs): Promise<Message> {
     return message.channel
       .send({

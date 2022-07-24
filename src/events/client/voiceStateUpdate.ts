@@ -2,11 +2,12 @@ import {
   TextChannel,
   VoiceState,
   Permissions,
-  VoiceBasedChannel
+  VoiceBasedChannel,
+  VoiceChannel
 } from 'discord.js';
-import { iEvent } from 'my-module';
+import { iEvent } from 'flavus';
 
-//TODO: Fix this mess!!!
+//TODO: Fix this mess!!!!!!!!!!!!!!!!!!
 
 const VoiceStateUpdateEvent: iEvent = {
   name: 'voiceStateUpdate',
@@ -24,6 +25,34 @@ const VoiceStateUpdateEvent: iEvent = {
             .has(Permissions.FLAGS.SPEAK))
       ) {
         newState.guild.me.voice.setSuppressed(false).catch(() => {});
+      }
+    }
+
+    if (client.config.api && !newState.member.user.bot) {
+      if (
+        newState.channel &&
+        newState.channel.type == 'GUILD_VOICE' &&
+        newState.channel.members &&
+        (newState.channel.members.filter((member) => !member.user.bot).size >
+          0 ||
+          (newState.channel.members.filter((member) => !member.user.bot).size >
+            1 &&
+            newState.member.user === client.user))
+      ) {
+        client.emit('apiHandleConnect', newState);
+        /*
+        client.APICache.voice.set(newState.member.id, {
+          voiceChannel: newState.channel as VoiceChannel,
+          user: newState.member.user,
+          guildId: newState.guild.id,
+          deafened: newState.member.voice.deaf || newState.member.voice.selfDeaf
+        });
+        */
+      } else {
+        client.emit('apiHandleDisconnect', oldState);
+        /*
+        client.APICache.voice.delete(newState.member.id);
+        */
       }
     }
 
@@ -93,7 +122,7 @@ const VoiceStateUpdateEvent: iEvent = {
               } catch (e) {
                 console.log(e);
               }
-            }, parseInt(client.config.leaveOnEmptyChannel) * 1000);
+            }, client.config.leaveOnEmptyChannel * 1000);
           }
         }
       }

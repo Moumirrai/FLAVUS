@@ -1,10 +1,5 @@
-import {
-  Message,
-  MessageActionRow,
-  MessageButton,
-  MessageEmbed
-} from 'discord.js';
-import { CommandArgs, iCommand } from 'my-module';
+import { MessageActionRow, MessageButton } from 'discord.js';
+import { CommandArgs, iCommand } from 'flavus';
 
 const QueueCommand: iCommand = {
   name: 'queue',
@@ -15,7 +10,7 @@ const QueueCommand: iCommand = {
   sameChannelRequired: false,
   visible: true,
   description: 'Shows queue and current track progress',
-  usage: '<prefix>resume',
+  usage: '<prefix>queue',
   async execute({ client, message, player }: CommandArgs): Promise<any> {
     // create buttons;
     let row = new MessageActionRow().addComponents(
@@ -32,7 +27,7 @@ const QueueCommand: iCommand = {
     message.channel
       .send({ embeds: [client.functions.createQueueEmbed(player, 0, client)] })
       .then((message) => {
-        var player = client.manager.players.get(message.guild.id);
+        const player = client.manager.players.get(message.guild.id);
         if (player.queue.length <= 15) return;
         message.edit({
           components: [row]
@@ -60,7 +55,9 @@ const QueueCommand: iCommand = {
               row.components[1].setDisabled(false);
             }
             await message.edit({
-              embeds: [client.functions.createQueueEmbed(player, currentIndex, client)],
+              embeds: [
+                client.functions.createQueueEmbed(player, currentIndex, client)
+              ],
               components: [row]
             });
             await button.deferUpdate();
@@ -78,7 +75,9 @@ const QueueCommand: iCommand = {
             }
             row.components[0].setDisabled(false);
             await message.edit({
-              embeds: [client.functions.createQueueEmbed(player, currentIndex, client)],
+              embeds: [
+                client.functions.createQueueEmbed(player, currentIndex, client)
+              ],
               components: [row]
             });
             await button.deferUpdate();

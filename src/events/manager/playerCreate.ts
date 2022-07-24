@@ -1,4 +1,4 @@
-import { iManagerEvent } from 'my-module';
+import { iManagerEvent } from 'flavus';
 import { GuildModel } from '../../models/guildModel';
 
 const playerMoveEvent: iManagerEvent = {
@@ -9,7 +9,8 @@ const playerMoveEvent: iManagerEvent = {
       if (!settings) return;
       if (player.volume !== settings.volume) player.setVolume(settings.volume);
     });
-    client.logger.info(`[EVENT] Player created: ${player.options.guild}`);
+    if (client.config.debugMode)
+      client.logger.info(`[EVENT] Player created: ${player.options.guild}`);
   }
 };
 

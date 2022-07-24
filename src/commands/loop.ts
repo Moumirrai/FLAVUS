@@ -1,7 +1,7 @@
-import { Message, MessageEmbed, MessageReaction, ReactionEmoji } from 'discord.js';
-import { CommandArgs, iCommand } from 'my-module';
+import { Message, MessageEmbed, MessageReaction } from 'discord.js';
+import { CommandArgs, iCommand } from 'flavus';
 
-const PauseCommand: iCommand = {
+const LoopCommand: iCommand = {
   name: 'loop',
   aliases: ['ll', 'lo'],
   voiceRequired: true,
@@ -11,7 +11,11 @@ const PauseCommand: iCommand = {
   visible: true,
   description: 'TODO',
   usage: '<prefix>loop',
-  async execute({ client, message, player }: CommandArgs): Promise<MessageReaction | void> {
+  async execute({
+    client,
+    message,
+    player
+  }: CommandArgs): Promise<MessageReaction | void> {
     if (!player.trackRepeat) {
       player.setTrackRepeat(true);
       return message.react('🔂').catch((e) => {});
@@ -21,4 +25,4 @@ const PauseCommand: iCommand = {
   }
 };
 
-export default PauseCommand;
+export default LoopCommand;

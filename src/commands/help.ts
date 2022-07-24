@@ -1,11 +1,9 @@
 import { Message, MessageEmbed } from 'discord.js';
-import { CommandArgs, iCommand } from 'my-module';
-import formatDuration = require('format-duration');
-import fetch from 'node-fetch';
+import { CommandArgs, iCommand } from 'flavus';
 
-const PingCommand: iCommand = {
+const HelpCommand: iCommand = {
   name: 'help',
-  aliases: [],
+  aliases: ['?'],
   voiceRequired: false,
   joinPermissionRequired: false,
   playerRequired: false,
@@ -35,7 +33,9 @@ const PingCommand: iCommand = {
           new MessageEmbed()
             .setColor(client.config.embed.color)
             .setTitle(`${command.name}`)
-            .setDescription(`${aliases}${command.description}\n\nUsage: \`${usage}\``)
+            .setDescription(
+              `${aliases}${command.description}\n\nUsage: \`${usage}\``
+            )
         ]
       });
     }
@@ -50,13 +50,11 @@ const PingCommand: iCommand = {
           .setColor(client.config.embed.color)
           .setTitle('Commands')
           .setDescription(
-            `${commands}\n\nUse \`${
-              client.config.prefix
-            }help <command>\` to get more info about a command`
+            `${commands}\n\nUse \`${client.config.prefix}help <command>\` to get more info about a command`
           )
       ]
     });
   }
 };
 
-export default PingCommand;
+export default HelpCommand;

@@ -1,4 +1,4 @@
-import { iManagerEvent } from 'my-module';
+import { iManagerEvent } from 'flavus';
 import { VoiceBasedChannel } from 'discord.js';
 
 const playerMoveEvent: iManagerEvent = {

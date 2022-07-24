@@ -1,9 +1,9 @@
-import { CommandArgs, iCommand } from 'my-module';
+import { CommandArgs, iCommand } from 'flavus';
 
 const LeaveCommand: iCommand = {
   name: 'stop',
   aliases: ['ds', 'leave'],
-  description: 'Resumes music if paused',
+  description: 'Stops player, and leaves the channel',
   usage: '<prefix>resume',
   voiceRequired: false,
   joinPermissionRequired: false,

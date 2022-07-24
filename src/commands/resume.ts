@@ -1,7 +1,7 @@
 import { Message, MessageEmbed } from 'discord.js';
-import { CommandArgs, iCommand } from 'my-module';
+import { CommandArgs, iCommand } from 'flavus';
 
-const PauseCommand: iCommand = {
+const ResumeCommand: iCommand = {
   name: 'resume',
   aliases: ['rs'],
   voiceRequired: true,
@@ -26,4 +26,4 @@ const PauseCommand: iCommand = {
   }
 };
 
-export default PauseCommand;
+export default ResumeCommand;
