@@ -12,7 +12,7 @@ export class LavalinkHandler extends Manager {
           clientId: process.env.SPOTIFY_ID!,
           clientSecret: process.env.SPOTIFY_SECRET!,
           convertUnresolved: false,
-          strategy: process.env.SPOTIFY_SECRET ? 'API' : 'SCRAPE',
+          strategy: process.env.SPOTIFY_SECRET ? 'API' : 'SCRAPE'
         })
       ],
       shards: client.config.erela.shards,

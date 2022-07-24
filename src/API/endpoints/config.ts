@@ -1,10 +1,6 @@
 import { APIEndpoint } from 'flavus-api';
 import { UserModel, IUserModel } from '../../models/userModel';
 
-//TODO: add type to promise
-
-//user status 201 instead of json message
-
 const ConfigEndpoint: APIEndpoint = {
   path: 'config',
   rateLimit: 0,
@@ -22,8 +18,8 @@ const ConfigEndpoint: APIEndpoint = {
                   blacklist: false,
                   titleBlacklist: [],
                   authorBlacklist: [],
-                  uriBlacklist: [],
-                },
+                  uriBlacklist: []
+                }
               });
               settings.save().catch((err) => console.log(err));
               return res.json(settings.model);
@@ -31,7 +27,11 @@ const ConfigEndpoint: APIEndpoint = {
               return res.json(settings.model);
             }
           }
-        ).clone().catch(function (err) { console.log(err) })
+        )
+          .clone()
+          .catch(function (err) {
+            console.log(err);
+          });
         break;
       case 'WRITE':
         await UserModel.findOne(
@@ -41,30 +41,38 @@ const ConfigEndpoint: APIEndpoint = {
             if (!settings) {
               settings = new UserModel({
                 userID: req.session.user.id,
-                model: req.body.model ? req.body.model : {
-                  blacklist: false,
-                  titleBlacklist: [],
-                  authorBlacklist: [],
-                  uriBlacklist: [],
-                },
+                model: req.body.model
+                  ? req.body.model
+                  : {
+                      blacklist: false,
+                      titleBlacklist: [],
+                      authorBlacklist: [],
+                      uriBlacklist: []
+                    }
               });
               settings.save().catch((err) => console.log(err));
-              return res.status(200).send('ok')
+              return res.status(200).send('ok');
             } else {
-              settings.model = req.body.model ? req.body.model : {
-                blacklist: false,
-                titleBlacklist: [],
-                authorBlacklist: [],
-                uriBlacklist: [],
-              },
+              (settings.model = req.body.model
+                ? req.body.model
+                : {
+                    blacklist: false,
+                    titleBlacklist: [],
+                    authorBlacklist: [],
+                    uriBlacklist: []
+                  }),
                 settings.save().catch((err) => console.log(err));
-              return res.status(200).send('ok')
+              return res.status(200).send('ok');
             }
           }
-        ).clone().catch(function (err) { console.log(err) })
+        )
+          .clone()
+          .catch(function (err) {
+            console.log(err);
+          });
         break;
       default:
-        return res.status(401).send('Invalid method')
+        return res.status(401).send('Invalid method');
     }
   }
 };

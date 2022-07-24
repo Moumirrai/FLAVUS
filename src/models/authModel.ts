@@ -1,10 +1,10 @@
 import { Document, Schema, model } from 'mongoose';
-import type { AuthRespose } from 'flavus-api';
+import type { AuthResponse } from 'flavus-api';
 
 export interface IAuthModel extends Document {
   code: String;
   id: String;
-  auth: AuthRespose;
+  auth: AuthResponse;
   timestamp: Date;
 }
 
@@ -20,7 +20,7 @@ export const AuthSchema = new Schema({
     unique: true
   },
   auth: {
-    type: Object,
+    type: Object
   },
   timestamp: { type: Date, default: Date.now }
 });

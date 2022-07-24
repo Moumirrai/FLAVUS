@@ -22,7 +22,7 @@ const PauseEvent: SocketEvent = {
     if (typeof data !== 'boolean')
       return socket.emit('playerError', 'Pause data must be boolean!');
     player.pause(data);
-    getPlayer(client, socket);
+    await getPlayer(client, socket);
   }
 };
 

@@ -1,16 +1,15 @@
 declare module 'flavus-api' {
-
   export interface APIEndpoint {
     path: string;
     rateLimit: number;
     execute: (
       client: import('../../struct/Client').BotClient,
       req: import('express').Request,
-      res: import('express').Response,
+      res: import('express').Response
     ) => Promise<unknown>;
   }
 
-  export interface AuthRespose {
+  export interface AuthResponse {
     access_token: string;
     expires_in: number;
     refresh_token: string;
@@ -23,7 +22,7 @@ declare module 'flavus-api' {
     rateLimit: {
       points: number;
       duration: number;
-    }
+    };
     execute: (
       client: import('../../struct/Client').BotClient,
       io: import('socket.io').Socket,
@@ -47,7 +46,7 @@ declare module 'flavus-api' {
   }
 
   export interface APIInterface {
-    EndPoints: Collection<string, APIEndpoint>
-    SocketEvents: Collection<string, SocketEvent>
+    EndPoints: Collection<string, APIEndpoint>;
+    SocketEvents: Collection<string, SocketEvent>;
   }
 }

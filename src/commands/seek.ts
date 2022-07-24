@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 import formatDuration = require('format-duration');
 
@@ -15,7 +15,6 @@ const SeekCommand: iCommand = {
   async execute({ client, message, args, player }: CommandArgs): Promise<any> {
     if (!player.queue.current) {
       return message.channel.send({
-        // send success message
         embeds: [
           new MessageEmbed()
             .setTitle(`I am not playing anything right now!`)
@@ -24,9 +23,7 @@ const SeekCommand: iCommand = {
       });
     }
     if (!args[0]) {
-      // if no args return error
       return message.channel.send({
-        // send success message
         embeds: [
           new MessageEmbed()
             .setTitle(`You must provide a time to seek to!`)
@@ -42,9 +39,7 @@ const SeekCommand: iCommand = {
     }
     const timeSplit = args[0].split(':');
     if (!timeSplit.every((item) => !isNaN(Number(item)) && item.length > 0)) {
-      // if time is not in correct format return error
       return message.channel.send({
-        // send success message
         embeds: [
           new MessageEmbed()
             .setTitle(`Time is not in correct format!`)

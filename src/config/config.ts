@@ -45,23 +45,23 @@ export type BotConfig = {
       hp: {
         points: number;
         duration: number;
-      }
+      };
       lp: {
         points: number;
         duration: number;
-      }
-    },
+      };
+    };
     api: {
       hp: {
         points: number;
         duration: number;
-      }
+      };
       lp: {
         points: number;
         duration: number;
-      }
-    }
-  }
+      };
+    };
+  };
 };
 
 export const config: BotConfig = {

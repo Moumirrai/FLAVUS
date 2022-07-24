@@ -23,22 +23,42 @@ const MessageEvent: iEvent = {
     const { channel } = message.member.voice;
 
     if (command.playerRequired && !player) {
-      return message.channel.send(errorEmbed('You cant use this command since nothing is playing!', client))
+      return message.channel.send(
+        errorEmbed(
+          'You cant use this command since nothing is playing!',
+          client
+        )
+      );
     }
     if (command.voiceRequired && !channel) {
-      return message.channel.send(errorEmbed('You must be in a voice channel to use this command!', client))
+      return message.channel.send(
+        errorEmbed(
+          'You must be in a voice channel to use this command!',
+          client
+        )
+      );
     }
     if (
       command.sameChannelRequired &&
       (!player || channel.id !== player.voiceChannel)
     ) {
-      return message.channel.send(errorEmbed('You must be in a same voice channel as me to use this command!', client))
+      return message.channel.send(
+        errorEmbed(
+          'You must be in a same voice channel as me to use this command!',
+          client
+        )
+      );
     }
     if (
       command.joinPermissionRequired &&
       !channel.permissionsFor(client.user).has('CONNECT')
     ) {
-      return message.channel.send(errorEmbed("I don't have the permissions to join your voice channel!", client))
+      return message.channel.send(
+        errorEmbed(
+          "I don't have the permissions to join your voice channel!",
+          client
+        )
+      );
     }
     await command.execute({
       client,
@@ -55,10 +75,10 @@ function errorEmbed(title: string, client: BotClient) {
   return {
     embeds: [
       new MessageEmbed()
-      .setColor(client.config.embed.errorcolor)
-      .setTitle(title)
+        .setColor(client.config.embed.errorcolor)
+        .setTitle(title)
     ]
-  }
+  };
 }
 
 export default MessageEvent;

@@ -13,35 +13,23 @@ const SkipCommand: iCommand = {
   usage: `\`<prefix>skip\` or \`<prefix>s <position in queue>\``,
   async execute({ client, message, args, player }: CommandArgs): Promise<any> {
     if (player.queue.size == 0 && !player.queue.current) {
-      if (message.guild.me.voice.channel) {
-        message.reply({
-          embeds: [
-            new MessageEmbed()
-              .setTitle('No more tracks in queue!')
-              .setColor(client.config.embed.color)
-          ]
-        });
-        return;
-      } else {
+      await message.reply({
+        embeds: [
+          new MessageEmbed()
+            .setTitle('No more tracks in queue!')
+            .setColor(client.config.embed.color)
+        ]
+      });
+      if (!message.guild.me.voice.channel) {
         try {
           player.destroy();
         } catch {}
-        message.reply({
-          embeds: [
-            new MessageEmbed()
-              .setTitle('No more tracks in queue!')
-              .setColor(client.config.embed.color)
-          ]
-        });
-        return;
       }
     }
-    //WHY?
-    //player.set(`previousTrack`, player.queue.current);
     if (args[0] && !isNaN(Number(args[0]))) {
       if (Number(args[0]) > player.queue.size || Number(args[0]) < 1) {
         //if the user wants to skip more tracks than are in the queue
-        message.reply({
+        await message.reply({
           embeds: [
             new MessageEmbed()
               .setTitle("Can't skip there!")

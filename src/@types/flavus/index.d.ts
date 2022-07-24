@@ -28,8 +28,8 @@ declare module 'flavus' {
   }
 
   export interface socketResponse {
-    type: 'playerError' | 'playerMessage',
-    content: string,
+    type: 'playerError' | 'playerMessage';
+    content: string;
   }
 
   export interface iVoiceCache {
@@ -38,7 +38,7 @@ declare module 'flavus' {
     guildId: string;
     deafened: boolean;
   }
-  
+
   export interface iManagerEvent {
     name: string;
     execute: (

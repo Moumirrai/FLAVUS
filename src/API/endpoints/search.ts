@@ -1,10 +1,5 @@
 import { APIEndpoint } from 'flavus-api';
-import { Player } from 'erela.js';
-import { Connect } from '../APIFunctions';
-import { User } from 'discord.js';
 import { youtube } from 'scrape-youtube';
-
-//TODO: add type to promise
 
 const SearchEndpoint: APIEndpoint = {
   path: 'search',

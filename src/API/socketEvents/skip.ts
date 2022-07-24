@@ -20,7 +20,7 @@ const SkipEvent: SocketEvent = {
     if (!player || !player.queue.current)
       return socket.emit('playerError', 'There is nothing playing!');
     player.stop();
-    getPlayer(client, socket);
+    await getPlayer(client, socket);
   }
 };
 

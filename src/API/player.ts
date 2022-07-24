@@ -1,16 +1,13 @@
-import { Message, MessageEmbed } from 'discord.js';
-import { Response } from 'express';
-import { GuildModel } from '../models/guildModel';
 import type { Player } from 'erela.js';
 import { Socket } from 'socket.io';
 import { BotClient } from '../struct/Client';
 import format from 'format-duration';
 
-//TODO: send less data per second - send only whats neaded, do not send something that does not need to update
+//TODO: send less data per second - send only whats needed, do not send something that does not need to update
 /*
 position - every second if not paused
 paused - send only if changed
-queue - send only on update (probably by comparing some hash or lenght)
+queue - send only on update (probably by comparing some hash or length)
 userConnected - only when changed
 deafened - probably remove
 guild - only if changed
@@ -41,7 +38,10 @@ export async function getPlayer(client: BotClient, socket: Socket) {
               length: player.queue.current.duration,
               thumbnail: player.queue.current.thumbnail,
               position: player.position,
-              percentage: calculatePercentage(player.position, player.queue.current.duration),
+              percentage: calculatePercentage(
+                player.position,
+                player.queue.current.duration
+              ),
               timeStrings: {
                 position: formatTime(player.position),
                 duration: formatTime(player.queue.current.duration)
@@ -57,7 +57,7 @@ export async function getPlayer(client: BotClient, socket: Socket) {
             duration: formatTime(song.duration)
           };
         }),
-        paused: player.paused,
+        paused: player.paused
       }
     });
   }

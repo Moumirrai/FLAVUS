@@ -7,7 +7,7 @@ const trackStartEvent: iManagerEvent = {
     player.set(`previousTrack`, player.queue.current);
     if (player.get('pauseOnEnd')) {
       player.set('pauseOnEnd', false);
-      if (!player || !player.playing) return
+      if (!player || !player.playing) return;
       player.pause(true);
     }
   }

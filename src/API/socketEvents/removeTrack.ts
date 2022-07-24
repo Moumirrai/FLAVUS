@@ -42,7 +42,7 @@ const PauseEvent: SocketEvent = {
     )
       return socket.emit('playerError', `Corrupted track index: ${data}`);
     player.queue.remove(data);
-    getPlayer(client, socket);
+    await getPlayer(client, socket);
   }
 };
 

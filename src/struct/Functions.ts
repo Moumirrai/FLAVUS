@@ -8,7 +8,7 @@ import {
 } from 'discord.js';
 import { Player, Track, SearchResult } from 'erela.js';
 import { GuildModel, IGuildModel } from '../models/guildModel';
-import { UserModel, IUserModel } from '../models/userModel';
+import { UserModel } from '../models/userModel';
 import Logger from './Logger';
 import { config } from '../config/config';
 import formatDuration = require('format-duration');
@@ -67,9 +67,9 @@ export function createQueueEmbed(
     )
     .setColor(config.embed.color as ColorResolvable);
   let string = '';
-  var indexes = [];
-  var titles = [];
-  var durations = [];
+  let indexes = [];
+  let titles = [];
+  let durations = [];
   tracks.map((track, index) => {
     indexes.push(`${++index}`);
     let string = `${escapeRegex(

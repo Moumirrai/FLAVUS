@@ -24,7 +24,7 @@ const SeekEvent: SocketEvent = {
     if (data < 0 || data > player.queue.current.duration)
       return socket.emit('playerError', 'Seek is limited by track duration!');
     player.seek(data);
-    getPlayer(client, socket);
+    await getPlayer(client, socket);
   }
 };
 

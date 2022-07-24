@@ -14,7 +14,7 @@ import { authUser } from '../API/Auth';
 import session, { Session, SessionData } from 'express-session';
 import type { iVoiceCache } from 'flavus';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
-import rateLimit from 'express-rate-limit'
+import rateLimit from 'express-rate-limit';
 
 declare module 'http' {
   interface IncomingMessage {
@@ -71,10 +71,10 @@ export class APIClient implements APIInterface {
       windowMs: 1 * 1000,
       max: 1,
       standardHeaders: true,
-      legacyHeaders: false,
-    })
+      legacyHeaders: false
+    });
 
-    app.use(limiter)
+    app.use(limiter);
 
     app.use(function (req, res, next) {
       //intercepts OPTIONS method

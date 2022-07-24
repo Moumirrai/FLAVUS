@@ -27,7 +27,7 @@ const VoiceStateUpdateEvent: iEvent = {
     } else
       return client.logger.error(
         'VoiceStateUpdateEvent: payload is not a VoiceState or Socket'
-    );
+      );
     if (isVoice) {
       let socket = client.APICache.socket.get(
         (payload as VoiceState).member.id
@@ -37,7 +37,7 @@ const VoiceStateUpdateEvent: iEvent = {
         socket.interval = undefined;
       }
     } else if (isSokcet) {
-      let socket = (payload as Socket)
+      let socket = payload as Socket;
       if (socket.interval) {
         clearInterval(socket.interval);
         socket.interval = undefined;

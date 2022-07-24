@@ -8,6 +8,10 @@ import { Player } from 'erela.js';
 import { CommandArgs, iCommand } from 'flavus';
 import formatDuration = require('format-duration');
 
+/*
+TODO: fix this!!!
+ */
+
 const SearchCommand: iCommand = {
   name: 'search',
   voiceRequired: true,
@@ -36,87 +40,38 @@ const SearchCommand: iCommand = {
     }
     const search = args.join(' ') as string;
     try {
-      var res;
-      var player: Player = await client.PlayerManager.connect(
+      const player: Player = await client.PlayerManager.connect(
         message,
         client,
         manager,
         vc
       );
-      //probably could be deleted
-      /*
-      var player: Player = client.manager.players.get(message.guild.id);
-      if (player && player.node && !player.node.connected)
-        await player.node.connect();
-      if (!player) {
-        player = await manager.create({
-          guild: message.guild.id,
-          voiceChannel: vc.id,
-          textChannel: message.channel.id,
-          selfDeafen: true
-        });
-        if (player && player.node && !player.node.connected)
-          await player.node.connect();
-      }
-      if (player.state !== 'CONNECTED') {
-        player.set('playerauthor', message.author.id);
-        player.connect();
-        player.stop();
-      }
-      */
+      let res
       try {
-        // Search for tracks using a query or url, using a query searches youtube automatically and the track requester object
-        res = await client.manager.search(
-          {
-            query: search,
-            source: 'youtube'
-          },
-          message.author
-        );
+        res = await client.PlayerManager.search(search, player, message.author, true)
         // Check the load type as this command is not that advanced for basics
-        if (res.loadType === 'LOAD_FAILED') throw res.exception;
-        else if (res.loadType === 'PLAYLIST_LOADED')
+        if (res.loadType === 'PLAYLIST_LOADED')
           throw {
             message: 'Playlists are not supported with this command'
           };
       } catch (e) {
         client.logger.error(e.stack);
-        return message.channel.send({
-          embeds: [
-            new MessageEmbed()
-              .setColor(client.config.embed.errorcolor)
-              .setTitle('Error while searching: `' + search + '`**')
-              .setDescription(e.stack)
-          ]
-        });
+        return message.channel.send(client.embeds.error('Error while searching: `' + search + '`', e.stack.toString()))
       }
 
-      if (!res.tracks[0]) {
-        return message.channel.send({
-          embeds: [
-            new MessageEmbed()
-              .setColor(client.config.embed.errorcolor)
-              .setTitle(
-                String('Nothing found for: **`' + search).substr(0, 256 - 3) +
-                  '`**'
-              )
-          ]
-        });
-      }
-
-      var max = 10;
-      var collected;
-      var cmduser = message.author;
+      let max = 10;
+      let collected;
+      const cmduser = message.author;
       if (res.tracks.length < max) max = res.tracks.length;
-      var track = res.tracks[0];
-      var theresults = res.tracks.slice(0, max);
-      var results = theresults
+      const track = res.tracks[0];
+      const theresults = res.tracks.slice(0, max);
+      const results = theresults
         .map(
           (track, index) =>
             `**${++index})** [\`${String(
               client.functions.escapeRegex(track.title)
             )
-              .substr(0, 60)
+              .substring(0, 60)
               .split('[')
               .join('{')
               .split(']')
@@ -142,7 +97,7 @@ const SearchCommand: iCommand = {
       first_layer();
       async function first_layer() {
         //define the selection
-        var songoptions = [
+        const songoptions = [
           ...emojiarray.slice(0, max).map((emoji, index) => {
             return {
               value: `Add ${index + 1}. Track`.substr(0, 25),
@@ -186,19 +141,19 @@ const SearchCommand: iCommand = {
         });
         //Menu Collections
         collector.on('collect', async (menu) => {
+          let track;
           if (menu.user.id === cmduser.id) {
             collector.stop();
             menu.deferUpdate();
-            //chek if any of menu.vaues is equal to cancel
             if (menu.values.includes('Cancel')) {
               await menumsg.delete().catch(() => {});
               return message.react('❌').catch((e) => {});
             }
-            var picked_songs = [];
+            const picked_songs = [];
             let toAddTracks = [];
             for (const value of menu.values) {
               let songIndex = songoptions.findIndex((d) => d.value == value);
-              var track = res.tracks[songIndex];
+              track = res.tracks[songIndex];
               toAddTracks.push(track);
               picked_songs.push(
                 `**${songIndex + 1})** [\`${String(
@@ -225,24 +180,20 @@ const SearchCommand: iCommand = {
             if (player.state !== 'CONNECTED') {
               //set the variables
               player.set('message', message);
-              player.set('playerauthor', message.author.id);
               player.connect();
-              //add track
               player.queue.add(toAddTracks);
-              //set the variables
-              //play track
-              player.play();
+              await player.play();
               player.pause(false);
             } else if (!player.queue || !player.queue.current) {
               //add track
               player.queue.add(toAddTracks);
               //play track
-              player.play();
+              await player.play();
               player.pause(false);
             } else {
               player.queue.add(toAddTracks);
-              var track = toAddTracks[0];
-              var embed3 = new MessageEmbed()
+              track = toAddTracks[0];
+              const embed3 = new MessageEmbed()
                 .setTitle(
                   `Added ${
                     toAddTracks.length > 1
@@ -255,7 +206,9 @@ const SearchCommand: iCommand = {
                 .addField(
                   'Duration: ',
                   `\`${
-                    track.isStream ? 'LIVE STREAM' : formatDuration(track.duration, { leading: true })
+                    track.isStream
+                      ? 'LIVE STREAM'
+                      : formatDuration(track.duration, { leading: true })
                   }\``,
                   true
                 )

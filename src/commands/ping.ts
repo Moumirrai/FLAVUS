@@ -10,7 +10,7 @@ const PingCommand: iCommand = {
   sameChannelRequired: false,
   visible: true,
   description: 'ping_description',
-  usage: 'ping',
+  usage: '<prefix>ping',
   async execute({ client, message }: CommandArgs): Promise<Message> {
     return message.channel
       .send({

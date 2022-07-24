@@ -1,6 +1,13 @@
-import { Client, Message, VoiceBasedChannel, User, MessageEmbed } from 'discord.js';
+import {
+  Client,
+  Message,
+  VoiceBasedChannel,
+  User,
+  MessageEmbed, MessageOptions
+} from 'discord.js';
 import { Manager, Player, SearchResult, Track } from 'erela.js';
-import { socketResponse } from 'flavus';
+import formatDuration = require('format-duration');
+import { BotClient } from './Client';
 
 const validUrl = require('valid-url');
 
@@ -24,7 +31,6 @@ export async function connect(
       await player.node.connect();
   }
   if (player.state !== 'CONNECTED') {
-    player.set('playerauthor', message.author.id);
   }
   return player;
 }
@@ -32,11 +38,12 @@ export async function connect(
 export async function search(
   query: string,
   player: Player,
-  author: User
+  author: User,
+  yt?: boolean
 ): Promise<SearchResult> {
   let res: SearchResult;
   try {
-    if (query.includes('open.spotify.com/') || validUrl.isUri(query)) {
+    if (!yt && query.includes('open.spotify.com/') || validUrl.isUri(query)) {
       res = await player.search(query, author);
     } else {
       res = await player.search(
@@ -48,11 +55,10 @@ export async function search(
       );
     }
     if (res.loadType === 'LOAD_FAILED') {
-      throw res.exception;
+      throw { message: res.exception };
     }
   } catch (err) {
-    console.log(err);
-    throw err.message;
+    throw err;
   }
 
   switch (res.loadType) {
@@ -68,61 +74,76 @@ export async function search(
   }
 }
 
-/*
-
-export async function addToQueue(
-  tracks: Track[],
+export async function handleSearchResult(
+  client: BotClient,
+  res: SearchResult,
   player: Player,
-  author: User,
-  client: Client,
-  web: boolean,
-  playlist?: boolean,
-  ): Promise<MessageEmbed | socketResponse> {
-  if (player.state !== 'CONNECTED') {
-    player.set('playerauthor', author);
-    player.connect();
-    player.queue.add(tracks);
-    player.play();
-    player.pause(false);
-    const embed = new MessageEmbed()
-      .setColor(client.config.embed.color)
-      .setTitle(`Now Playing`)
-      .setDescription(
-        `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
-      )
-      .setThumbnail(res.tracks[0].thumbnail);
-    return message.channel.send({
-      embeds: [embed]
-    });
-  } else if (!player.queue || !player.queue.current) {
-    player.queue.add(res.tracks[0]);
-    if (!player.playing && !player.paused && !player.queue.size)
-      player.play();
-    player.pause(false);
-    const embed = new MessageEmbed()
-      .setColor(client.config.embed.color)
-      .setTitle(`Now Playing`)
-      .setDescription(
-        `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
-      )
-      .setThumbnail(res.tracks[0].thumbnail);
-    return message.channel.send({
-      embeds: [embed]
-    });
-  } else {
-    player.queue.add(res.tracks[0]);
-    return message.channel.send({
-      embeds: [
+  web?: boolean
+): Promise<MessageOptions|string> {
+  switch (res.loadType) {
+    case 'NO_MATCHES':
+      if (web) throw String('Found nothing for: ' + search).substring(0, 253);
+      return client.embeds.error(
+        String('Found nothing for: **`' + search).substring(0, 253) + '`**'
+      );
+    case 'TRACK_LOADED':
+    case 'SEARCH_RESULT':
+      if (player.state !== 'CONNECTED' || !player.queue.current) {
+        if (player.state !== 'CONNECTED') player.connect();
+        player.queue.add(res.tracks[0]);
+        await player.play();
+        player.pause(false);
+        if (web)
+          return `Now Playing\n[${res.tracks[0].title}](${res.tracks[0].uri})`;
+        return client.embeds.message(
+          new MessageEmbed()
+            .setTitle(`Now Playing`)
+            .setDescription(
+              `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
+            )
+            .setThumbnail(res.tracks[0].thumbnail)
+        );
+      } else {
+        player.queue.add(res.tracks[0]);
+        if (web)
+          return (
+            String(res.tracks[0].title).substring(0, 253) + '\nadded to queue'
+          );
+        return client.embeds.message(
+          new MessageEmbed()
+            .setTitle('Queued')
+            .setDescription(
+              `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
+            )
+            .setThumbnail(res.tracks[0].thumbnail)
+        );
+      }
+    case 'PLAYLIST_LOADED':
+      if (player.state !== 'CONNECTED' || !player.queue.current) {
+        if (player.state !== 'CONNECTED') player.connect();
+        player.queue.add(res.tracks);
+        await player.play();
+        player.pause(false);
+      } else {
+        player.queue.add(res.tracks);
+      }
+      if (web) return 'TODO';
+      return client.embeds.message(
         new MessageEmbed()
-          .setColor(client.config.embed.color)
-          .setTitle(`Queued`)
-          .setDescription(
-            `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
+          .setTitle(
+            `Playlist  **\`${res.playlist.name}`.substr(0, 256 - 3) +
+              '`**' +
+              ' added to the Queue'
           )
           .setThumbnail(res.tracks[0].thumbnail)
-      ]
-    });
+          .addField(
+            'Duration: ',
+            `\`${formatDuration(res.playlist.duration, {
+              leading: true
+            })}\``,
+            true
+          )
+          .addField('Queue length: ', `\`${player.queue.length} Songs\``, true)
+      );
   }
 }
- */
-

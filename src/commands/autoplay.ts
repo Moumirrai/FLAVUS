@@ -1,4 +1,3 @@
-import { Message, MessageEmbed } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 import { GuildModel } from '../models/guildModel';
 

@@ -8,6 +8,7 @@ import { resolve } from 'path';
 import type { iCommand, iVoiceCache } from 'flavus';
 import { connect, ConnectOptions } from 'mongoose';
 import * as Functions from './Functions';
+import * as Embeds from './Embeds';
 import * as PlayerManager from './PlayerManager';
 import { APIClient } from './APIClient';
 import { Socket } from 'socket.io';
@@ -40,13 +41,14 @@ export class BotClient extends Client {
   public logger = Logger;
   public aliases = new Collection<string, iCommand>();
   public commands = new Collection<string, iCommand>();
-  
+
   public APICache = {
     voice: new Collection<string, iVoiceCache>(),
     socket: new Collection<string, Socket>()
-  }
+  };
 
   public functions = Functions;
+  public embeds = Embeds;
   public PlayerManager = PlayerManager;
   public async main() {
     try {
@@ -56,7 +58,7 @@ export class BotClient extends Client {
       await this.loadCommands();
       await this.mongoDB();
       await this.login(this.config.token);
-      if (this.config) new APIClient().main(this);
+      if (this.config.api) new APIClient().main(this);
     } catch (error) {
       this.logger.error(error);
       this.destroy();

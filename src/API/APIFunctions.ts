@@ -1,6 +1,5 @@
-import { Socket } from 'socket.io';
 import { BotClient } from '../struct/Client';
-import { Message, MessageEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 import type { Player } from 'erela.js';
 import { Session, SessionData } from 'express-session';
 
@@ -10,7 +9,9 @@ export async function Connect(
 ): Promise<Player | null> {
   const voiceCache = client.APICache.voice.get(session.user.id);
   if (!voiceCache) return null;
-  const title = client.config.anonymous ? 'Player initialized' : `Player initialized by <@${session.user.id}>`
+  const title = client.config.anonymous
+    ? 'Player initialized'
+    : `Player initialized by <@${session.user.id}>`;
   const msg = await voiceCache.voiceChannel.send({
     embeds: [
       new MessageEmbed()
@@ -19,11 +20,10 @@ export async function Connect(
         .setTimestamp()
     ]
   });
-  const player = await client.PlayerManager.connect(
+  return await client.PlayerManager.connect(
     msg,
     client,
     client.manager,
     voiceCache.voiceChannel
   );
-  return player;
 }

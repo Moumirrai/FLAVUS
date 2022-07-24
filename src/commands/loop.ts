@@ -11,7 +11,11 @@ const LoopCommand: iCommand = {
   visible: true,
   description: 'TODO',
   usage: '<prefix>loop',
-  async execute({ client, message, player }: CommandArgs): Promise<MessageReaction | void> {
+  async execute({
+    client,
+    message,
+    player
+  }: CommandArgs): Promise<MessageReaction | void> {
     if (!player.trackRepeat) {
       player.setTrackRepeat(true);
       return message.react('🔂').catch((e) => {});

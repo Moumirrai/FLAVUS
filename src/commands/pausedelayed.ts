@@ -10,11 +10,15 @@ const PauseOnEndCommand: iCommand = {
   sameChannelRequired: true,
   visible: true,
   description: 'Pauses player when the current track ends',
-  usage: '<prefix>pauseonend',
-  async execute({ client, message, player }: CommandArgs): Promise<void | MessageReaction> {
-    const pause = player.get('pauseOnEnd')
+  usage: '<prefix>paused',
+  async execute({
+    client,
+    message,
+    player
+  }: CommandArgs): Promise<void | MessageReaction> {
+    const pause = player.get('pauseOnEnd');
     if (pause !== undefined) {
-      player.set('pauseOnEnd', !pause)
+      player.set('pauseOnEnd', !pause);
       if (!pause) {
         return message.react('👌').catch((e) => {});
       } else {
