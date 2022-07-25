@@ -60,18 +60,7 @@ export async function search(
   } catch (err) {
     throw err;
   }
-
-  switch (res.loadType) {
-    case 'NO_MATCHES':
-      if (!player.queue.current) player.destroy();
-      throw 'No matches found!';
-    case 'TRACK_LOADED':
-    case 'SEARCH_RESULT':
-    case 'PLAYLIST_LOADED':
-      return res;
-    default:
-      throw 'Unknown load type!';
-  }
+  return res
 }
 
 export async function handleSearchResult(
@@ -82,6 +71,7 @@ export async function handleSearchResult(
 ): Promise<MessageOptions|string> {
   switch (res.loadType) {
     case 'NO_MATCHES':
+      if (!player.queue.current) player.destroy();
       if (web) throw String('Found nothing for: ' + search).substring(0, 253);
       return client.embeds.error(
         String('Found nothing for: **`' + search).substring(0, 253) + '`**'

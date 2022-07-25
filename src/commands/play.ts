@@ -23,7 +23,6 @@ const PlayCommand: iCommand = {
         client.embeds.error('No arguments were provided!')
       );
     }
-    const search = args.join(' ') as string;
     let player = await client.PlayerManager.connect(
       message,
       client,
@@ -35,7 +34,11 @@ const PlayCommand: iCommand = {
         client.embeds.error('Player failed to connect!')
       );
     }
-    let res = await client.PlayerManager.search(search, player, message.author);
+    const search = args.join(' ') as string;
+    let res = await client.PlayerManager.search(search, player, message.author).catch((err) => {
+      //TODO: test this
+      return message.channel.send(client.embeds.error('Error while searching', err.message.message))
+    });
     const embed = await client.PlayerManager.handleSearchResult(
       client,
       res,

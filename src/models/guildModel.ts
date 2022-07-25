@@ -5,6 +5,10 @@ export interface IGuildModel extends Document {
   volume: number;
   autoplay: boolean;
   timestamp: Date;
+  textChannel: {
+    name: string;
+    id: string;
+  }
 }
 
 export const GuildSchema = new Schema({
@@ -20,6 +24,14 @@ export const GuildSchema = new Schema({
   autoplay: {
     type: Boolean,
     default: false
+  },
+  textChannel: {
+    name: {
+      type: string
+    },
+    id: {
+      type: string
+    }
   },
   timestamp: { type: Date, default: Date.now }
 });
