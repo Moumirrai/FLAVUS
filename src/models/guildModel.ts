@@ -5,7 +5,7 @@ export interface IGuildModel extends Document {
   volume: number;
   autoplay: boolean;
   timestamp: Date;
-  textChannel: {
+  statusChannel: {
     name: string;
     id: string;
   }
@@ -25,12 +25,12 @@ export const GuildSchema = new Schema({
     type: Boolean,
     default: false
   },
-  textChannel: {
+  statusChannel: {
     name: {
-      type: string
+      type: String
     },
     id: {
-      type: string
+      type: String
     }
   },
   timestamp: { type: Date, default: Date.now }

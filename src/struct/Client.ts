@@ -9,6 +9,7 @@ import type { iCommand, iVoiceCache } from 'flavus';
 import { connect, ConnectOptions } from 'mongoose';
 import * as Functions from './Functions';
 import * as Embeds from './Embeds';
+import * as Mongo from './Mongo';
 import * as PlayerManager from './PlayerManager';
 import { APIClient } from './APIClient';
 import { Socket } from 'socket.io';
@@ -49,6 +50,7 @@ export class BotClient extends Client {
 
   public functions = Functions;
   public embeds = Embeds;
+  public mongo = Mongo
   public PlayerManager = PlayerManager;
   public async main() {
     try {
