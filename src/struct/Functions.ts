@@ -285,8 +285,7 @@ export async function autoplay(
   let guildModel = await GuildModel.findOne({
     guildID: player.guild
   });
-  if (!guildModel) return;
-  if (!guildModel.autoplay) return;
+  if (!guildModel || !guildModel.autoplay) return;
   if (
     (player.get(`previousTrack`) as Track).requester != client.user ||
     !player.get(`similarQueue`) ||
