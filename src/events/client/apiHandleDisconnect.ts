@@ -17,9 +17,11 @@ const VoiceStateUpdateEvent: iEvent = {
     let isSokcet = false;
     if (payload instanceof VoiceState) {
       isVoice = true;
+      /*
       client.logger.debug(
         `apiHandleConnect: voiceState - ${payload.member.user.username}`
       ); //DEBUG
+      */
       client.APICache.voice.delete(payload.member.id);
     } else if (payload instanceof Socket) {
       isSokcet = true;

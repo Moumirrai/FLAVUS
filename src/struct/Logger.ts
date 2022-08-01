@@ -1,10 +1,19 @@
 import chalk from 'chalk';
+import fs from 'fs';
 
-const debugMode = process.env.DEBUGMODE === 'true';
+export class Logger {
+  constructor() {
+    this.debugMode = process.env.DEBUGMODE === 'true';
+    this.logFile =
+      process.env.SAVELOGS === 'true' ? this.createLogFile() : null;
+  }
 
-const logger = {
-  debug: (message: string) => {
-    if (!debugMode) return;
+  public debugMode: boolean;
+  public logFile: fs.WriteStream;
+
+
+  public debug = (message: string): void => {
+    if (!this.debugMode) return;
     console.log(
       chalk.gray(new Date().toLocaleString()) +
         ' ' +
@@ -12,8 +21,14 @@ const logger = {
         ' ' +
         message
     );
-  },
-  info: (message: string) => {
+    if (this.logFile) {
+      this.logFile.write(
+        new Date().toLocaleString() + ' [DEBUG] ' + message + '\n'
+      );
+    }
+  };
+
+  public info = (message: string): void => {
     console.log(
       chalk.gray(new Date().toLocaleString()) +
         ' ' +
@@ -21,8 +36,14 @@ const logger = {
         ' ' +
         message
     );
-  },
-  error: (message: string) => {
+    if (this.logFile) {
+      this.logFile.write(
+        new Date().toLocaleString() + ' [INFO] ' + message + '\n'
+      );
+    }
+  };
+
+  public error = (message: string): void => {
     console.log(
       chalk.gray(new Date().toLocaleString()) +
         ' ' +
@@ -30,7 +51,34 @@ const logger = {
         ' ' +
         message
     );
-  }
-};
+    if (this.logFile) {
+      this.logFile.write(
+        new Date().toLocaleString() + ' [ERROR] ' + message + '\n'
+      );
+    }
+  };
 
-export default logger;
+  public log = (message: string): void => {
+    if (this.logFile) {
+      this.logFile.write(
+        new Date().toLocaleString() + ' [LOG] ' + message + '\n'
+      );
+    }
+  };
+
+  private createLogFile = () => {
+    if (!fs.existsSync('./logs')) {
+      fs.mkdirSync('./logs');
+    }
+    return fs.createWriteStream(`./logs/logs_${Date.now()}.log`);
+  };
+
+  public catchErrors = (): void => {
+    process.on('uncaughtException', (err) => {
+      this.error(err.stack);
+      return;
+    });
+  };
+}
+
+export default new Logger();

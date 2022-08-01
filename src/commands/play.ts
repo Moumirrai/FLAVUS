@@ -35,9 +35,15 @@ const PlayCommand: iCommand = {
       );
     }
     const search = args.join(' ') as string;
-    let res = await client.PlayerManager.search(search, player, message.author).catch((err) => {
+    let res = await client.PlayerManager.search(
+      search,
+      player,
+      message.author
+    ).catch((err) => {
       //TODO: test this
-      throw message.channel.send(client.embeds.error('Error while searching', err.message.message))
+      throw message.channel.send(
+        client.embeds.error('Error while searching', err.message.message)
+      );
     });
     const embed = await client.PlayerManager.handleSearchResult(
       client,

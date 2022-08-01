@@ -8,7 +8,7 @@ export interface IGuildModel extends Document {
   statusChannel: {
     name: string;
     id: string;
-  }
+  };
 }
 
 export const GuildSchema = new Schema({

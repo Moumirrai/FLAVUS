@@ -4,7 +4,7 @@ import { readdirSync, existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
 import type { APIInterface, APIEndpoint, SocketEvent } from 'flavus-api';
 import { Collection } from 'discord.js';
-import type { BotClient } from './Client';
+import { BotClient } from './Client';
 import Logger from './Logger';
 import express, { request } from 'express';
 import http from 'http';
@@ -107,6 +107,7 @@ export class APIClient implements APIInterface {
           return next();
         }
         if (!req.headers.authorization) {
+          client.logger.log("Authentification failed! - No authorization header");
           return res.status(401).send('Authentification failed!');
         }
         if (req.headers.authorization && req.session.code) {
@@ -117,6 +118,7 @@ export class APIClient implements APIInterface {
               req.session.user = user;
               return next();
             }
+            client.logger.log("Authentification failed! - Invalid authorization header");
             return res.status(401).send('Authentification failed!');
           }
           return next();
@@ -127,6 +129,7 @@ export class APIClient implements APIInterface {
           req.session.user = user;
           return next();
         }
+        client.logger.log("Authentification failed! - User not found");
         return res.status(401).send('Authentification failed!');
       }
     );
@@ -158,6 +161,7 @@ export class APIClient implements APIInterface {
         socket.on(name, async (data) => {
           try {
             await rateLimiter.consume(socket.request.session.user.id);
+            client.logger.log(`Socket event: "${name}" with data: ${JSON.stringify(data)}`);
             event.execute(client, socket, data);
           } catch (e) {
             socket.emit('rateLimit', `Slow down!`);
@@ -174,6 +178,7 @@ export class APIClient implements APIInterface {
       const path = req.params.path;
       const endpoint = this.EndPoints.get(path);
       if (!endpoint) return res.status(404).send('404 Not Found');
+      client.logger.log(`Endpoint event: "${endpoint.path}" with query: ${JSON.stringify(req.query)} and data: ${JSON.stringify(req.body)}`);
       await endpoint.execute(client, req, res);
     });
 

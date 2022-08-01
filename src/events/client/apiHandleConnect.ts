@@ -18,9 +18,11 @@ const VoiceStateUpdateEvent: iEvent = {
     let isSokcet = false;
     if (payload instanceof VoiceState) {
       isVoice = true;
+      /*
       client.logger.debug(
         `apiHandleConnect: voiceState - ${payload.member.user.username}`
       ); //DEBUG
+      */
       client.APICache.voice.set(payload.member.id, {
         voiceChannel: payload.channel as VoiceChannel,
         user: payload.member.user,
@@ -29,9 +31,11 @@ const VoiceStateUpdateEvent: iEvent = {
       });
     } else if (payload instanceof Socket) {
       isSokcet = true;
+      /*
       client.logger.debug(
         `apiHandleConnect: socket - ${payload.request.session.user.username}`
       ); //DEBUG
+      */
       client.APICache.socket.set(payload.request.session.user.id, payload);
     } else
       return client.logger.error(
@@ -57,7 +61,7 @@ const VoiceStateUpdateEvent: iEvent = {
       if (voiceState) {
         let socket = payload as Socket;
         if (!socket.interval) {
-          client.logger.debug('creating interval');
+          // client.logger.debug('creating interval');
           socket.interval = setInterval(() => getPlayer(client, socket), 1000);
         }
       }

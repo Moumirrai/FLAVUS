@@ -40,6 +40,9 @@ export class BotClient extends Client {
     }
   }
   public logger = Logger;
+  //export logger to be used in other files
+
+
   public aliases = new Collection<string, iCommand>();
   public commands = new Collection<string, iCommand>();
 
@@ -50,11 +53,12 @@ export class BotClient extends Client {
 
   public functions = Functions;
   public embeds = Embeds;
-  public mongo = Mongo
+  public mongo = Mongo;
   public PlayerManager = PlayerManager;
   public async main() {
     try {
       this.logger.info('Initializing...');
+      this.logger.catchErrors();
       await this.loadEvents();
       await this.loadManagerEvents();
       await this.loadCommands();

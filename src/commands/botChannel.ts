@@ -41,9 +41,11 @@ const BotChannelCommand: iCommand = {
         });
         return message.channel.send(
           client.embeds.message(
-            new MessageEmbed().setTitle(
-              `Status channel set to \`${message.channel.name}\``
-            ).setDescription('This channel will be used when the player is initialized from the web interface.')
+            new MessageEmbed()
+              .setTitle(`Status channel set to \`${message.channel.name}\``)
+              .setDescription(
+                'This channel will be used when the player is initialized from the web interface.'
+              )
           )
         );
       }

@@ -46,9 +46,14 @@ const SearchCommand: iCommand = {
         manager,
         vc
       );
-      let res
+      let res;
       try {
-        res = await client.PlayerManager.search(search, player, message.author, true)
+        res = await client.PlayerManager.search(
+          search,
+          player,
+          message.author,
+          true
+        );
         // Check the load type as this command is not that advanced for basics
         if (res.loadType === 'PLAYLIST_LOADED')
           throw {
@@ -56,7 +61,12 @@ const SearchCommand: iCommand = {
           };
       } catch (e) {
         client.logger.error(e.stack);
-        return message.channel.send(client.embeds.error('Error while searching: `' + search + '`', e.stack.toString()))
+        return message.channel.send(
+          client.embeds.error(
+            'Error while searching: `' + search + '`',
+            e.stack.toString()
+          )
+        );
       }
 
       let max = 10;

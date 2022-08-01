@@ -20,7 +20,8 @@ export class LavalinkHandler extends Manager {
       send: (id, payload) => {
         const guild = client.guilds.cache.get(id);
         if (guild) guild.shard.send(payload);
-      }
+      },
+      autoPlay: false
     });
     this.client = client;
   }

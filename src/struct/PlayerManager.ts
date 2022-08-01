@@ -3,7 +3,8 @@ import {
   Message,
   VoiceBasedChannel,
   User,
-  MessageEmbed, MessageOptions
+  MessageEmbed,
+  MessageOptions
 } from 'discord.js';
 import { Manager, Player, SearchResult, Track } from 'erela.js';
 import formatDuration = require('format-duration');
@@ -43,8 +44,9 @@ export async function search(
 ): Promise<SearchResult> {
   let res: SearchResult;
   try {
-    if (!yt && query.includes('open.spotify.com/') || validUrl.isUri(query)) {
+    if ((!yt && query.includes('open.spotify.com/')) || validUrl.isUri(query)) {
       res = await player.search(query, author);
+      res.query = query;
     } else {
       res = await player.search(
         {
@@ -60,7 +62,7 @@ export async function search(
   } catch (err) {
     throw err;
   }
-  return res
+  return res;
 }
 
 export async function handleSearchResult(
@@ -68,7 +70,7 @@ export async function handleSearchResult(
   res: SearchResult,
   player: Player,
   web?: boolean
-): Promise<MessageOptions|string> {
+): Promise<MessageOptions | string> {
   switch (res.loadType) {
     case 'NO_MATCHES':
       if (!player.queue.current) player.destroy();
@@ -78,10 +80,28 @@ export async function handleSearchResult(
       );
     case 'TRACK_LOADED':
     case 'SEARCH_RESULT':
+      if (res.query) {
+        const urlParams = new URL(res.query).searchParams;
+        if (urlParams.has('t')) {
+          const time = parseInt(urlParams.get('t')) * 1000;
+          if (
+            !time ||
+            isNaN(time) ||
+            time < 0 ||
+            time > res.tracks[0].duration
+          )
+            return;
+          res.tracks[0].startTime = time;
+        }
+      }
       if (player.state !== 'CONNECTED' || !player.queue.current) {
         if (player.state !== 'CONNECTED') player.connect();
         player.queue.add(res.tracks[0]);
-        await player.play();
+        //console.log(res.startOn)
+        await player.play(res.tracks[0], {
+          startTime: res.tracks[0].startTime ? res.tracks[0].startTime : 0
+        });
+        console.log(`Playing ${res.tracks[0].startTime}`);
         player.pause(false);
         if (web)
           return `Now Playing\n[${res.tracks[0].title}](${res.tracks[0].uri})`;
