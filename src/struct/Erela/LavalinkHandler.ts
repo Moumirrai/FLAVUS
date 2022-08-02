@@ -1,10 +1,10 @@
 import { Manager } from 'erela.js';
-import type { BotClient } from '../Client';
+import type { Core } from '../Core';
 import Spotify from 'better-erela.js-spotify';
 
 export class LavalinkHandler extends Manager {
-  client: BotClient;
-  constructor(client: BotClient) {
+  client: Core;
+  constructor(client: Core) {
     super({
       nodes: client.config.erela.nodes,
       plugins: [

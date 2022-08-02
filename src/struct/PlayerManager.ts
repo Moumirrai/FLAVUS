@@ -4,11 +4,13 @@ import {
   VoiceBasedChannel,
   User,
   MessageEmbed,
-  MessageOptions
+  MessageOptions,
+  TextChannel
 } from 'discord.js';
 import { Manager, Player, SearchResult, Track } from 'erela.js';
+import { GuildModel, IGuildModel } from '../models/guildModel';
 import formatDuration = require('format-duration');
-import { BotClient } from './Client';
+import { Core } from './Core';
 
 const validUrl = require('valid-url');
 
@@ -66,7 +68,7 @@ export async function search(
 }
 
 export async function handleSearchResult(
-  client: BotClient,
+  client: Core,
   res: SearchResult,
   player: Player,
   web?: boolean
@@ -84,12 +86,7 @@ export async function handleSearchResult(
         const urlParams = new URL(res.query).searchParams;
         if (urlParams.has('t')) {
           const time = parseInt(urlParams.get('t')) * 1000;
-          if (
-            !time ||
-            isNaN(time) ||
-            time < 0 ||
-            time > res.tracks[0].duration
-          )
+          if (!time || isNaN(time) || time < 0 || time > res.tracks[0].duration)
             return;
           res.tracks[0].startTime = time;
         }
@@ -156,4 +153,95 @@ export async function handleSearchResult(
           .addField('Queue length: ', `\`${player.queue.length} Songs\``, true)
       );
   }
+}
+
+export async function autoplay(
+  client: Core,
+  player: Player
+): Promise<void | Message> {
+  let guildModel = await GuildModel.findOne({
+    guildID: player.guild
+  });
+  if (!guildModel || !guildModel.autoplay) return;
+  if (
+    (player.get(`previousTrack`) as Track).requester != client.user ||
+    !player.get(`similarQueue`) ||
+    (player.get(`similarQueue`) as Track[]).length === 0
+  ) {
+    try {
+      const previoustrack: Track = player.get(`previousTrack`);
+      if (!previoustrack) return;
+      //update owner
+      if (previoustrack.requester != client.user)
+        player.set(`autoplayOwner`, previoustrack.requester);
+
+      const mixURL = `https://www.youtube.com/watch?v=${previoustrack.identifier}&list=RD${previoustrack.identifier}`;
+      const response: SearchResult = await client.manager.search(
+        mixURL,
+        client.user
+      );
+      //if !response, send error embed
+      if (
+        !response ||
+        response.loadType === 'LOAD_FAILED' ||
+        response.loadType !== 'PLAYLIST_LOADED'
+      ) {
+        player.destroy();
+        return (client.channels.cache.get(player.textChannel) as TextChannel)
+          .send({
+            embeds: [
+              new MessageEmbed()
+                .setColor(client.config.embed.color)
+                .setTitle('Autoplay')
+                .setDescription('No similar tracks found!')
+            ]
+          })
+          .catch(() => {});
+      }
+      response.tracks = (await client.functions.blacklist(client, player, response)).tracks;
+
+      //remove previous track from tracks, if present
+      response.tracks = response.tracks.filter(
+        (track) => track.identifier !== previoustrack.identifier
+      );
+      //if there are no tracks left in the response, send error message
+      if (!response.tracks.length) {
+        player.destroy();
+        return (client.channels.cache.get(player.textChannel) as TextChannel)
+          .send({
+            embeds: [
+              new MessageEmbed()
+                .setColor(client.config.embed.color)
+                .setTitle('Autoplay')
+                .setDescription('No similar tracks found!')
+            ]
+          })
+          .catch(() => {});
+      }
+      player.set(`similarQueue`, response.tracks); //set the similar queue
+    } catch (e) {
+      client.logger.error(e.stack);
+    }
+  }
+  try {
+    const similarQueue: Track[] = player.get(`similarQueue`);
+    const track = similarQueue.splice(
+      Math.floor(Math.random() * similarQueue.length),
+      1
+    )[0];
+    player.set(`similarQueue`, similarQueue);
+    player.queue.add(track);
+    const embed = new MessageEmbed()
+      .setTitle('Autoplay')
+      .setDescription(`[${track.title}](${track.uri})`)
+      .setColor(client.config.embed.color)
+      .setThumbnail(track.thumbnail);
+    (client.channels.cache.get(player.textChannel) as TextChannel)
+      .send({ embeds: [embed] })
+      .catch(() => {});
+    return player.play();
+  } catch (e) {
+    client.logger.error(e.stack);
+  }
+  return;
 }

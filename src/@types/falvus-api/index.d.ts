@@ -3,7 +3,7 @@ declare module 'flavus-api' {
     path: string;
     rateLimit: number;
     execute: (
-      client: import('../../struct/Client').BotClient,
+      client: import('../../struct/Core').Core,
       req: import('express').Request,
       res: import('express').Response
     ) => Promise<unknown>;
@@ -24,7 +24,7 @@ declare module 'flavus-api' {
       duration: number;
     };
     execute: (
-      client: import('../../struct/Client').BotClient,
+      client: import('../../struct/Core').Core,
       io: import('socket.io').Socket,
       data: unknown
     ) => Promise<unknown>;

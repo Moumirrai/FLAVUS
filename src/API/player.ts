@@ -1,6 +1,6 @@
 import type { Player } from 'erela.js';
 import { Socket } from 'socket.io';
-import { BotClient } from '../struct/Client';
+import { Core } from '../struct/Core';
 import format from 'format-duration';
 
 //TODO: send less data per second - send only whats needed, do not send something that does not need to update
@@ -15,7 +15,7 @@ player - only if present, no need to send null
 volume - remove, useless
 */
 
-export async function getPlayer(client: BotClient, socket: Socket) {
+export async function getPlayer(client: Core, socket: Socket) {
   const voiceState = client.APICache.voice.get(socket.request.session.user.id);
   if (!voiceState)
     return socket.volatile.emit('playerData', { userConnected: false });

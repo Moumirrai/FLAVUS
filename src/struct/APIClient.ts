@@ -4,7 +4,7 @@ import { readdirSync, existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
 import type { APIInterface, APIEndpoint, SocketEvent } from 'flavus-api';
 import { Collection } from 'discord.js';
-import { BotClient } from './Client';
+import { Core } from './Core';
 import Logger from './Logger';
 import express, { request } from 'express';
 import http from 'http';
@@ -28,14 +28,14 @@ declare module 'https' {
   }
 }
 
-export class APIClient implements APIInterface {
+export class APICore implements APIInterface {
   EndPoints = new Collection<string, APIEndpoint>();
   SocketEvents = new Collection<string, SocketEvent>();
 
   public sokcetCache = new Collection<string, Socket>();
   public voiceCache = new Collection<string, iVoiceCache>();
 
-  public async main(client: BotClient): Promise<APIClient> {
+  public async main(client: Core): Promise<APICore> {
     if (
       (client.config.ssl &&
         !existsSync(resolve(client.config.certPath, 'privkey.pem'))) ||

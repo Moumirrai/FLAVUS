@@ -11,10 +11,10 @@ import * as Functions from './Functions';
 import * as Embeds from './Embeds';
 import * as Mongo from './Mongo';
 import * as PlayerManager from './PlayerManager';
-import { APIClient } from './APIClient';
+import { APICore } from './APIClient';
 import { Socket } from 'socket.io';
 
-export class BotClient extends Client {
+export class Core extends Client {
   constructor() {
     super({
       partials: ['MESSAGE', 'CHANNEL', 'REACTION', 'GUILD_MEMBER', 'USER'],
@@ -64,7 +64,7 @@ export class BotClient extends Client {
       await this.loadCommands();
       await this.mongoDB();
       await this.login(this.config.token);
-      if (this.config.api) new APIClient().main(this);
+      if (this.config.api) new APICore().main(this);
     } catch (error) {
       this.logger.error(error);
       this.destroy();

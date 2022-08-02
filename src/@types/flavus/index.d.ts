@@ -1,6 +1,6 @@
 declare module 'flavus' {
   export interface CommandArgs {
-    client: import('../../struct/Client').BotClient;
+    client: import('../../struct/Core').Core;
     message: import('discord.js').Message;
     args: string[];
     manager: import('erela.js').Manager;
@@ -22,7 +22,7 @@ declare module 'flavus' {
   export interface iEvent {
     name: string;
     execute: (
-      client: import('../../struct/Client').BotClient,
+      client: import('../../struct/Core').Core,
       ...args: any[]
     ) => Promise<unknown>;
   }
@@ -42,7 +42,7 @@ declare module 'flavus' {
   export interface iManagerEvent {
     name: string;
     execute: (
-      client: import('../../struct/Client').BotClient,
+      client: import('../../struct/Core').Core,
       manager: import('erela.js').Manager,
       ...args: any[]
     ) => Promise<unknown>;

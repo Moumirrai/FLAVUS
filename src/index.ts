@@ -1,6 +1,6 @@
-import { BotClient } from './struct/Client';
+import { Core } from './struct/Core';
 
-const client = new BotClient();
+const client = new Core();
 
 (async () => {
   await client.main();

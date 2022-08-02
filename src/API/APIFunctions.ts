@@ -1,11 +1,11 @@
-import { BotClient } from '../struct/Client';
+import { Core } from '../struct/Core';
 import { MessageEmbed, TextBasedChannel } from 'discord.js';
 import type { Player } from 'erela.js';
 import { Session, SessionData } from 'express-session';
 import { GuildModel, IGuildModel } from '../models/guildModel';
 
 export async function Connect(
-  client: BotClient,
+  client: Core,
   session: Session & SessionData
 ): Promise<Player | null> {
   const voiceCache = client.APICache.voice.get(session.user.id);

@@ -11,8 +11,9 @@ import { GuildModel, IGuildModel } from '../models/guildModel';
 import { UserModel } from '../models/userModel';
 import Logger from './Logger';
 import { config } from '../config/config';
-import formatDuration = require('format-duration');
+import formatDuration from 'format-duration';
 
+//TODO: probably useless, check and remove
 export function random<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
 }
@@ -222,7 +223,7 @@ export function fetchGuildConfig(guildID: string): Promise<IGuildModel | null> {
  * If enabled, filters out tracks from autoplay search according to the user's config
  * @returns {Promise<SearchResult>} filtered response
  */
-async function blacklist(
+export async function blacklist(
   client: Client,
   player: Player,
   response: SearchResult
@@ -278,6 +279,8 @@ async function blacklist(
 /**
  * If enabled, automatically adds tracks to the queue
  */
+
+//TODO: remove
 export async function autoplay(
   client: Client,
   player: Player

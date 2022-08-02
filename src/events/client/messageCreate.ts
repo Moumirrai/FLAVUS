@@ -1,12 +1,12 @@
 //create messageCreate event
-import { Client, Message, MessageEmbed } from 'discord.js';
+import { Message, MessageEmbed } from 'discord.js';
 import { iEvent } from 'flavus';
 import { Player } from 'erela.js';
-import { BotClient } from '../../struct/Client';
+import { Core } from '../../struct/Core';
 
 const MessageEvent: iEvent = {
   name: 'messageCreate',
-  async execute(client: BotClient, message: Message) {
+  async execute(client: Core, message: Message) {
     if (!message.content || !message.guild || message.author.bot) return;
     if (!message.content.startsWith(client.config.prefix)) return;
     const args = message.content
@@ -73,7 +73,7 @@ const MessageEvent: iEvent = {
   }
 };
 
-function errorEmbed(title: string, client: BotClient) {
+function errorEmbed(title: string, client: Core) {
   return {
     embeds: [
       new MessageEmbed()

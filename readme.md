@@ -1,11 +1,12 @@
 # Flavus
 
-My personal music bot powered by lavalink. Based on [discord.js](https://discord.js.org/#/) and [erela.js](https://erelajs-docs.netlify.app/docs/gettingstarted.html#documentation-guides).
+Discord music bot powered by Lavalink. Based on [discord.js](https://discord.js.org/#/) and [erela.js](https://erelajs-docs.netlify.app/docs/gettingstarted.html#documentation-guides). Provides an rest/socket API through which remote control is possible (e.g. web client).
 
-### Features
+## Features
 - can play music from **YouTube**, **Spotify**, **Twitch**, and more
-- has autoplay feature
-
+- has decent autoplay
+- lots of useful features, like playing on timestamp from YouTube
+- API for controlls
 
 ### Lavalink server and MongoDB instance required
  If you dont want to host your own Lavalink use these settings in `.env`:
@@ -25,6 +26,8 @@ TOKEN=<YOUR_DISCORD_BOT_TOKEN>
 OWNER=<OWNER_DISCORD_ID>
 PREFIX=<PREFIX>
 LEAVE_ON_EMPTY_CHANNEL=<TIME_IN_SECONDS>
+DEBUGMODE=<BOOLEAN>     # whether to print bebug messages
+SAVELOGS=<BOOLEAN>
 
 # Lavalink credentials
 LAVALINK_HOST=<LAVALINK_HOST>
@@ -48,20 +51,24 @@ SPOTIFY_SECRET=<SPOTIFY_CLIENT_SECRET>
 GENIUS = <GENIUS_CLIENT_ID>
 
 # API Config
-API=true
+API=<BOOLEAN>   # the settings below are required only if this is true
 APIPORT=3030
+SECRET=<SEED_FOR_CRYPTR>
+SSL=<BOOLEAN>   # if set to true, but no valit certificates are found, switches to false
+CERT_PATH=<PATH_TO_YOUR_CERTIFICATES>   # if not provided, uses the "cert" folder in the process root folder
 ```
 
 # TODO
 
-### - **FIX PLAYERMANAGER!!!**
-
-- fix dashboard error handling
-
-- fix sockets and sessions
-- rework queue using (this)[https://guides.menudocs.org/topics/erelajs/advanced.html#extending]
-- add 'start on timestamp' support
-- create central functions that can be used from chat and dashbord e.g. play({query: string, id: string, voiceChannel: idk, options: any})
-    - volume, play, search, loop, autoplay etc.
-    - combine pause and resume to one function
-- add equalizer
+- [ ] fix dashboard error handling
+- [ ] fix sockets and sessions
+- [ ] ?rework queue using [this](https://guides.menudocs.org/topics/erelajs/advanced.html#extending)
+- [x] add 'start on timestamp' support
+- create central functions that can be used from chat and dashbord
+    - [x] search
+    - [x] play
+    - [ ] autoplay
+    - [ ] loop
+    - [ ] volume
+- [ ] combine pause and resume to one function
+- [ ] maybe add equalizer
