@@ -1,5 +1,6 @@
 import { Message } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
+import { SearchResult } from 'erela.js';
 
 const PlayCommand: iCommand = {
   name: 'play',
@@ -41,13 +42,13 @@ const PlayCommand: iCommand = {
       message.author
     ).catch((err) => {
       //TODO: test this
-      throw message.channel.send(
+      return message.channel.send(
         client.embeds.error('Error while searching', err.message.message)
       );
     });
     const embed = await client.PlayerManager.handleSearchResult(
       client,
-      res,
+      (res as SearchResult),
       player
     );
     return message.channel.send(embed);

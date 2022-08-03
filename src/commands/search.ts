@@ -30,15 +30,12 @@ const SearchCommand: iCommand = {
     client
   }: CommandArgs): Promise<Message> {
     if (!args) {
-      return message.channel.send({
-        embeds: [
-          new MessageEmbed()
-            .setColor(client.config.embed.errorcolor)
-            .setTitle('No arguments were provided!')
-        ]
-      });
+      return message.channel.send(
+        client.embeds.error('No arguments were provided!')
+      );
     }
     const search = args.join(' ') as string;
+    //TODO: fix try-catch
     try {
       const player: Player = await client.PlayerManager.connect(
         message,
@@ -241,16 +238,11 @@ const SearchCommand: iCommand = {
       }
     } catch (e) {
       client.logger.error(e.stack);
-      return message.channel.send({
-        embeds: [
-          new MessageEmbed()
-            .setColor(client.config.embed.errorcolor)
-            .setTitle(
-              String('Nothing found for: **`' + search).substr(0, 256 - 3) +
-                '`**'
-            )
-        ]
-      });
+      return message.channel.send(
+        client.embeds.error(
+          ('Nothing found for: `' + search).substring(0, 256 - 3) + '`'
+        )
+      );
     }
   }
 };
