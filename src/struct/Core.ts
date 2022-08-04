@@ -1,5 +1,5 @@
 import { config, BotConfig } from '../config/config';
-import { LavalinkHandler } from './Erela/LavalinkHandler';
+import { LavalinkManager } from './Erela/LavalinkManager';
 import Genius from 'genius-lyrics';
 import { Client, Intents, Collection } from 'discord.js';
 import { readdirSync } from 'fs';
@@ -32,7 +32,7 @@ export class Core extends Client {
     });
 
     this.config = config as BotConfig;
-    this.manager = new LavalinkHandler(this);
+    this.manager = new LavalinkManager(this);
     if (process.env.GENIUS) {
       this.lyrics = new Genius.Client(process.env.GENIUS);
     } else {

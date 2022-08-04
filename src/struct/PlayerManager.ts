@@ -7,6 +7,7 @@ import {
   MessageOptions,
   TextChannel
 } from 'discord.js';
+import { ResultHandlerInterface } from 'flavus-api';
 import { Manager, Player, SearchResult, Track } from 'erela.js';
 import { GuildModel, IGuildModel } from '../models/guildModel';
 import formatDuration = require('format-duration');
@@ -72,7 +73,7 @@ export async function handleSearchResult(
   res: SearchResult,
   player: Player,
   web?: boolean
-): Promise<MessageOptions | string> {
+): Promise<MessageOptions | ResultHandlerInterface> {
   switch (res.loadType) {
     case 'NO_MATCHES':
       if (!player.queue.current) player.destroy();
@@ -98,10 +99,21 @@ export async function handleSearchResult(
         await player.play(res.tracks[0], {
           startTime: res.tracks[0].startTime ? res.tracks[0].startTime : 0
         });
-        console.log(`Playing ${res.tracks[0].startTime}`);
         player.pause(false);
         if (web)
-          return `Now Playing\n[${res.tracks[0].title}](${res.tracks[0].uri})`;
+          //return `Now Playing\n[${res.tracks[0].title}](${res.tracks[0].uri})`;
+          return {
+            type: 'TRACK',
+            tracks: [
+              {
+                title: res.tracks[0].title,
+                author: res.tracks[0].author,
+                duration: res.tracks[0].duration,
+                uri: res.tracks[0].uri
+              }
+            ],
+            nowPlaying: true
+          };
         return client.embeds.message(
           new MessageEmbed()
             .setTitle(`Now Playing`)
@@ -113,9 +125,18 @@ export async function handleSearchResult(
       } else {
         player.queue.add(res.tracks[0]);
         if (web)
-          return (
-            String(res.tracks[0].title).substring(0, 253) + '\nadded to queue'
-          );
+          return {
+            type: 'TRACK',
+            tracks: [
+              {
+                title: res.tracks[0].title,
+                author: res.tracks[0].author,
+                duration: res.tracks[0].duration,
+                uri: res.tracks[0].uri
+              }
+            ],
+            nowPlaying: true
+          };
         return client.embeds.message(
           new MessageEmbed()
             .setTitle('Queued')
@@ -134,7 +155,16 @@ export async function handleSearchResult(
       } else {
         player.queue.add(res.tracks);
       }
-      if (web) return 'TODO';
+      if (web)
+        return {
+          type: 'PLAYLIST',
+          tracks: res.tracks.map((track) => ({
+            title: track.title,
+            author: track.author,
+            duration: track.duration,
+            uri: track.uri
+          }))
+        };
       return client.embeds.message(
         new MessageEmbed()
           .setTitle(
@@ -198,8 +228,9 @@ export async function autoplay(
           })
           .catch(() => {});
       }
-      response.tracks = (await client.functions.blacklist(client, player, response)).tracks;
-
+      response.tracks = (
+        await client.functions.blacklist(client, player, response)
+      ).tracks;
       //remove previous track from tracks, if present
       response.tracks = response.tracks.filter(
         (track) => track.identifier !== previoustrack.identifier

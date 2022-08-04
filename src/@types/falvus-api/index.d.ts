@@ -49,4 +49,11 @@ declare module 'flavus-api' {
     EndPoints: Collection<string, APIEndpoint>;
     SocketEvents: Collection<string, SocketEvent>;
   }
+
+  export interface ResultHandlerInterface {
+    type: 'TRACK' | 'PLAYLIST';
+    tracks: { title: string; author: string; duration: number; uri: string }[];
+    nowPlaying?: boolean;
+    error?: boolean;
+  }
 }

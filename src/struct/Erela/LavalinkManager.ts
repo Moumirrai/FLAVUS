@@ -2,7 +2,7 @@ import { Manager } from 'erela.js';
 import type { Core } from '../Core';
 import Spotify from 'better-erela.js-spotify';
 
-export class LavalinkHandler extends Manager {
+export class LavalinkManager extends Manager {
   client: Core;
   constructor(client: Core) {
     super({
