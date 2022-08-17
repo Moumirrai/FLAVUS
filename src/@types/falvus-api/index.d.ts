@@ -1,7 +1,6 @@
 declare module 'flavus-api' {
   export interface APIEndpoint {
     path: string;
-    rateLimit: number;
     execute: (
       client: import('../../struct/Core').Core,
       req: import('express').Request,

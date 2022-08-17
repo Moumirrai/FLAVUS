@@ -177,8 +177,8 @@ export class APICore implements APIInterface {
     app.post('/api/:path', async (req, res) => {
       const path = req.params.path;
       const endpoint = this.EndPoints.get(path);
-      if (!endpoint) return res.status(404).send('404 Not Found');
       client.logger.log(`Endpoint event: "${endpoint.path}" with query: ${JSON.stringify(req.query)} and data: ${JSON.stringify(req.body)}`);
+      if (!endpoint) return res.status(404).send('404 Not Found');
       await endpoint.execute(client, req, res);
     });
 

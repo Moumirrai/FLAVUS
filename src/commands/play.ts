@@ -1,4 +1,4 @@
-import { Message } from 'discord.js';
+import { Message, MessageOptions } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 import { SearchResult } from 'erela.js';
 
@@ -50,7 +50,7 @@ const PlayCommand: iCommand = {
       client,
       (res as SearchResult),
       player
-    );
+    ) as MessageOptions;
     return message.channel.send(embed);
   }
 };
