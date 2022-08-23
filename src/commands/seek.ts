@@ -11,7 +11,7 @@ const SeekCommand: iCommand = {
   sameChannelRequired: true,
   visible: true,
   description: `Seeks to given time. Time can by provided in \`ss\`, \`mm:ss\` or \`hh:mm:ss\`.\nYou don't have to put zero before one digit number, just divide them using \`:\``,
-  usage: `\`<prefix>seek 10\`, \`<prefix>seek 02:22\` or \`<prefix>seek 1:5:25\``,
+  usage: `\`<prefix>seek 10 , <prefix>seek 02:22 or <prefix>seek 1:5:25\``,
   async execute({ client, message, args, player }: CommandArgs): Promise<any> {
     //TODO: maybe create reusable condition check for player.current in messageCreate event, since multiple commands require it
     if (!player.queue.current) {

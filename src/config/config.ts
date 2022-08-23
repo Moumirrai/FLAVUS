@@ -8,6 +8,7 @@ dotenv.config();
 export type BotConfig = {
   token: string;
   prefix: string;
+  owner: string;
   erela: {
     nodes: {
       host: string;
@@ -67,6 +68,7 @@ export type BotConfig = {
 export const config: BotConfig = {
   token: process.env.TOKEN,
   prefix: process.env.PREFIX,
+  owner: process.env.OWNER,
   erela: {
     nodes: [
       {
