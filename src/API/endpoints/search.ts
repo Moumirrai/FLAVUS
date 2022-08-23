@@ -3,7 +3,6 @@ import { youtube } from 'scrape-youtube';
 
 const SearchEndpoint: APIEndpoint = {
   path: 'search',
-  rateLimit: 0,
   async execute(client, req, res): Promise<Express.Response> {
     const query = req.body.query;
     if (!query) {

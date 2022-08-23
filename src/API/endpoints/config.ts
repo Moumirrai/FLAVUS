@@ -3,7 +3,6 @@ import { UserModel, IUserModel } from '../../models/userModel';
 
 const ConfigEndpoint: APIEndpoint = {
   path: 'config',
-  rateLimit: 0,
   async execute(client, req, res): Promise<Express.Response> {
     switch (req.headers.method) {
       case 'READ':

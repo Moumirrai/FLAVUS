@@ -51,7 +51,7 @@ const PlayCommand: iCommand = {
       (res as SearchResult),
       player
     );
-    return message.channel.send(embed as MessageOptions);
+    return message.channel.send(embed);
   }
 };
 
