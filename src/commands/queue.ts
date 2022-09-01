@@ -35,7 +35,7 @@ const QueueCommand: iCommand = {
         const collector = message.channel.createMessageComponentCollector({
           time: 120000
         });
-        let currentIndex: number = 0;
+        let currentIndex = 0;
         collector.on('collect', async (button) => {
           const maxIndex = Math.ceil(player.queue.length / 15) * 15 - 15;
           if (button.message.id !== message.id) return;
