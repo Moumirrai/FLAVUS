@@ -97,7 +97,7 @@ export const config: BotConfig = {
   maxVolume: 100,
   leaveOnEmptyChannel: parseInt(process.env.LEAVE_ON_EMPTY_CHANNEL),
   port: parseInt(process.env.PORT),
-  split: new RegExp(/[ -/<>(){}\[\].,\\*-+=%'´§_:?!°"#&@|˛`˙˝¨¸~•]+/),
+  split: new RegExp(/[ -/<>(){}\[\].,\\*-+=%'´§_:?!°"#&@|˛`˙˝¨¸~•]+/u),
   anonymous: process.env.ANONYMOUS === 'true',
   debugMode: process.env.DEBUGMODE === 'true',
   api: process.env.API === 'true',
