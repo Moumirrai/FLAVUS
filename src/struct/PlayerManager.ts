@@ -13,7 +13,7 @@ import { GuildModel, IGuildModel } from '../models/guildModel';
 import formatDuration = require('format-duration');
 import { Core } from './Core';
 
-const validUrl = require('valid-url');
+import validUrl = require('valid-url');
 
 export async function connect(
   message: Message,

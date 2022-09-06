@@ -1,7 +1,7 @@
 import Cryptr from 'cryptr';
 import { AuthModel, IAuthModel } from '../models/authModel';
 const cryptr = new Cryptr(process.env.SECRET);
-const DiscordOauth2 = require('discord-oauth2');
+import DiscordOauth2 = require('discord-oauth2');
 const oauth = new DiscordOauth2({
   clientId: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,

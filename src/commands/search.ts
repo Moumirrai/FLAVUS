@@ -34,7 +34,7 @@ const SearchCommand: iCommand = {
         client.embeds.error('No arguments were provided!')
       );
     }
-    const search = args.join(' ') as string;
+    const search = args.join(' ');
     //TODO: fix try-catch
     try {
       const player: Player = await client.PlayerManager.connect(

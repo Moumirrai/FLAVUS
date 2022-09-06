@@ -1,10 +1,10 @@
 import { Document, Schema, model } from 'mongoose';
 
 export interface Imodel {
-  blacklist: Boolean;
-  titleBlacklist: Array<String>;
-  authorBlacklist: Array<String>;
-  uriBlacklist: Array<String>;
+  blacklist: boolean;
+  titleBlacklist: Array<string>;
+  authorBlacklist: Array<string>;
+  uriBlacklist: Array<string>;
 }
 
 export interface IUserModel extends Document {

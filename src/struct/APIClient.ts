@@ -1,5 +1,5 @@
-var bodyParser = require('body-parser');
-var cors = require('cors');
+import bodyParser = require('body-parser');
+import cors = require('cors');
 import { readdirSync, existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
 import type { APIInterface, APIEndpoint, SocketEvent } from 'flavus-api';
@@ -109,6 +109,10 @@ export class APICore implements APIInterface {
         if (!req.headers.authorization) {
           client.logger.log("Authentification failed! - No authorization header");
           return res.status(401).send('Authentification failed!');
+        }
+        //allow metrics endpoint to be accessed without auth
+        if (req.url.startsWith('/api/metrics') && req.headers.authorization === process.env.METRICS_TOKEN) {
+          return next();
         }
         if (req.headers.authorization && req.session.code) {
           if (req.session.code !== req.headers.authorization) {

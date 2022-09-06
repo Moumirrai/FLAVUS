@@ -2,8 +2,8 @@ import { Document, Schema, model } from 'mongoose';
 import type { AuthResponse } from 'flavus-api';
 
 export interface IAuthModel extends Document {
-  code: String;
-  id: String;
+  code: string;
+  id: string;
   auth: AuthResponse;
   timestamp: Date;
 }

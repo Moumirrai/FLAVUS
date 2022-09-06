@@ -66,7 +66,7 @@ export function createQueueEmbed(
     .setTitle(
       'Queue' + queueLength + (player.trackRepeat ? '  -  LOOP ENABLED' : '')
     )
-    .setColor(config.embed.color as ColorResolvable);
+    .setColor(config.embed.color);
   let string = '';
   let indexes = [];
   let titles = [];

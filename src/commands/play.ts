@@ -35,7 +35,7 @@ const PlayCommand: iCommand = {
         client.embeds.error('Player failed to connect!')
       );
     }
-    const search = args.join(' ') as string;
+    const search = args.join(' ');
     let res = await client.PlayerManager.search(
       search,
       player,

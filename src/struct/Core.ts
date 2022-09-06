@@ -31,7 +31,7 @@ export class Core extends Client {
       }
     });
 
-    this.config = config as BotConfig;
+    this.config = config
     this.manager = new LavalinkManager(this);
     if (process.env.GENIUS) {
       this.lyrics = new Genius.Client(process.env.GENIUS);
@@ -51,6 +51,7 @@ export class Core extends Client {
     socket: new Collection<string, Socket>()
   };
 
+  public status: number = 1;
   public functions = Functions;
   public embeds = Embeds;
   public mongo = Mongo;
