@@ -19,15 +19,15 @@ const AutoplayCommand: iCommand = {
           guildID: message.guild.id,
           autoplay: true
         });
-        settings.save().catch((err) => console.log(err));
-        return message.react('👌').catch((e) => {});
+        settings.save().catch((err) => client.logger.error(err));
+        return message.react('👌').catch((e) => {client.logger.error(e)});
       } else {
         settings.autoplay = !settings.autoplay;
-        settings.save().catch((err) => console.log(err));
+        settings.save().catch((err) => client.logger.error(err));
         if (settings.autoplay) {
-          return message.react('👌').catch((e) => {});
+          return message.react('👌').catch((e) => {client.logger.error(e)});
         } else {
-          return message.react('❌').catch((e) => {});
+          return message.react('❌').catch((e) => {client.logger.error(e)});
         }
       }
     });

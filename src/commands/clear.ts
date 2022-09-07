@@ -18,7 +18,7 @@ const ClearCommand: iCommand = {
   }: CommandArgs): Promise<void | MessageReaction> {
     if (player.queue.size !== 0) {
       player.queue.clear();
-      return message.react('✅').catch((e) => {});
+      return message.react('✅').catch((e) => {client.logger.error(e)});
     }
   }
 };

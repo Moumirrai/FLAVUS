@@ -1,7 +1,7 @@
 import { Track } from 'erela.js';
 import { Player } from 'erela.js';
 import { iManagerEvent } from 'flavus';
-import { MessageEmbed, TextChannel } from 'discord.js';
+import { TextChannel } from 'discord.js';
 
 const trackStuckEvent: iManagerEvent = {
   name: 'trackStuck',

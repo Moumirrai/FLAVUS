@@ -1,14 +1,29 @@
 import { Player } from 'erela.js';
+import { MessageEmbed, TextChannel } from 'discord.js';
 import { iManagerEvent } from 'flavus';
+import { GuildModel } from '../../models/guildModel';
 
 const queueEndEvent: iManagerEvent = {
   name: 'queueEnd',
   async execute(client, _manager, player: Player) {
-    /*
-    TODO: add option to send "end of queue, starting autoplay" embed
-    - check against database now, and if disabled send end embed
-    await client.functions.autoplay(client, player);
-    */
+    let guildModel = await GuildModel.findOne({
+      guildID: player.guild
+    });
+    if (!guildModel || !guildModel.autoplay) {
+      player.destroy();
+      return (client.channels.cache.get(player.textChannel) as TextChannel)
+        .send({
+          embeds: [
+            new MessageEmbed()
+              .setColor(client.config.embed.color)
+              .setTitle('Queue has ended')
+              .setDescription('You can enable autoplay with `autoplay` command')
+          ]
+        })
+        .catch((e) => {
+          client.logger.error(e);
+        });
+    }
     await client.PlayerManager.autoplay(client, player);
   }
 };

@@ -1,7 +1,6 @@
 import { Message, MessageEmbed } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 import formatDuration = require('format-duration');
-import { Player } from 'erela.js';
 
 const GrabCommand: iCommand = {
   name: 'grab',
@@ -32,7 +31,7 @@ const GrabCommand: iCommand = {
             })
         ]
       });
-      return message.delete().catch((e) => {});
+      return message.delete().catch((e) => {client.logger.error(e)});
     }
     message.author
       .send({
@@ -72,9 +71,9 @@ const GrabCommand: iCommand = {
       })
       .catch((e) => {
         message.author.send('Error');
-        return message.delete().catch((e) => {});
+        return message.delete().catch((e) => {client.logger.error(e)});
       });
-    return message.delete().catch((e) => {});
+    return message.delete().catch((e) => {client.logger.error(e)});
   }
 };
 

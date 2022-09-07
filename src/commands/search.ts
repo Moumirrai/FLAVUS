@@ -70,7 +70,6 @@ const SearchCommand: iCommand = {
       let collected;
       const cmduser = message.author;
       if (res.tracks.length < max) max = res.tracks.length;
-      const track = res.tracks[0];
       const theresults = res.tracks.slice(0, max);
       const results = theresults
         .map(

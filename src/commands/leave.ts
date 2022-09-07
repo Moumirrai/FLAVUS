@@ -10,9 +10,9 @@ const LeaveCommand: iCommand = {
   playerRequired: true,
   sameChannelRequired: false,
   visible: true,
-  async execute({ message, player }: CommandArgs): Promise<any> {
+  async execute({ client, message, player }: CommandArgs): Promise<any> {
     player.destroy();
-    return message.react('🛑').catch((e) => {});
+    return message.react('🛑').catch((e) => {client.logger.error(e)});
   }
 };
 

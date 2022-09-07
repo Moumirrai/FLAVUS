@@ -1,7 +1,5 @@
-//create messageCreate event
-import { Guild, Message, MessageEmbed } from 'discord.js';
+import { Guild, MessageEmbed } from 'discord.js';
 import { iEvent } from 'flavus';
-import { Player } from 'erela.js';
 import { Core } from '../../struct/Core';
 import { WhitelistModel } from '../../models/whitelistModel';
 

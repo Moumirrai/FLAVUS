@@ -22,7 +22,7 @@ const ResumeCommand: iCommand = {
       });
     }
     player.pause(false);
-    message.react('⏯').catch((e) => {});
+    message.react('⏯').catch((e) => {client.logger.error(e)});
   }
 };
 

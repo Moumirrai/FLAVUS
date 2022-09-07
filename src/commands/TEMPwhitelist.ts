@@ -21,11 +21,11 @@ const AutoplayCommand: iCommand = {
           guildID: args[0]
         });
         response.save().catch((err) => console.log(err));
-        return message.react('👌').catch((e) => {});
+        return message.react('👌').catch((e) => {client.logger.error(e)});
       } else {
         if (args[1] === 'remove') {
           response.remove();
-          return message.react('❌').catch((e) => {});
+          return message.react('❌').catch((e) => {client.logger.error(e)});
         } else {
           return message.reply('This guild is already in the whitelist!');
         }

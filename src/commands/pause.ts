@@ -22,7 +22,7 @@ const PauseCommand: iCommand = {
       });
     }
     player.pause(true);
-    message.react('⏸️').catch((e) => {});
+    message.react('⏸️').catch((e) => {client.logger.error(e)});
   }
 };
 

@@ -1,6 +1,5 @@
 import {
   Client,
-  ColorResolvable,
   Message,
   MessageEmbed,
   TextChannel,

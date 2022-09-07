@@ -1,8 +1,5 @@
 import {
-  TextChannel,
   VoiceState,
-  Permissions,
-  VoiceBasedChannel,
   VoiceChannel
 } from 'discord.js';
 import { iEvent, iVoiceCache } from 'flavus';

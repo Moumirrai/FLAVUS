@@ -1,4 +1,4 @@
-import { config, BotConfig } from '../config/config';
+import { config } from '../config/config';
 import { LavalinkManager } from './Erela/LavalinkManager';
 import Genius from 'genius-lyrics';
 import { Client, Intents, Collection } from 'discord.js';

@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 
 const SkipCommand: iCommand = {
@@ -42,7 +42,7 @@ const SkipCommand: iCommand = {
       }
     }
     player.stop(); // skip the track
-    return message.react('⏭').catch((e) => {});
+    return message.react('⏭').catch((e) => {client.logger.error(e)});
   }
 };
 

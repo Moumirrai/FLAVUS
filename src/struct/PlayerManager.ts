@@ -9,7 +9,6 @@ import {
 } from 'discord.js';
 import { ResultHandlerInterface } from 'flavus-api';
 import { Manager, Player, SearchResult, Track } from 'erela.js';
-import { GuildModel, IGuildModel } from '../models/guildModel';
 import formatDuration = require('format-duration');
 import { Core } from './Core';
 
@@ -189,10 +188,6 @@ export async function autoplay(
   client: Core,
   player: Player
 ): Promise<void | Message> {
-  let guildModel = await GuildModel.findOne({
-    guildID: player.guild
-  });
-  if (!guildModel || !guildModel.autoplay) return;
   if (
     (player.get(`previousTrack`) as Track).requester != client.user ||
     !player.get(`similarQueue`) ||
@@ -226,7 +221,7 @@ export async function autoplay(
                 .setDescription('No similar tracks found!')
             ]
           })
-          .catch(() => {});
+          .catch((e) => {client.logger.error(e)});
       }
       response.tracks = (
         await client.functions.blacklist(client, player, response)

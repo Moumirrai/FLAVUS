@@ -1,4 +1,4 @@
-import { Message, MessageEmbed, MessageReaction } from 'discord.js';
+import { MessageReaction } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 
 const LoopCommand: iCommand = {
@@ -18,10 +18,10 @@ const LoopCommand: iCommand = {
   }: CommandArgs): Promise<MessageReaction | void> {
     if (!player.trackRepeat) {
       player.setTrackRepeat(true);
-      return message.react('🔂').catch((e) => {});
+      return message.react('🔂').catch((e) => {client.logger.error(e)});
     }
     player.setTrackRepeat(false);
-    message.react('❌').catch((e) => {});
+    message.react('❌').catch((e) => {client.logger.error(e)});
   }
 };
 

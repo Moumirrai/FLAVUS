@@ -1,6 +1,6 @@
 import { CommandArgs, iCommand } from 'flavus';
 import { GuildModel, IGuildModel } from '../models/guildModel';
-import { MessageEmbed, MessageOptions, TextChannel } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 
 /*
  * TODO: change name, and embed
@@ -43,6 +43,7 @@ const BotChannelCommand: iCommand = {
           client.embeds.message(
             new MessageEmbed()
               .setTitle(`Status channel set to \`${message.channel.name}\``)
+              .setURL('https://flavus.xyz/')
               .setDescription(
                 'This channel will be used when the player is initialized from the web interface.'
               )

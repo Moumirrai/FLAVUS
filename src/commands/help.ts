@@ -42,16 +42,16 @@ const HelpCommand: iCommand = {
     //send all commands names, client.commands is collection of commands that has value visible set to true
     let commands = client.commands
       .filter((c) => c.visible)
-      .map((c) => c.name)
-      .join('\n');
+      .map((c) => `\`${c.name}\``)
+      .join(', ');
     return message.channel.send({
       embeds: [
         new MessageEmbed()
           .setColor(client.config.embed.color)
-          .setTitle('Commands')
-          .setDescription(
-            `${commands}\n\nUse \`${client.config.prefix}help <command>\` to get more info about a command`
-          )
+          .setTitle('Help')
+          .setURL('https://flavus.instatus.com/')
+          .setDescription('**If something is not working as it should, try looking at the status page first!\nhttps://flavus.instatus.com/ **')
+          .addField('Commands', `${commands}\n\nUse \`${client.config.prefix}help <command>\` to get more info about a command`)
       ]
     });
   }

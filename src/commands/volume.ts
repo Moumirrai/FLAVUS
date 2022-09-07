@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 import { GuildModel } from '../models/guildModel';
 
@@ -62,7 +62,7 @@ const VolumeCommand: iCommand = {
           volume: Number(args[0])
         });
         settings.save().catch((err) => console.log(err));
-        return message.react('👌').catch((e) => {});
+        return message.react('👌').catch((e) => {client.logger.error(e)});
       } else {
         settings.volume = Number(args[0]);
         settings.save().catch((err) => console.log(err));

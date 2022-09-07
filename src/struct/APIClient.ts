@@ -6,7 +6,7 @@ import type { APIInterface, APIEndpoint, SocketEvent } from 'flavus-api';
 import { Collection } from 'discord.js';
 import { Core } from './Core';
 import Logger from './Logger';
-import express, { request } from 'express';
+import express from 'express';
 import http from 'http';
 import https from 'https';
 import { Server, Socket } from 'socket.io';
