@@ -51,7 +51,7 @@ export class Core extends Client {
     socket: new Collection<string, Socket>()
   };
 
-  public status: number = 1;
+  public status = 1;
   public functions = Functions;
   public embeds = Embeds;
   public mongo = Mongo;
