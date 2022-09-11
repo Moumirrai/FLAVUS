@@ -7,10 +7,14 @@ const trackEndEvent: iManagerEvent = {
     if (!player || !player.queue) return;
     if (player.queue.current) {
       if (player.queue.current.startTime) {
-        await player.play(player.queue.current, { startTime: player.queue.current.startTime ? player.queue.current.startTime : 0 });
-        console.log(`Playing on ${player.queue.current.startTime}`);
-        console.log('111')
-      } else { await player.play(); console.log('222') }
+        await player.play(player.queue.current, {
+          startTime: player.queue.current.startTime
+            ? player.queue.current.startTime
+            : 0
+        });
+      } else {
+        await player.play();
+      }
     }
   }
 };
