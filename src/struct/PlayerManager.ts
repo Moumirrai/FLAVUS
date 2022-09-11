@@ -162,7 +162,8 @@ export async function handleSearchResult(
             author: track.author,
             duration: track.duration,
             uri: track.uri
-          }))
+          })),
+          playlistName: res.playlist.name,
         };
       return client.embeds.message(
         new MessageEmbed()

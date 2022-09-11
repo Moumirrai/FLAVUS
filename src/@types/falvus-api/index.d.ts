@@ -52,6 +52,7 @@ declare module 'flavus-api' {
   export interface ResultHandlerInterface {
     type: 'TRACK' | 'PLAYLIST';
     tracks: { title: string; author: string; duration: number; uri: string }[];
+    playlistName?: string;
     nowPlaying?: boolean;
     error?: boolean;
   }
