@@ -19,7 +19,9 @@ const MessageEvent: iEvent = {
       client.commands.get(commandArg) || client.aliases.get(commandArg);
     if (!command) return;
 
-    client.logger.log(`Command "${command.name}" executed with args: "${args.join(' ')}"`);
+    client.logger.log(
+      `Command "${command.name}" executed with args: "${args.join(' ')}"`
+    );
 
     const player: Player = client.manager.get(message.guild.id);
     const { channel } = message.member.voice;

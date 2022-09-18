@@ -20,13 +20,19 @@ const PauseOnEndCommand: iCommand = {
     if (pause !== undefined) {
       player.set('pauseOnEnd', !pause);
       if (!pause) {
-        return message.react('👌').catch((e) => {client.logger.error(e)});
+        return message.react('👌').catch((e) => {
+          client.logger.error(e);
+        });
       } else {
-        return message.react('❌').catch((e) => {client.logger.error(e)});
+        return message.react('❌').catch((e) => {
+          client.logger.error(e);
+        });
       }
     } else {
       player.set('pauseOnEnd', true);
-      return message.react('👌').catch((e) => {client.logger.error(e)});
+      return message.react('👌').catch((e) => {
+        client.logger.error(e);
+      });
     }
   }
 };

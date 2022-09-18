@@ -12,7 +12,9 @@ const ShuffleCommand: iCommand = {
   usage: `<prefix>shuffle`,
   async execute({ client, message, player }: CommandArgs): Promise<any> {
     player.queue.shuffle();
-    return message.react('🔀').catch((e) => {client.logger.error(e)});
+    return message.react('🔀').catch((e) => {
+      client.logger.error(e);
+    });
   }
 };
 

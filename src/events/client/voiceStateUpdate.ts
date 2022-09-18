@@ -1,7 +1,4 @@
-import {
-  VoiceState,
-  Permissions,
-} from 'discord.js';
+import { VoiceState, Permissions } from 'discord.js';
 import { iEvent } from 'flavus';
 
 //TODO: Fix this mess!!!!!!!!!!!!!!!!!!

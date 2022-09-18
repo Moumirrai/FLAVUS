@@ -12,7 +12,9 @@ const LeaveCommand: iCommand = {
   visible: true,
   async execute({ client, message, player }: CommandArgs): Promise<any> {
     player.destroy();
-    return message.react('🛑').catch((e) => {client.logger.error(e)});
+    return message.react('🛑').catch((e) => {
+      client.logger.error(e);
+    });
   }
 };
 

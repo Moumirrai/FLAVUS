@@ -12,7 +12,7 @@ const AutoplayCommand: iCommand = {
   description: 'Debug whitelist',
   usage: '<prefix>whitelist',
   async execute({ client, message, args }: CommandArgs): Promise<any> {
-    if (message.author.id !== client.config.owner) return
+    if (message.author.id !== client.config.owner) return;
     if (!args[0]) message.reply('No arguments were provided!');
     WhitelistModel.findOne({ guildID: args[0] }, (err, response) => {
       if (err) return client.logger.error(err);
@@ -21,11 +21,15 @@ const AutoplayCommand: iCommand = {
           guildID: args[0]
         });
         response.save().catch((err) => console.log(err));
-        return message.react('👌').catch((e) => {client.logger.error(e)});
+        return message.react('👌').catch((e) => {
+          client.logger.error(e);
+        });
       } else {
         if (args[1] === 'remove') {
           response.remove();
-          return message.react('❌').catch((e) => {client.logger.error(e)});
+          return message.react('❌').catch((e) => {
+            client.logger.error(e);
+          });
         } else {
           return message.reply('This guild is already in the whitelist!');
         }

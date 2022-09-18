@@ -18,10 +18,14 @@ const LoopCommand: iCommand = {
   }: CommandArgs): Promise<MessageReaction | void> {
     if (!player.trackRepeat) {
       player.setTrackRepeat(true);
-      return message.react('🔂').catch((e) => {client.logger.error(e)});
+      return message.react('🔂').catch((e) => {
+        client.logger.error(e);
+      });
     }
     player.setTrackRepeat(false);
-    message.react('❌').catch((e) => {client.logger.error(e)});
+    message.react('❌').catch((e) => {
+      client.logger.error(e);
+    });
   }
 };
 

@@ -50,8 +50,13 @@ const HelpCommand: iCommand = {
           .setColor(client.config.embed.color)
           .setTitle('Help')
           .setURL('https://flavus.instatus.com/')
-          .setDescription('**If something is not working as it should, try looking at the status page first!\nhttps://flavus.instatus.com/ **')
-          .addField('Commands', `${commands}\n\nUse \`${client.config.prefix}help <command>\` to get more info about a command`)
+          .setDescription(
+            '**If something is not working as it should, try looking at the status page first!\nhttps://flavus.instatus.com/ **'
+          )
+          .addField(
+            'Commands',
+            `${commands}\n\nUse \`${client.config.prefix}help <command>\` to get more info about a command`
+          )
       ]
     });
   }

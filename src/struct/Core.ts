@@ -7,10 +7,10 @@ import Logger from './Logger';
 import { resolve } from 'path';
 import type { iCommand, iVoiceCache } from 'flavus';
 import { connect, ConnectOptions } from 'mongoose';
-import * as Functions from './Functions';
+import Functions from './Functions';
 import * as Embeds from './Embeds';
-import * as Mongo from './Mongo';
-import * as PlayerManager from './PlayerManager';
+import Mongo from './Mongo';
+import PlayerManager from './PlayerManager';
 import { APICore } from './APIClient';
 import { Socket } from 'socket.io';
 
@@ -31,7 +31,7 @@ export class Core extends Client {
       }
     });
 
-    this.config = config
+    this.config = config;
     this.manager = new LavalinkManager(this);
     if (process.env.GENIUS) {
       this.lyrics = new Genius.Client(process.env.GENIUS);
@@ -41,7 +41,6 @@ export class Core extends Client {
   }
   public logger = Logger;
   //export logger to be used in other files
-
 
   public aliases = new Collection<string, iCommand>();
   public commands = new Collection<string, iCommand>();

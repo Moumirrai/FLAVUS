@@ -1,7 +1,4 @@
-import {
-  VoiceState,
-  VoiceChannel
-} from 'discord.js';
+import { VoiceState, VoiceChannel } from 'discord.js';
 import { iEvent, iVoiceCache } from 'flavus';
 import { Socket } from 'socket.io';
 import { getPlayer } from '../../API/player';

@@ -1,7 +1,7 @@
-import * as dotenv from 'dotenv';
+import { config as dotenvConfig } from 'dotenv';
 import { ColorResolvable } from 'discord.js';
 import { resolve } from 'path';
-dotenv.config();
+dotenvConfig();
 
 //TODO: no need for config folder - remove
 

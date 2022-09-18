@@ -31,7 +31,9 @@ const GrabCommand: iCommand = {
             })
         ]
       });
-      return message.delete().catch((e) => {client.logger.error(e)});
+      return message.delete().catch((e) => {
+        client.logger.error(e);
+      });
     }
     message.author
       .send({
@@ -71,9 +73,13 @@ const GrabCommand: iCommand = {
       })
       .catch((e) => {
         message.author.send('Error');
-        return message.delete().catch((e) => {client.logger.error(e)});
+        return message.delete().catch((e) => {
+          client.logger.error(e);
+        });
       });
-    return message.delete().catch((e) => {client.logger.error(e)});
+    return message.delete().catch((e) => {
+      client.logger.error(e);
+    });
   }
 };
 

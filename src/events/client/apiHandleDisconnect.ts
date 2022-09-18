@@ -1,6 +1,4 @@
-import {
-  VoiceState,
-} from 'discord.js';
+import { VoiceState } from 'discord.js';
 import { iEvent } from 'flavus';
 import { Socket } from 'socket.io';
 

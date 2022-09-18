@@ -18,7 +18,7 @@ const MetricsEndpoint: APIEndpoint = {
       uptime: client.uptime,
       cpuUsage: Math.round(process.cpuUsage().user / 1000000),
       cpuUsageTotal: Math.round(process.cpuUsage().system / 1000000),
-      memoryUsage: Math.round(process.memoryUsage().heapUsed / 1024 / 1024),
+      memoryUsage: Math.round(process.memoryUsage().heapUsed / 1024 / 1024)
     };
     return res.status(200).json(response);
   }

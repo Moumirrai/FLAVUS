@@ -48,7 +48,7 @@ const PlayCommand: iCommand = {
     });
     const embed = await client.PlayerManager.handleSearchResult(
       client,
-      (res as SearchResult),
+      res as SearchResult,
       player
     );
     return message.channel.send(embed as MessageOptions);

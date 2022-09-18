@@ -42,7 +42,9 @@ const SkipCommand: iCommand = {
       }
     }
     player.stop(); // skip the track
-    return message.react('⏭').catch((e) => {client.logger.error(e)});
+    return message.react('⏭').catch((e) => {
+      client.logger.error(e);
+    });
   }
 };
 

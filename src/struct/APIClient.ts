@@ -107,11 +107,16 @@ export class APICore implements APIInterface {
           return next();
         }
         if (!req.headers.authorization) {
-          client.logger.log("Authentification failed! - No authorization header");
+          client.logger.log(
+            'Authentification failed! - No authorization header'
+          );
           return res.status(401).send('Authentification failed!');
         }
         //allow metrics endpoint to be accessed without auth
-        if (req.url.startsWith('/api/metrics') && req.headers.authorization === process.env.METRICS_TOKEN) {
+        if (
+          req.url.startsWith('/api/metrics') &&
+          req.headers.authorization === process.env.METRICS_TOKEN
+        ) {
           return next();
         }
         if (req.headers.authorization && req.session.code) {
@@ -122,7 +127,9 @@ export class APICore implements APIInterface {
               req.session.user = user;
               return next();
             }
-            client.logger.log("Authentification failed! - Invalid authorization header");
+            client.logger.log(
+              'Authentification failed! - Invalid authorization header'
+            );
             return res.status(401).send('Authentification failed!');
           }
           return next();
@@ -133,7 +140,7 @@ export class APICore implements APIInterface {
           req.session.user = user;
           return next();
         }
-        client.logger.log("Authentification failed! - User not found");
+        client.logger.log('Authentification failed! - User not found');
         return res.status(401).send('Authentification failed!');
       }
     );
@@ -165,7 +172,9 @@ export class APICore implements APIInterface {
         socket.on(name, async (data) => {
           try {
             await rateLimiter.consume(socket.request.session.user.id);
-            client.logger.log(`Socket event: "${name}" with data: ${JSON.stringify(data)}`);
+            client.logger.log(
+              `Socket event: "${name}" with data: ${JSON.stringify(data)}`
+            );
             event.execute(client, socket, data);
           } catch (e) {
             socket.emit('rateLimit', `Slow down!`);
@@ -181,7 +190,11 @@ export class APICore implements APIInterface {
     app.post('/api/:path', async (req, res) => {
       const path = req.params.path;
       const endpoint = this.EndPoints.get(path);
-      client.logger.log(`Endpoint event: "${endpoint.path}" with query: ${JSON.stringify(req.query)} and data: ${JSON.stringify(req.body)}`);
+      client.logger.log(
+        `Endpoint event: "${endpoint.path}" with query: ${JSON.stringify(
+          req.query
+        )} and data: ${JSON.stringify(req.body)}`
+      );
       if (!endpoint) return res.status(404).send('404 Not Found');
       await endpoint.execute(client, req, res);
     });
