@@ -8,6 +8,12 @@ declare module 'flavus-api' {
     ) => Promise<unknown>;
   }
 
+  export interface Room {
+    id: string;
+    members: string[];
+    interval: Timer | null;
+  }
+
   export interface AuthResponse {
     access_token: string;
     expires_in: number;
@@ -42,11 +48,31 @@ declare module 'flavus-api' {
     accent_color: any;
     locale: string;
     mfa_enabled: boolean;
+    guilds: userGuilds;
+  }
+
+  export interface userGuilds {
+    active: {
+      id: string;
+      name: string;
+      icon: string;
+      owner: boolean;
+      permissions: number;
+      features: string[];
+    }[],
+    notActive: {
+      id: string;
+      name: string;
+      icon: string;
+      owner: boolean;
+      permissions: number;
+      features: string[];
+    }[]
   }
 
   export interface APIInterface {
-    EndPoints: Collection<string, APIEndpoint>;
-    SocketEvents: Collection<string, SocketEvent>;
+    readonly EndPoints: Collection<string, APIEndpoint>;
+    readonly SocketEvents: Collection<string, SocketEvent>;
   }
 
   export interface ResultHandlerInterface {

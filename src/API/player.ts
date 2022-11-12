@@ -15,8 +15,9 @@ player - only if present, no need to send null
 volume - remove, useless
 */
 
+
 export async function getPlayer(client: Core, socket: Socket) {
-  const voiceState = client.APICache.voice.get(socket.request.session.user.id);
+  const voiceState = client.apiClient.cache.voiceStates.get(socket.request.session.user.id);
   if (!voiceState)
     return socket.volatile.emit('playerData', { userConnected: false });
   const player: Player = client.manager.players.get(

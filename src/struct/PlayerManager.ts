@@ -11,7 +11,8 @@ import { ResultHandlerInterface } from 'flavus-api';
 import { Manager, Player, SearchResult, Track } from 'erela.js';
 import formatDuration = require('format-duration');
 import { Core } from './Core';
-import { validUrl } from 'valid-url';
+
+import validUrl = require('valid-url');
 
 export default class PlayerManager {
   public static async connect(

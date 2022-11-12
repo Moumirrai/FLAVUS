@@ -16,28 +16,30 @@ const VoiceStateUpdateEvent: iEvent = {
         `apiHandleConnect: voiceState - ${payload.member.user.username}`
       ); //DEBUG
       */
-      client.APICache.voice.delete(payload.member.id);
+      client.apiClient.cache.voiceStates.delete(payload.member.id);
     } else if (payload instanceof Socket) {
       isSokcet = true;
-      client.APICache.socket.delete(payload.request.session.user.id);
+      client.apiClient.cache.sockets.delete(payload.request.session.user.id);
     } else
       return client.logger.error(
         'VoiceStateUpdateEvent: payload is not a VoiceState or Socket'
       );
     if (isVoice) {
-      let socket = client.APICache.socket.get(
+      let socket = client.apiClient.cache.sockets.get(
         (payload as VoiceState).member.id
       );
       if (socket && socket.interval) {
         clearInterval(socket.interval);
         socket.interval = undefined;
       }
+      client.apiClient.roomManager.leave(socket)
     } else if (isSokcet) {
       let socket = payload as Socket;
       if (socket.interval) {
         clearInterval(socket.interval);
         socket.interval = undefined;
       }
+      client.apiClient.roomManager.leave(socket)
     }
   }
 };

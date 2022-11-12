@@ -60,15 +60,11 @@ CERT_PATH=<PATH_TO_YOUR_CERTIFICATES>   # if not provided, uses the "cert" folde
 
 # TODO
 
-- [ ] fix dashboard error handling
+After a socket is disconnected, it is removed from its rooms, but they are not cleared from the cache because the socket no longer references it. Fix!!
+
 - [ ] fix sockets and sessions
+
+- [ ] fix dashboard error handling
 - [ ] ?rework queue using [this](https://guides.menudocs.org/topics/erelajs/advanced.html#extending)
-- [x] add 'start on timestamp' support
-- create central functions that can be used from chat and dashbord
-    - [x] search
-    - [x] play
-    - [ ] autoplay
-    - [ ] loop
-    - [ ] volume
 - [ ] combine pause and resume to one function
 - [ ] maybe add equalizer

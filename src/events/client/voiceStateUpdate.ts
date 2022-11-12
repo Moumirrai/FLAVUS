@@ -35,7 +35,7 @@ const VoiceStateUpdateEvent: iEvent = {
       ) {
         client.emit('apiHandleConnect', newState);
         /*
-        client.APICache.voice.set(newState.member.id, {
+        client.apiClient.cache.voiceStates.set(newState.member.id, {
           voiceChannel: newState.channel as VoiceChannel,
           user: newState.member.user,
           guildId: newState.guild.id,
@@ -45,7 +45,7 @@ const VoiceStateUpdateEvent: iEvent = {
       } else {
         client.emit('apiHandleDisconnect', oldState);
         /*
-        client.APICache.voice.delete(newState.member.id);
+        client.apiClient.cache.voiceStates.delete(newState.member.id);
         */
       }
     }

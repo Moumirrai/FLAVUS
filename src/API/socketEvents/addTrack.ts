@@ -10,7 +10,7 @@ const PauseEvent: SocketEvent = {
   },
   async execute(client, socket, data: string): Promise<any> {
     if (!data) return socket.emit('playerError', 'Track is corrupted!');
-    const voiceCache = client.APICache.voice.get(
+    const voiceCache = client.apiClient.cache.voiceStates.get(
       socket.request.session.user.id
     );
     if (!voiceCache)
@@ -18,7 +18,7 @@ const PauseEvent: SocketEvent = {
 
     const player: Player =
       client.manager.players.get(
-        client.APICache.voice.get(socket.request.session.user.id).voiceChannel
+        client.apiClient.cache.voiceStates.get(socket.request.session.user.id).voiceChannel
           .guild.id
       ) || (await Connect(client, socket.request.session));
 

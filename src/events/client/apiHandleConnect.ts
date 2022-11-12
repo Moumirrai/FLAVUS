@@ -17,7 +17,7 @@ const VoiceStateUpdateEvent: iEvent = {
         `apiHandleConnect: voiceState - ${payload.member.user.username}`
       ); //DEBUG
       */
-      client.APICache.voice.set(payload.member.id, {
+      client.apiClient.cache.voiceStates.set(payload.member.id, {
         voiceChannel: payload.channel as VoiceChannel,
         user: payload.member.user,
         guildId: payload.guild.id,
@@ -30,18 +30,23 @@ const VoiceStateUpdateEvent: iEvent = {
         `apiHandleConnect: socket - ${payload.request.session.user.username}`
       ); //DEBUG
       */
-      client.APICache.socket.set(payload.request.session.user.id, payload);
+      client.apiClient.cache.sockets.set(
+        payload.request.session.user.id,
+        payload
+      );
+
     } else
       return client.logger.error(
         'VoiceStateUpdateEvent: payload is not a VoiceState or Socket'
       );
     //#############################################################################################
     if (isVoice) {
-      let socket = client.APICache.socket.get(
+      let socket = client.apiClient.cache.sockets.get(
         (payload as VoiceState).member.id
       );
       //let player = client.manager.players.get((payload as VoiceState).guild.id);
       if (socket /* && player*/) {
+        client.apiClient.roomManager.join(socket, (payload as VoiceState).guild.id);
         if (!socket.interval) {
           socket.interval = setInterval(() => getPlayer(client, socket), 1000);
         }
@@ -49,11 +54,13 @@ const VoiceStateUpdateEvent: iEvent = {
         getPlayer(client, socket);
       }*/
     } else if (isSokcet) {
-      let voiceState = client.APICache.voice.get(
+      let voiceState = client.apiClient.cache.voiceStates.get(
         (payload as Socket).request.session.user.id
       );
       if (voiceState) {
         let socket = payload as Socket;
+        //check if there is any socket room with the same guild id, if not create one and join it
+        client.apiClient.roomManager.join(socket, voiceState.guildId);
         if (!socket.interval) {
           // client.logger.debug('creating interval');
           socket.interval = setInterval(() => getPlayer(client, socket), 1000);

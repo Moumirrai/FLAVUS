@@ -24,14 +24,14 @@ const PauseEvent: SocketEvent = {
       //if data.removedIndex is missing return error
 
       return socket.emit('playerError', 'Move data is corrupted!');
-    const voiceCache = client.APICache.voice.get(
+    const voiceCache = client.apiClient.cache.voiceStates.get(
       socket.request.session.user.id
     );
     if (!voiceCache)
       return socket.emit('playerError', "I can't see you connected!");
 
     const player: Player = client.manager.players.get(
-      client.APICache.voice.get(socket.request.session.user.id).voiceChannel
+      client.apiClient.cache.voiceStates.get(socket.request.session.user.id).voiceChannel
         .guild.id
     );
 

@@ -45,10 +45,12 @@ export class Core extends Client {
   public aliases = new Collection<string, iCommand>();
   public commands = new Collection<string, iCommand>();
 
+  /*
   public APICache = {
     voice: new Collection<string, iVoiceCache>(),
     socket: new Collection<string, Socket>()
   };
+  */
 
   public status = 1;
   public functions = Functions;
@@ -64,7 +66,7 @@ export class Core extends Client {
       await this.loadCommands();
       await this.mongoDB();
       await this.login(this.config.token);
-      if (this.config.api) new APICore().main(this);
+      if (this.config.api) this.apiClient = new APICore(this);
     } catch (error) {
       this.logger.error(error);
       this.destroy();

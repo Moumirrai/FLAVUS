@@ -9,7 +9,7 @@ export class Logger {
   }
 
   public debugMode: boolean;
-  public logFile: fs.WriteStream;
+  public readonly logFile: fs.WriteStream;
 
   public debug = (message: string): void => {
     if (!this.debugMode) return;

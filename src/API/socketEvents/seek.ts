@@ -9,7 +9,7 @@ const SeekEvent: SocketEvent = {
     duration: 2
   },
   async execute(client, socket, data: number): Promise<any> {
-    const voiceCache = client.APICache.voice.get(
+    const voiceCache = client.apiClient.cache.voiceStates.get(
       socket.request.session.user.id
     );
     if (!voiceCache)

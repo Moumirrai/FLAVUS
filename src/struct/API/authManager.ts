@@ -1,5 +1,5 @@
 import Cryptr from 'cryptr';
-import { AuthModel, IAuthModel } from '../models/authModel';
+import { AuthModel, IAuthModel } from '../../models/authModel';
 const cryptr = new Cryptr(process.env.SECRET);
 import DiscordOauth2 = require('discord-oauth2');
 const oauth = new DiscordOauth2({
@@ -7,10 +7,13 @@ const oauth = new DiscordOauth2({
   clientSecret: process.env.CLIENT_SECRET,
   redirectUri: process.env.REDIRECTURI
 });
-import type { AuthResponse, UserInterface } from 'flavus-api';
-import logger from '../struct/Logger';
-
-export async function authUser(code: string): Promise<UserInterface | null> {
+import type { AuthResponse, userGuilds, UserInterface } from 'flavus-api';
+import logger from '../Logger';
+import { Core } from '../Core';
+export async function authUser(
+  code: string,
+  client: Core
+): Promise<UserInterface | null> {
   try {
     const userAuth: IAuthModel = await AuthModel.findOne({
       code: code
@@ -29,19 +32,20 @@ export async function authUser(code: string): Promise<UserInterface | null> {
           userAuth.auth = encrypt(newCredentials);
           userAuth.timestamp = new Date();
           await userAuth.save();
-          return (await getUser(newCredentials.access_token)) || null;
+          return (await getUser(newCredentials.access_token, client)) || null;
         }
         return null;
       }
       return (
-        (await getUser(cryptr.decrypt(userAuth.auth.access_token))) || null
+        (await getUser(cryptr.decrypt(userAuth.auth.access_token), client)) ||
+        null
       );
     }
     //new auth
     const newCredentials: AuthResponse | null = await newAuth(code);
     if (newCredentials) {
       //if code is valid
-      const user = await getUser(newCredentials.access_token);
+      const user = await getUser(newCredentials.access_token, client);
       if (user) {
         try {
           const newuserAuth: IAuthModel = await AuthModel.findOne({
@@ -118,13 +122,44 @@ async function refreshToken(
     });
 }
 
-export async function getUser(token: string): Promise<UserInterface | null> {
-  return oauth
+export async function getUser(
+  token: string,
+  client
+): Promise<UserInterface | null> {
+  return await oauth
     .getUser(token)
-    .then((response: UserInterface) => {
+    .then(async (response: UserInterface) => {
+      response.guilds = await getGuilds(token, client);
+      //TODO:remove this
+      //console.log(response);
       return response;
     })
     .catch(function () {
+      return null;
+    });
+}
+
+export async function getGuilds(
+  token: string,
+  client
+): Promise<userGuilds | null> {
+  return oauth
+    .getUserGuilds(token)
+    .then((response: DiscordOauth2.PartialGuild[]) => {
+      const owned = response.filter((guild) => guild.owner);
+      const notActive =
+      owned.filter((guild) => !client.guilds.cache.has(guild.id)) || [];
+      const active =
+      owned.filter((guild) => client.guilds.cache.has(guild.id)) || [];
+      //TODO:remove this
+      //console.log(active);
+      return {
+        active: active,
+        notActive: notActive
+      };
+    })
+    .catch(function (e) {
+      logger.error(e);
       return null;
     });
 }

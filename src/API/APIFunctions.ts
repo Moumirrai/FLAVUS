@@ -8,7 +8,7 @@ export async function Connect(
   client: Core,
   session: Session & SessionData
 ): Promise<Player | null> {
-  const voiceCache = client.APICache.voice.get(session.user.id);
+  const voiceCache = client.apiClient.cache.voiceStates.get(session.user.id);
   if (!voiceCache) return null;
   //TODO: fix this
   let guildModel: IGuildModel = await GuildModel.findOne({
