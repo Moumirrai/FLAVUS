@@ -15,7 +15,7 @@ const GuildCreateEvent: iEvent = {
             .setColor(client.config.embed.errorcolor)
             .setTitle(`Guild ${guild.name} is not whitelisted`)
             .setDescription(
-              `To add guild to whitelist contanct the owner of the bot <@${client.config.owner}>.`
+              `To add guild to whitelist contanct the owner of the bot <@${client.config.owner}>.\nID: \`${guild.id}\``
             )
         );
         guild.leave();
