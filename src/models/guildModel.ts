@@ -3,7 +3,10 @@ import { Document, Schema, model } from 'mongoose';
 export interface IGuildModel extends Document {
   guildID: string;
   volume: number;
-  autoplay: boolean;
+  autoplay: {
+    active: boolean;
+    mode: "yt" | "spotify";
+  }
   timestamp: Date;
   statusChannel: {
     name: string;
@@ -22,8 +25,14 @@ export const GuildSchema = new Schema({
     default: 70
   },
   autoplay: {
-    type: Boolean,
-    default: false
+    active: {
+      type: Boolean,
+      default: false
+    },
+    mode: {
+      type: String,
+      default: "yt"
+    }
   },
   statusChannel: {
     name: {

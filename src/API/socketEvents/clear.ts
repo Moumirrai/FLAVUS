@@ -2,8 +2,6 @@ import { SocketEvent } from 'flavus-api';
 import type { Player } from 'erela.js';
 import { getPlayer } from '../player';
 
-//TODO: fix or delete
-
 const StopEvent: SocketEvent = {
   name: 'clear',
   rateLimit: {

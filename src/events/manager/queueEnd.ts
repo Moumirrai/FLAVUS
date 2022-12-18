@@ -9,7 +9,7 @@ const queueEndEvent: iManagerEvent = {
     let guildModel = await GuildModel.findOne({
       guildID: player.guild
     });
-    if (!guildModel || !guildModel.autoplay) {
+    if (!guildModel || !guildModel.autoplay.active) {
       player.destroy();
       return (client.channels.cache.get(player.textChannel) as TextChannel)
         .send({
@@ -24,7 +24,7 @@ const queueEndEvent: iManagerEvent = {
           client.logger.error(e);
         });
     }
-    await client.PlayerManager.autoplay(client, player);
+    await client.PlayerManager.autoplay(client, player, guildModel.autoplay.mode);
   }
 };
 
