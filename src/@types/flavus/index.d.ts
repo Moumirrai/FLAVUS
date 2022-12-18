@@ -47,4 +47,14 @@ declare module 'flavus' {
       ...args: any[]
     ) => Promise<unknown>;
   }
+
+  export interface iSpotifySearchResult {
+    tracks: {
+      items: import('better-erela.js-spotify/dist/plugin').SpotifyTrack[];
+    };
+  }
+
+  export interface iSpotifyRecommResult {
+    tracks: import('better-erela.js-spotify/dist/plugin').SpotifyTrack[];
+  }
 }
