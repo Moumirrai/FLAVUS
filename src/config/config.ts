@@ -43,6 +43,7 @@ export type BotConfig = {
   certPath: string;
   ratelimit: {
     socket: {
+      //TODO: Use this
       hp: {
         points: number;
         duration: number;
@@ -53,6 +54,7 @@ export type BotConfig = {
       };
     };
     api: {
+      //TODO: Use this
       hp: {
         points: number;
         duration: number;
@@ -63,6 +65,7 @@ export type BotConfig = {
       };
     };
   };
+  loginExpire: string;
 };
 
 export const config: BotConfig = {
@@ -124,5 +127,6 @@ export const config: BotConfig = {
         duration: 1
       }
     }
-  }
+  },
+  loginExpire: "7d"
 };

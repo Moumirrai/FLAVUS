@@ -21,7 +21,7 @@ export async function authUser(
     if (userAuth) {
       //if code is already in database
       if (
-        userAuth.timestamp.getTime() + userAuth.auth.expires_in * 1000 <
+        userAuth.createdAt.getTime() + userAuth.auth.expires_in * 1000 <
         new Date().getTime()
       ) {
         //if access_token expired, use refresh_token
@@ -29,17 +29,26 @@ export async function authUser(
           cryptr.decrypt(userAuth.auth.refresh_token)
         );
         if (newCredentials) {
+          const user = await getUser(newCredentials.access_token, client);
+          if (!user) return null;
           userAuth.auth = encrypt(newCredentials);
-          userAuth.timestamp = new Date();
+          userAuth.createdAt = new Date();
           await userAuth.save();
-          return (await getUser(newCredentials.access_token, client)) || null;
+          return user;
         }
         return null;
       }
-      return (
-        (await getUser(cryptr.decrypt(userAuth.auth.access_token), client)) ||
-        null
+      //if access_token is still valid
+      const user = await getUser(
+        cryptr.decrypt(userAuth.auth.access_token),
+        client
       );
+      if (user) {
+        userAuth.createdAt = new Date();
+        await userAuth.save();
+        return user;
+      }
+      return null;
     }
     //new auth
     const newCredentials: AuthResponse | null = await newAuth(code);
@@ -48,26 +57,14 @@ export async function authUser(
       const user = await getUser(newCredentials.access_token, client);
       if (user) {
         try {
-          const newuserAuth: IAuthModel = await AuthModel.findOne({
-            id: user.id
+          const newuserAuth: IAuthModel = new AuthModel({
+            code: code,
+            id: user.id,
+            auth: encrypt(newCredentials),
+            createdAt: new Date()
           });
-          if (newuserAuth) {
-            //if object with same id as new auth is already in database, overwrite it
-            newuserAuth.code = code;
-            newuserAuth.auth = encrypt(newCredentials);
-            newuserAuth.timestamp = new Date();
-            await newuserAuth.save();
-            return user;
-          } else {
-            const newuserAuth: IAuthModel = new AuthModel({
-              code: code,
-              id: user.id,
-              auth: encrypt(newCredentials),
-              timestamp: new Date()
-            });
-            await newuserAuth.save();
-            return user;
-          }
+          await newuserAuth.save();
+          return user;
         } catch (error) {
           logger.error(error);
         }
@@ -148,9 +145,9 @@ export async function getGuilds(
     .then((response: DiscordOauth2.PartialGuild[]) => {
       const owned = response.filter((guild) => guild.owner);
       const notActive =
-      owned.filter((guild) => !client.guilds.cache.has(guild.id)) || [];
+        owned.filter((guild) => !client.guilds.cache.has(guild.id)) || [];
       const active =
-      owned.filter((guild) => client.guilds.cache.has(guild.id)) || [];
+        owned.filter((guild) => client.guilds.cache.has(guild.id)) || [];
       //TODO:remove this
       //console.log(active);
       return {
