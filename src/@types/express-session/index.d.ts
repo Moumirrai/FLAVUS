@@ -5,6 +5,5 @@ declare module 'express-session' {
   export interface SessionData {
     code: string;
     user: UserInterface;
-    createdAt: number;
   }
 }

@@ -9,7 +9,7 @@ const LoopCommand: iCommand = {
   playerRequired: true,
   sameChannelRequired: true,
   visible: true,
-  description: 'Plays the current track in a loop',
+  description: 'TODO',
   usage: '<prefix>loop',
   async execute({
     client,

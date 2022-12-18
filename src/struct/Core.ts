@@ -78,7 +78,7 @@ export class Core extends Client {
     connect(this.config.mongodb_uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      autoIndex: true
+      autoIndex: false
     } as ConnectOptions)
       .then(() => {
         return this.logger.info('Connected to MongoDB');

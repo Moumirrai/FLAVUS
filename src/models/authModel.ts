@@ -1,28 +1,29 @@
 import { Document, Schema, model } from 'mongoose';
 import type { AuthResponse } from 'flavus-api';
-import { config } from '../config/config';
 
 export interface IAuthModel extends Document {
   code: string;
   id: string;
   auth: AuthResponse;
-  createdAt: Date;
+  timestamp: Date;
 }
 
 export const AuthSchema = new Schema({
   code: {
     type: String,
     required: true,
+    unique: true
   },
   id: {
     type: String,
     required: false,
+    unique: true
   },
   auth: {
     type: Object
   },
-  createdAt: { type: Date, expires: config.loginExpire, default: Date.now, index: true }
-})
+  timestamp: { type: Date, default: Date.now }
+});
 
 export const AuthModel = model<IAuthModel>(
   'AuthModel',

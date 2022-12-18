@@ -29,7 +29,6 @@
     "express-session": "^1.17.3",
     "format-duration": "^1.4.0",
     "genius-lyrics": "^4.3.5",
-    "moment": "^2.29.4",
     "mongoose": "^6.4.6",
     "rate-limiter-flexible": "^2.3.7",
     "scrape-youtube": "^2.2.0",

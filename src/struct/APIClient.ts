@@ -16,7 +16,6 @@ import type { iVoiceCache } from 'flavus';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import rateLimit from 'express-rate-limit';
 import roomManager from './API/roomManager';
-import { config } from 'dotenv';
 
 declare module 'http' {
   interface IncomingMessage {
@@ -118,14 +117,11 @@ export class APICore implements APIInterface {
           return next();
         }
         if (req.headers.authorization && req.session.code) {
-          //TODO: parse and inherit expiration from config
-          if (req.session.code !== req.headers.authorization || !req.session.createdAt || new Date().getTime() - req.session.createdAt >
-          604800000) {
+          if (req.session.code !== req.headers.authorization) {
             const user = await authUser(req.headers.authorization, this.client);
             if (user) {
               req.session.code = req.headers.authorization;
               req.session.user = user;
-              req.session.createdAt = new Date().getTime();
               return next();
             }
             this.client.logger.log(
@@ -139,10 +135,9 @@ export class APICore implements APIInterface {
         if (user) {
           req.session.code = req.headers.authorization;
           req.session.user = user;
-          req.session.createdAt = new Date().getTime();
           return next();
         }
-        this.client.logger.log('Authentification failed!');
+        this.client.logger.log('Authentification failed! - User not found');
         return res.status(401).send('Authentification failed!');
       }
     );
@@ -163,7 +158,6 @@ export class APICore implements APIInterface {
       if (user) {
         socket.request.session.code = code;
         socket.request.session.user = user;
-        socket.request.session.createdAt = new Date().getTime();
         return next();
       }
       return next(new Error('Authentification failed!'));
