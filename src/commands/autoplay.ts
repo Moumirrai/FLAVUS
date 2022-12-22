@@ -1,5 +1,6 @@
 import { CommandArgs, iCommand } from 'flavus';
 import { GuildModel } from '../models/guildModel';
+import { MessageEmbed } from 'discord.js';
 
 const AutoplayCommand: iCommand = {
   name: 'autoplay',
@@ -9,8 +10,8 @@ const AutoplayCommand: iCommand = {
   playerRequired: false,
   sameChannelRequired: false,
   visible: true,
-  description: 'Toggles autoplay',
-  usage: '<prefix>autoplay',
+  description: 'Toggles or changes autoplay config',
+  usage: '`<prefix>autoplay` or `<prefix>autoplay switch`',
   async execute({ client, message, args }: CommandArgs): Promise<any> {
     GuildModel.findOne({ guildID: message.guild.id }, (err, settings) => {
       if (err) return client.logger.error(err);
@@ -23,27 +24,58 @@ const AutoplayCommand: iCommand = {
           }
         });
         settings.save().catch((err) => client.logger.error(err));
-        return message.react('👌').catch((e) => {
-          client.logger.error(e);
+        return message.channel.send({
+          embeds: [
+            new MessageEmbed()
+              .setColor(client.config.embed.color)
+              .setTitle(`Autoplay is now enabled!`)
+              .setDescription(
+                `Current mode - **${
+                  settings.autoplay.mode === 'yt' ? 'YouTube' : 'Spotify'
+                }**\nTo change mode, use \`<prefix>autoplay switch\``
+              )
+          ]
         });
       } else {
-        if (args[0] && args[0] === 'mode') {
-          if (args[1] && args[1] === 'switch') {
-            settings.autoplay.mode = settings.autoplay.mode === 'yt' ? 'spotify' : 'yt';
-            settings.save().catch((err) => client.logger.error(err));
-            return message.channel.send('Current mode - ' + settings.autoplay.mode);
-          }
-          return message.channel.send('Current mode - ' + settings.autoplay.mode);
+        if (args[0] && args[0] === 'switch') {
+          settings.autoplay.mode =
+            settings.autoplay.mode === 'yt' ? 'spotify' : 'yt';
+          settings.save().catch((err) => client.logger.error(err));
+          return message.channel.send({
+            embeds: [
+              new MessageEmbed()
+                .setColor(client.config.embed.color)
+                .setTitle(`Autoplay`)
+                .setDescription(
+                  `Mode switched to - **${
+                    settings.autoplay.mode === 'yt' ? 'YouTube' : 'Spotify'
+                  }**\nTo change mode, use \`<prefix>autoplay switch\``
+                )
+            ]
+          });
         }
         settings.autoplay.active = !settings.autoplay.active;
         settings.save().catch((err) => client.logger.error(err));
         if (settings.autoplay.active) {
-          return message.react('👌').catch((e) => {
-            client.logger.error(e);
+          return message.channel.send({
+            embeds: [
+              new MessageEmbed()
+                .setColor(client.config.embed.color)
+                .setTitle(`Autoplay is now enabled!`)
+                .setDescription(
+                  `Current mode - **${
+                    settings.autoplay.mode === 'yt' ? 'YouTube' : 'Spotify'
+                  }**\nTo change mode, use \`<prefix>autoplay switch\``
+                )
+            ]
           });
         } else {
-          return message.react('❌').catch((e) => {
-            client.logger.error(e);
+          return message.channel.send({
+            embeds: [
+              new MessageEmbed()
+                .setColor(client.config.embed.errorcolor)
+                .setTitle(`Autoplay is now disabled!`)
+            ]
           });
         }
       }

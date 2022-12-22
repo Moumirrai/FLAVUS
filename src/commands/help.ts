@@ -31,10 +31,11 @@ const HelpCommand: iCommand = {
       return message.channel.send({
         embeds: [
           new MessageEmbed()
+          .setAuthor({ name: 'Help' })
             .setColor(client.config.embed.color)
             .setTitle(`${command.name}`)
             .setDescription(
-              `${aliases}${command.description}\n\nUsage: \`${usage}\``
+              `${aliases}${command.description}\n\nUsage: ${usage}`
             )
         ]
       });

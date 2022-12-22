@@ -12,20 +12,7 @@ const SkipCommand: iCommand = {
   description: 'Skips to next or specific track',
   usage: `\`<prefix>skip\` or \`<prefix>s <position in queue>\``,
   async execute({ client, message, args, player }: CommandArgs): Promise<any> {
-    if (player.queue.size == 0 && !player.queue.current) {
-      await message.reply({
-        embeds: [
-          new MessageEmbed()
-            .setTitle('No more tracks in queue!')
-            .setColor(client.config.embed.color)
-        ]
-      });
-      if (!message.guild.me.voice.channel) {
-        try {
-          player.destroy();
-        } catch {}
-      }
-    }
+    //if queue is empty, it will be handled by the playerManager queueEnd event, so no need to handle it here
     if (args[0] && !isNaN(Number(args[0]))) {
       if (Number(args[0]) > player.queue.size || Number(args[0]) < 1) {
         //if the user wants to skip more tracks than are in the queue
@@ -35,6 +22,16 @@ const SkipCommand: iCommand = {
               .setTitle("Can't skip there!")
               .setColor(client.config.embed.color)
           ]
+        })
+        .then((msg) => {
+          setTimeout(() => {
+            msg.delete().catch((e) => {
+              client.logger.error(e);
+            });
+            message.delete().catch((e) => {
+              client.logger.error(e);
+            });
+          }, 5000);
         });
         return;
       } else {

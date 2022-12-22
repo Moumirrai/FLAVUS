@@ -138,10 +138,10 @@ export default class PlayerManager {
             };
           return client.embeds.message(
             new MessageEmbed()
-              .setTitle(`Now Playing`)
-              .setDescription(
-                `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
-              )
+              .setAuthor({ name: 'Now Playing' })
+              .setTitle(`${res.tracks[0].title}`)
+              .setURL(res.tracks[0].uri)
+              .setDescription(`by **${res.tracks[0].author}**`)
               .setThumbnail(res.tracks[0].thumbnail)
           );
         } else {
@@ -161,10 +161,10 @@ export default class PlayerManager {
             };
           return client.embeds.message(
             new MessageEmbed()
-              .setTitle('Queued')
-              .setDescription(
-                `**[${res.tracks[0].title}](${res.tracks[0].uri})**`
-              )
+              .setAuthor({ name: 'Queued' })
+              .setTitle(`${res.tracks[0].title}`)
+              .setURL(res.tracks[0].uri)
+              .setDescription(`by **${res.tracks[0].author}**`)
               .setThumbnail(res.tracks[0].thumbnail)
           );
         }
@@ -237,8 +237,10 @@ export default class PlayerManager {
       player.set(`similarQueue`, similarQueue);
       player.queue.add(track);
       const embed = new MessageEmbed()
-        .setTitle('Autoplay')
-        .setDescription(`[${track.title}](${track.uri})`)
+        .setAuthor({ name: 'Autoplay' })
+        .setTitle(`${track.title}`)
+        .setURL(track.uri)
+        .setDescription(`by **${track.author}**`)
         .setColor(client.config.embed.color)
         .setThumbnail(track.thumbnail);
       (client.channels.cache.get(player.textChannel) as TextChannel)
@@ -279,8 +281,8 @@ export default class PlayerManager {
             embeds: [
               new MessageEmbed()
                 .setColor(client.config.embed.color)
-                .setTitle('Autoplay')
-                .setDescription('No similar tracks found!')
+                .setAuthor({ name: 'Autoplay' })
+                .setTitle('No similar tracks found!')
             ]
           })
           .catch((e) => {
@@ -316,7 +318,6 @@ export default class PlayerManager {
   }
 
   public static async spotifyAutoplay(client: Core, player: Player) {
-    console.log('spotify autoplay')
     try {
       const previoustrack: Track = player.get(`previousTrack`);
       if (!previoustrack) return;
@@ -347,7 +348,7 @@ export default class PlayerManager {
       let recomm = (await (
         client.manager.options.plugins[0] as Spotify
       ).resolver.makeRequest(
-        `https://api.spotify.com/v1/recommendations?limit=20&seed_artists=${sourceTrack.tracks.items[0].artists[0].id}&seed_tracks=${sourceTrack.tracks.items[0].id}`
+        `https://api.spotify.com/v1/recommendations?limit=15&seed_artists=${sourceTrack.tracks.items[0].artists[0].id}&seed_tracks=${sourceTrack.tracks.items[0].id}`
       )) as iSpotifyRecommResult;
       if (!recomm.tracks.length) {
         player.destroy();
@@ -382,7 +383,8 @@ export default class PlayerManager {
   }
 
   public static spotifyBuildUnresolved(
-    track: SpotifyTrack, client
+    track: SpotifyTrack,
+    client
   ): Omit<UnresolvedTrack, 'resolve'> {
     return {
       requester: client.user,
