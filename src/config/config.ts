@@ -3,8 +3,6 @@ import { ColorResolvable } from 'discord.js';
 import { resolve } from 'path';
 dotenvConfig();
 
-//TODO: no need for config folder - remove
-
 export type BotConfig = {
   token: string;
   prefix: string;
