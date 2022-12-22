@@ -1,6 +1,6 @@
 import { CommandArgs, iCommand } from 'flavus';
 import { GuildModel } from '../models/guildModel';
-import { MessageEmbed } from 'discord.js';
+import { Message, MessageEmbed } from 'discord.js';
 
 const AutoplayCommand: iCommand = {
   name: 'autoplay',
@@ -12,7 +12,7 @@ const AutoplayCommand: iCommand = {
   visible: true,
   description: 'Toggles or changes autoplay config',
   usage: '`<prefix>autoplay` or `<prefix>autoplay switch`',
-  async execute({ client, message, args }: CommandArgs): Promise<any> {
+  async execute({ client, message, args }: CommandArgs): Promise<void|Message> {
     GuildModel.findOne({ guildID: message.guild.id }, (err, settings) => {
       if (err) return client.logger.error(err);
       if (!settings) {

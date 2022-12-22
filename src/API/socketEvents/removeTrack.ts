@@ -14,7 +14,7 @@ const PauseEvent: SocketEvent = {
     points: 5,
     duration: 1
   },
-  async execute(client, socket, data: number): Promise<any> {
+  async execute(client, socket, data: number): Promise<boolean> {
     if (typeof data !== 'number')
       return socket.emit('playerError', 'Track index must be a number!');
     const voiceCache = client.apiClient.cache.voiceStates.get(

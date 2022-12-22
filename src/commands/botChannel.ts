@@ -1,6 +1,6 @@
 import { CommandArgs, iCommand } from 'flavus';
 import { GuildModel, IGuildModel } from '../models/guildModel';
-import { MessageEmbed } from 'discord.js';
+import { Message, MessageEmbed } from 'discord.js';
 
 /*
  * TODO: change name, and embed
@@ -16,14 +16,19 @@ const BotChannelCommand: iCommand = {
   visible: true,
   description: 'Sets default text channel for bot',
   usage: '<prefix>botchannel',
-  async execute({ client, message }: CommandArgs): Promise<any> {
-    if (!message.inGuild())
-      throw client.embeds.error('Message is not from guild');
+  async execute({ client, message }: CommandArgs): Promise<Message> {
+    if (!message.inGuild()) {
+      client.logger.error('Message is not from guild');
+      return message.channel.send(
+        client.embeds.error('Message is not from guild')
+      );
+    }
 
     GuildModel.findOne(
       { guildID: message.guild.id },
       (err, settings: IGuildModel) => {
-        if (err) throw client.logger.error(err);
+        if (err)
+          return message.channel.send(client.embeds.error(err.toString()));
         if (!settings) {
           settings = new GuildModel({
             guildID: message.guild.id,
@@ -37,7 +42,7 @@ const BotChannelCommand: iCommand = {
             (settings.statusChannel.id = message.channel.id);
         }
         settings.save().catch((err) => {
-          throw client.logger.error(err);
+          return message.channel.send(client.embeds.error(err.toString()));
         });
         return message.channel.send(
           client.embeds.message(

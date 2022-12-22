@@ -45,8 +45,6 @@ export default class PlayerManager {
       if (player && player.node && !player.node.connected)
         await player.node.connect();
     }
-    if (player.state !== 'CONNECTED') {
-    }
     return player;
   }
 
@@ -218,7 +216,7 @@ export default class PlayerManager {
     mode: string
   ): Promise<void | Message> {
     if (
-      (player.get(`previousTrack`) as Track).requester != client.user ||
+      (player.get(`previousTrack`) as Track).requester !== client.user ||
       !player.get(`similarQueue`) ||
       (player.get(`similarQueue`) as Track[]).length === 0
     ) {
@@ -261,7 +259,7 @@ export default class PlayerManager {
       const previoustrack: Track = player.get(`previousTrack`);
       if (!previoustrack) return;
       //update owner
-      if (previoustrack.requester != client.user)
+      if (previoustrack.requester !== client.user)
         player.set(`autoplayOwner`, previoustrack.requester);
 
       const mixURL = `https://www.youtube.com/watch?v=${previoustrack.identifier}&list=RD${previoustrack.identifier}`;
@@ -322,7 +320,7 @@ export default class PlayerManager {
       const previoustrack: Track = player.get(`previousTrack`);
       if (!previoustrack) return;
       //update owner
-      if (previoustrack.requester != client.user)
+      if (previoustrack.requester !== client.user)
         player.set(`autoplayOwner`, previoustrack.requester);
       //find previous track on spotify
       let sourceTrack = (await (

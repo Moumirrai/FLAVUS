@@ -11,7 +11,7 @@ const QueueCommand: iCommand = {
   visible: true,
   description: 'Shows queue and current track progress',
   usage: '<prefix>queue',
-  async execute({ client, message, player }: CommandArgs): Promise<any> {
+  async execute({ client, message, player }: CommandArgs): Promise<void> {
     // create buttons;
     let row = new MessageActionRow().addComponents(
       new MessageButton()

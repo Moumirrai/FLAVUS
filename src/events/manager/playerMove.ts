@@ -12,7 +12,7 @@ const playerMoveEvent: iManagerEvent = {
   ) {
     if (!newChannel) {
       await player.destroy();
-    } else if (oldChannel == newChannel) {
+    } else if (oldChannel === newChannel) {
       return;
     } else {
       player.setVoiceChannel(newChannel);

@@ -1,3 +1,4 @@
+import { MessageReaction } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 
 const ShuffleCommand: iCommand = {
@@ -10,7 +11,7 @@ const ShuffleCommand: iCommand = {
   visible: true,
   description: 'Shuffles queue',
   usage: `<prefix>shuffle`,
-  async execute({ client, message, player }: CommandArgs): Promise<any> {
+  async execute({ client, message, player }: CommandArgs): Promise<void|MessageReaction> {
     player.queue.shuffle();
     return message.react('🔀').catch((e) => {
       client.logger.error(e);

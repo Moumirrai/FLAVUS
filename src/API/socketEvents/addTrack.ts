@@ -8,7 +8,7 @@ const PauseEvent: SocketEvent = {
     points: 5,
     duration: 1
   },
-  async execute(client, socket, data: string): Promise<any> {
+  async execute(client, socket, data: string): Promise<boolean> {
     if (!data) return socket.emit('playerError', 'Track is corrupted!');
     const voiceCache = client.apiClient.cache.voiceStates.get(
       socket.request.session.user.id

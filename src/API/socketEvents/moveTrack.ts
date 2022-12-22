@@ -13,7 +13,7 @@ const PauseEvent: SocketEvent = {
     points: 5,
     duration: 1
   },
-  async execute(client, socket, data: IMoveIndex): Promise<any> {
+  async execute(client, socket, data: IMoveIndex): Promise<boolean> {
     if (
       !data ||
       (!data.removedIndex && data.removedIndex !== 0) ||

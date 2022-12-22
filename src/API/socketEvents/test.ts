@@ -8,7 +8,7 @@ const DebugEvent: SocketEvent = {
     points: 1,
     duration: 1
   },
-  async execute(client, socket, data): Promise<any> {
+  async execute(client, socket, data): Promise<void> {
     console.log(socket.request.session.user.id);
     client.logger.debug('Test socket event - ' + data);
   }

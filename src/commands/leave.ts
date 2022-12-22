@@ -1,3 +1,4 @@
+import { MessageReaction } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 
 const LeaveCommand: iCommand = {
@@ -10,7 +11,7 @@ const LeaveCommand: iCommand = {
   playerRequired: true,
   sameChannelRequired: false,
   visible: true,
-  async execute({ client, message, player }: CommandArgs): Promise<any> {
+  async execute({ client, message, player }: CommandArgs): Promise<void|MessageReaction> {
     player.destroy();
     return message.react('🛑').catch((e) => {
       client.logger.error(e);

@@ -1,11 +1,16 @@
-import { Track } from 'erela.js';
-import { Player } from 'erela.js';
+import { Player, TrackStuckEvent, Track } from 'erela.js';
 import { iManagerEvent } from 'flavus';
 import { TextChannel } from 'discord.js';
 
 const trackStuckEvent: iManagerEvent = {
   name: 'trackStuck',
-  async execute(client, _manager, player: Player, track: Track, payload: any) {
+  async execute(
+    client,
+    _manager,
+    player: Player,
+    track: Track,
+    payload: TrackStuckEvent
+  ) {
     client.logger.error(`Track stuck: ${track.uri}\n` + payload.toString());
     return (client.channels.cache.get(player.textChannel) as TextChannel)
       .send(

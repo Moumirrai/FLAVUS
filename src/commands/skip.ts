@@ -1,4 +1,4 @@
-import { MessageEmbed } from 'discord.js';
+import { Message, MessageEmbed, MessageReaction } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 
 const SkipCommand: iCommand = {
@@ -11,7 +11,7 @@ const SkipCommand: iCommand = {
   visible: true,
   description: 'Skips to next or specific track',
   usage: `\`<prefix>skip\` or \`<prefix>s <position in queue>\``,
-  async execute({ client, message, args, player }: CommandArgs): Promise<any> {
+  async execute({ client, message, args, player }: CommandArgs): Promise<void|Message|MessageReaction> {
     //if queue is empty, it will be handled by the playerManager queueEnd event, so no need to handle it here
     if (args[0] && !isNaN(Number(args[0]))) {
       if (Number(args[0]) > player.queue.size || Number(args[0]) < 1) {
@@ -35,7 +35,7 @@ const SkipCommand: iCommand = {
         });
         return;
       } else {
-        if (Number(args[0]) != 1) player.queue.remove(0, Number(args[0]) - 1); //remove tracks from queue
+        if (Number(args[0]) !== 1) player.queue.remove(0, Number(args[0]) - 1); //remove tracks from queue
       }
     }
     player.stop(); // skip the track

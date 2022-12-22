@@ -8,7 +8,7 @@ const VoiceStateUpdateEvent: iEvent = {
   async execute(client, oldState: VoiceState, newState: VoiceState) {
     if (
       newState.channelId &&
-      newState.channel.type == 'GUILD_STAGE_VOICE' &&
+      newState.channel.type === 'GUILD_STAGE_VOICE' &&
       newState.guild.me.voice.suppress
     ) {
       if (
@@ -25,7 +25,7 @@ const VoiceStateUpdateEvent: iEvent = {
     if (client.config.api && !newState.member.user.bot) {
       if (
         newState.channel &&
-        newState.channel.type == 'GUILD_VOICE' &&
+        newState.channel.type === 'GUILD_VOICE' &&
         newState.channel.members &&
         (newState.channel.members.filter((member) => !member.user.bot).size >
           0 ||
@@ -55,7 +55,7 @@ const VoiceStateUpdateEvent: iEvent = {
      */
     if (oldState.channelId && (!newState.channelId || newState.channelId)) {
       var player = client.manager.players.get(newState.guild.id);
-      if (player && oldState.channelId == player.voiceChannel) {
+      if (player && oldState.channelId === player.voiceChannel) {
         //as long as it's the right voice State
         if (
           !(
@@ -86,7 +86,7 @@ const VoiceStateUpdateEvent: iEvent = {
             client.config.leaveOnEmptyChannel !== null &&
             player &&
             (!oldState.channel.members ||
-              oldState.channel.members.size == 0 ||
+              oldState.channel.members.size === 0 ||
               oldState.channel.members.filter(
                 (mem) => !mem.user.bot && !mem.voice.deaf && !mem.voice.selfDeaf
               ).size < 1)
@@ -105,7 +105,7 @@ const VoiceStateUpdateEvent: iEvent = {
                 if (!vc) return player.destroy();
                 if (
                   !vc.members ||
-                  vc.members.size == 0 ||
+                  vc.members.size === 0 ||
                   vc.members.filter(
                     (mem) =>
                       !mem.user.bot && !mem.voice.deaf && !mem.voice.selfDeaf

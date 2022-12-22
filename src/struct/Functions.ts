@@ -149,7 +149,7 @@ export default class Functions {
         let line = `**${indexes[i]})** ${titles[i]} - [${durations[i]}]`;
         string += line + '\n';
       }
-      if (Math.ceil((index + 15) / 15) == Math.ceil(tracks.length / 15))
+      if (Math.ceil((index + 15) / 15) === Math.ceil(tracks.length / 15))
         string +=
           '\n' +
           'This is the end of the queue!' +
@@ -189,7 +189,7 @@ export default class Functions {
     const times = `${
       new Date(player.position).toISOString().substr(11, 8) +
       ' / ' +
-      (player.queue.current.duration == 0
+      (player.queue.current.duration === 0
         ? ' ◉ LIVE'
         : new Date(player.queue.current.duration).toISOString().substr(11, 8))
     }`;
