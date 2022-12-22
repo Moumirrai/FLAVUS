@@ -34,6 +34,7 @@
     "rate-limiter-flexible": "^2.3.7",
     "scrape-youtube": "^2.2.0",
     "socket.io": "^4.5.1",
+    "undici": "^5.14.0",
     "valid-url": "^1.0.9"
   },
   "devDependencies": {

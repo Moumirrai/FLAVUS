@@ -16,13 +16,17 @@ export const AuthSchema = new Schema({
   },
   id: {
     type: String,
-    required: false,
   },
   auth: {
     type: Object
   },
-  createdAt: { type: Date, expires: config.loginExpire, default: Date.now, index: true }
-})
+  createdAt: {
+    type: Date,
+    expires: config.loginExpire,
+    default: Date.now,
+    index: true
+  }
+});
 
 export const AuthModel = model<IAuthModel>(
   'AuthModel',
