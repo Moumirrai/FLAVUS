@@ -138,7 +138,7 @@ const SearchCommand: iCommand = {
             ],
             components: [new MessageActionRow().addComponents(Selection)]
           })
-          .catch(() => {});
+          .catch();
         //Create the collector
         const collector = menumsg.createMessageComponentCollector({
           filter: (i) =>
@@ -152,7 +152,7 @@ const SearchCommand: iCommand = {
             collector.stop();
             menu.deferUpdate();
             if (menu.values.includes('Cancel')) {
-              await menumsg.delete().catch(() => {});
+              await menumsg.delete().catch();
               return message.react('❌').catch((e) => {});
             }
             const picked_songs = [];
@@ -224,7 +224,7 @@ const SearchCommand: iCommand = {
                 .send({
                   embeds: [embed3]
                 })
-                .catch(() => {});
+                .catch();
             }
           } else
             menu.reply({

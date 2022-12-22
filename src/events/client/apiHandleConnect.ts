@@ -41,7 +41,7 @@ const VoiceStateUpdateEvent: iEvent = {
       );
     //#############################################################################################
     if (isVoice) {
-      let socket = client.apiClient.cache.sockets.get(
+      const socket = client.apiClient.cache.sockets.get(
         (payload as VoiceState).member.id
       );
       //let player = client.manager.players.get((payload as VoiceState).guild.id);
@@ -54,11 +54,11 @@ const VoiceStateUpdateEvent: iEvent = {
         getPlayer(client, socket);
       }*/
     } else if (isSokcet) {
-      let voiceState = client.apiClient.cache.voiceStates.get(
+      const voiceState = client.apiClient.cache.voiceStates.get(
         (payload as Socket).request.session.user.id
       );
       if (voiceState) {
-        let socket = payload as Socket;
+        const socket = payload as Socket;
         //check if there is any socket room with the same guild id, if not create one and join it
         client.apiClient.roomManager.join(socket, voiceState.guildId);
         if (!socket.interval) {

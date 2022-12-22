@@ -13,7 +13,7 @@ const QueueCommand: iCommand = {
   usage: '<prefix>queue',
   async execute({ client, message, player }: CommandArgs): Promise<void> {
     // create buttons;
-    let row = new MessageActionRow().addComponents(
+    const row = new MessageActionRow().addComponents(
       new MessageButton()
         .setCustomId('id_1')
         .setEmoji('⬅️')

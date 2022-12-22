@@ -24,7 +24,7 @@ const PlayCommand: iCommand = {
         client.embeds.error('No arguments were provided!')
       );
     }
-    let player = await client.PlayerManager.connect(
+    const player = await client.PlayerManager.connect(
       message,
       client,
       manager,
@@ -36,7 +36,7 @@ const PlayCommand: iCommand = {
       );
     }
     const search = args.join(' ');
-    let res = await client.PlayerManager.search(
+    const res = await client.PlayerManager.search(
       search,
       player,
       message.author

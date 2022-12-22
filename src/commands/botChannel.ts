@@ -41,8 +41,8 @@ const BotChannelCommand: iCommand = {
           (settings.statusChannel.name = message.channel.name),
             (settings.statusChannel.id = message.channel.id);
         }
-        settings.save().catch((err) => {
-          return message.channel.send(client.embeds.error(err.toString()));
+        settings.save().catch((err1) => {
+          return message.channel.send(client.embeds.error(err1.toString()));
         });
         return message.channel.send(
           client.embeds.message(

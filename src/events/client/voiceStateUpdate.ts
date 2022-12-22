@@ -18,7 +18,7 @@ const VoiceStateUpdateEvent: iEvent = {
             .permissionsFor(newState.guild.me)
             .has(Permissions.FLAGS.SPEAK))
       ) {
-        newState.guild.me.voice.setSuppressed(false).catch(() => {});
+        newState.guild.me.voice.setSuppressed(false).catch();
       }
     }
 
@@ -101,7 +101,7 @@ const VoiceStateUpdateEvent: iEvent = {
                   vc =
                     (await newState.guild.channels
                       .fetch(player.voiceChannel)
-                      .catch(() => {})) || false;
+                      .catch()) || false;
                 if (!vc) return player.destroy();
                 if (
                   !vc.members ||

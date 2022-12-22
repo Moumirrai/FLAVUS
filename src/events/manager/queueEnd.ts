@@ -6,7 +6,7 @@ import { GuildModel } from '../../models/guildModel';
 const queueEndEvent: iManagerEvent = {
   name: 'queueEnd',
   async execute(client, _manager, player: Player) {
-    let guildModel = await GuildModel.findOne({
+    const guildModel = await GuildModel.findOne({
       guildID: player.guild
     });
     if (!guildModel || !guildModel.autoplay.active) {

@@ -188,11 +188,8 @@ export default class PlayerManager {
           };
         return client.embeds.message(
           new MessageEmbed()
-            .setTitle(
-              `Playlist  **\`${res.playlist.name}`.substr(0, 256 - 3) +
-                '`**' +
-                ' added to the Queue'
-            )
+            .setAuthor({ name: 'Queued' })
+            .setTitle(`Playlist **\`${res.playlist.name.substring(0, 256 - 3)}\`**`)
             .setThumbnail(res.tracks[0].thumbnail)
             .addField(
               'Duration: ',
@@ -243,7 +240,7 @@ export default class PlayerManager {
         .setThumbnail(track.thumbnail);
       (client.channels.cache.get(player.textChannel) as TextChannel)
         .send({ embeds: [embed] })
-        .catch(() => {});
+        .catch();
       return player.play();
     } catch (e) {
       client.logger.error(e.stack);
@@ -306,7 +303,7 @@ export default class PlayerManager {
                 .setDescription('No similar tracks found!')
             ]
           })
-          .catch(() => {});
+          .catch();
       }
       player.set(`similarQueue`, response.tracks); //set the similar queue
     } catch (e) {
@@ -323,7 +320,7 @@ export default class PlayerManager {
       if (previoustrack.requester !== client.user)
         player.set(`autoplayOwner`, previoustrack.requester);
       //find previous track on spotify
-      let sourceTrack = (await (
+      const sourceTrack = (await (
         client.manager.options.plugins[0] as Spotify
       ).resolver.makeRequest(
         `https://api.spotify.com/v1/search?q=${encodeURI(
@@ -341,9 +338,9 @@ export default class PlayerManager {
                 .setDescription('No similar tracks found!')
             ]
           })
-          .catch(() => {});
+          .catch();
       }
-      let recomm = (await (
+      const recomm = (await (
         client.manager.options.plugins[0] as Spotify
       ).resolver.makeRequest(
         `https://api.spotify.com/v1/recommendations?limit=15&seed_artists=${sourceTrack.tracks.items[0].artists[0].id}&seed_tracks=${sourceTrack.tracks.items[0].id}`
@@ -359,14 +356,14 @@ export default class PlayerManager {
                 .setDescription('No similar tracks found!')
             ]
           })
-          .catch(() => {});
+          .catch();
       }
       //fiter out all track that has type other than "track" and add them to array
-      let tracks = recomm.tracks.filter(
+      const tracks = recomm.tracks.filter(
         (track) => track.type === 'track'
       ) as SpotifyTrack[];
       //now for each track
-      let similarQueue: Track[] = [];
+      const similarQueue: Track[] = [];
       for (let i = 0; i < tracks.length; i++) {
         similarQueue.push(
           TrackUtils.buildUnresolved(

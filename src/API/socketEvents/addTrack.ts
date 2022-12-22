@@ -24,7 +24,7 @@ const PauseEvent: SocketEvent = {
 
     if (!player)
       return socket.emit('playerError', 'Cant add song, there is no player!');
-    let res = await client.PlayerManager.search(
+    const res = await client.PlayerManager.search(
       data,
       player,
       voiceCache.user

@@ -11,7 +11,7 @@ export async function Connect(
   const voiceCache = client.apiClient.cache.voiceStates.get(session.user.id);
   if (!voiceCache) return null;
   //TODO: fix this
-  let guildModel: IGuildModel = await GuildModel.findOne({
+  const guildModel: IGuildModel = await GuildModel.findOne({
     guildID: voiceCache.guildId
   });
   let channel: TextBasedChannel = voiceCache.voiceChannel;

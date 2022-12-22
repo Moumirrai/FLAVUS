@@ -25,7 +25,7 @@ const VoiceStateUpdateEvent: iEvent = {
         'VoiceStateUpdateEvent: payload is not a VoiceState or Socket'
       );
     if (isVoice) {
-      let socket = client.apiClient.cache.sockets.get(
+      const socket = client.apiClient.cache.sockets.get(
         (payload as VoiceState).member.id
       );
       if (socket && socket.interval) {
@@ -34,7 +34,7 @@ const VoiceStateUpdateEvent: iEvent = {
       }
       client.apiClient.roomManager.leave(socket)
     } else if (isSokcet) {
-      let socket = payload as Socket;
+      const socket = payload as Socket;
       if (socket.interval) {
         clearInterval(socket.interval);
         socket.interval = undefined;

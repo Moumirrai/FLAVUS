@@ -12,7 +12,7 @@ interface metrics {
 const MetricsEndpoint: APIEndpoint = {
   path: 'metrics',
   async execute(client, req, res): Promise<Express.Response> {
-    let response: metrics = {
+    const response: metrics = {
       status: client.status,
       activePlayers: client.manager.players.size,
       uptime: client.uptime,

@@ -21,7 +21,7 @@ const trackStuckEvent: iManagerEvent = {
           } ms\`\`\``
         )
       )
-      .catch(() => {});
+      .catch();
   }
 };
 

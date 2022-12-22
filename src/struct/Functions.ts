@@ -31,7 +31,7 @@ export default class Functions {
     client: Client
   ): MessageEmbed {
     const tracks = player.queue;
-    let tDuration = { duration: 0, stream: 0 };
+    const tDuration = { duration: 0, stream: 0 };
     tracks.forEach((track) => {
       if (!track.isStream) tDuration.duration += track.duration;
       else tDuration.stream++;
@@ -39,11 +39,11 @@ export default class Functions {
     if (player.queue.current && player.queue.current.isStream)
       tDuration.stream++;
     else if (player.queue.current) {
-      let current =
+      const current =
         player.queue.current.duration !== 0
           ? player.position
           : player.queue.current.duration;
-      let total = player.queue.current.duration;
+      const total = player.queue.current.duration;
       tDuration.duration += total - current;
     }
     let queueLength;
@@ -127,7 +127,7 @@ export default class Functions {
     if (indexes.length <= 15) {
       string += `\n`;
       for (let i = 0; i < tracks.length; i++) {
-        let line = `**${indexes[i]})** ${titles[i]} - [${durations[i]}]`;
+        const line = `**${indexes[i]})** ${titles[i]} - [${durations[i]}]`;
         string += line + '\n';
       }
       string +=
@@ -146,7 +146,7 @@ export default class Functions {
       durations = durations.slice(index, index + 15);
       string += `\n`;
       for (let i = 0; i < indexes.length; i++) {
-        let line = `**${indexes[i]})** ${titles[i]} - [${durations[i]}]`;
+        const line = `**${indexes[i]})** ${titles[i]} - [${durations[i]}]`;
         string += line + '\n';
       }
       if (Math.ceil((index + 15) / 15) === Math.ceil(tracks.length / 15))
@@ -175,13 +175,13 @@ export default class Functions {
    * @returns {string} progress bar
    */
   public static createProgressBar(player: Player): string {
-    let { size, arrow, block } = config.embed.progress_bar;
+    const { size, arrow, block } = config.embed.progress_bar;
     if (!player.queue.current) return '';
-    let current =
+    const current =
       player.queue.current.duration !== 0
         ? player.position
         : player.queue.current.duration;
-    let total = player.queue.current.duration;
+    const total = player.queue.current.duration;
     const progress = Math.round((size * current) / total);
     const emptyProgress = size - progress;
     const progressString =
@@ -227,14 +227,14 @@ export default class Functions {
   ): Promise<SearchResult> {
     const owner: User = player.get(`autoplayOwner`);
     if (owner) {
-      let userConfig = await UserModel.findOne({
+      const userConfig = await UserModel.findOne({
         userID: owner.id
       });
       if (userConfig && userConfig.model.blacklist === true) {
         //filter tracks
         if (userConfig.model.titleBlacklist.length > 0) {
           response.tracks.forEach((track) => {
-            let title = track.title.split(client.config.split);
+            const title = track.title.split(client.config.split);
             for (let i = 0; i < title.length; i++) {
               if (userConfig.model.titleBlacklist.includes(title[i])) {
                 response.tracks.splice(response.tracks.indexOf(track), 1);
@@ -247,8 +247,8 @@ export default class Functions {
         if (userConfig.model.authorBlacklist.length > 0) {
           userConfig.model.authorBlacklist =
             userConfig.model.authorBlacklist.map((x) => x.toLowerCase());
-          let filtered = response.tracks.filter((track) => {
-            let authors = track.author.toLowerCase().split(' ');
+          const filtered = response.tracks.filter((track) => {
+            const authors = track.author.toLowerCase().split(' ');
             for (let i = 0; i < authors.length; i++) {
               if (userConfig.model.authorBlacklist.includes(authors[i])) {
                 return false;
@@ -260,7 +260,7 @@ export default class Functions {
         }
         //filter uri
         if (userConfig.model.uriBlacklist.length > 0) {
-          let filtered = response.tracks.filter((track) => {
+          const filtered = response.tracks.filter((track) => {
             if (userConfig.model.uriBlacklist.includes(track.uri)) {
               return false;
             }

@@ -24,7 +24,7 @@ const HelpCommand: iCommand = {
           ]
         });
       //in command.description replace every <prefix> with client.config.prefix
-      let usage = command.usage.replace(/<prefix>/g, client.config.prefix);
+      const usage = command.usage.replace(/<prefix>/g, client.config.prefix);
       let aliases = '';
       if (command.aliases.length > 0)
         aliases = `Aliases: ${command.aliases.join(', ')}\n\n`;
@@ -41,7 +41,7 @@ const HelpCommand: iCommand = {
       });
     }
     //send all commands names, client.commands is collection of commands that has value visible set to true
-    let commands = client.commands
+    const commands = client.commands
       .filter((c) => c.visible)
       .map((c) => `\`${c.name}\``)
       .join(', ');
