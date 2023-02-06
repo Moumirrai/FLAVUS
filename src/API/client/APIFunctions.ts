@@ -1,8 +1,8 @@
-import { Core } from '../struct/Core';
+import { Core } from '../../struct/Core';
 import { MessageEmbed, TextBasedChannel } from 'discord.js';
 import type { Player } from 'erela.js';
 import { Session, SessionData } from 'express-session';
-import { GuildModel, IGuildModel } from '../models/guildModel';
+import { GuildModel, IGuildModel } from '../../models/guildModel';
 
 export async function Connect(
   client: Core,

@@ -12,6 +12,7 @@ const playerMoveEvent: iManagerEvent = {
   ) {
     if (!newChannel) {
       await player.destroy();
+      client.logger.log('Stopping player, code 104');
     } else if (oldChannel === newChannel) {
       return;
     } else {

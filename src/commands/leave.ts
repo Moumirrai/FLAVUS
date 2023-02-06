@@ -6,12 +6,10 @@ const LeaveCommand: iCommand = {
   aliases: ['ds', 'leave'],
   description: 'Stops player, and leaves the channel',
   usage: '<prefix>resume',
-  voiceRequired: false,
-  joinPermissionRequired: false,
   playerRequired: true,
-  sameChannelRequired: false,
   visible: true,
   async execute({ client, message, player }: CommandArgs): Promise<void|MessageReaction> {
+    client.logger.log('Stopping player, code 102');
     player.destroy();
     return message.react('🛑').catch((e) => {
       client.logger.error(e);

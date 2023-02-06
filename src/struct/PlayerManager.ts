@@ -3,7 +3,6 @@ import {
   Message,
   VoiceBasedChannel,
   User,
-  MessageEmbed,
   MessageOptions,
   TextChannel
 } from 'discord.js';
@@ -20,7 +19,6 @@ import formatDuration = require('format-duration');
 import { Core } from './Core';
 import { Spotify } from 'better-erela.js-spotify/dist/plugin';
 import { SpotifyTrack } from 'better-erela.js-spotify/dist/typings';
-import { BaseManager } from 'better-erela.js-spotify/dist/Manager/BaseManager';
 import { iSpotifySearchResult, iSpotifyRecommResult } from 'flavus';
 
 import validUrl = require('valid-url');
@@ -33,17 +31,16 @@ export default class PlayerManager {
     vc: VoiceBasedChannel
   ): Promise<Player> {
     let player: Player = client.manager.players.get(message.guild.id);
-    if (player && player.node && !player.node.connected)
-      await player.node.connect();
     if (!player) {
-      player = await manager.create({
+      player = manager.create({
         guild: message.guild.id,
         voiceChannel: vc.id,
         textChannel: message.channel.id,
         selfDeafen: true
       });
-      if (player && player.node && !player.node.connected)
-        await player.node.connect();
+    }
+    if (!player.node.connected) {
+      player.node.connect();
     }
     return player;
   }
@@ -56,27 +53,19 @@ export default class PlayerManager {
   ): Promise<SearchResult> {
     let res: SearchResult;
     try {
-      if (
-        (!yt && query.includes('open.spotify.com/')) ||
-        validUrl.isUri(query)
-      ) {
-        res = await player.search(query, author);
-        res.query = query;
-      } else {
-        res = await player.search(
-          {
-            query: query,
-            source: 'youtube'
-          },
-          author
-        );
-      }
+      res = await player.search(
+        query.includes('open.spotify.com/') || validUrl.isUri(query)
+          ? query
+          : { query: query, source: 'youtube' },
+        author
+      );
       if (res.loadType === 'LOAD_FAILED') {
         throw { message: res.exception };
       }
     } catch (err) {
       throw err;
     }
+    res.query = query;
     return res;
   }
 
@@ -88,19 +77,26 @@ export default class PlayerManager {
   ): Promise<MessageOptions | ResultHandlerInterface> {
     switch (res.loadType) {
       case 'NO_MATCHES':
-        if (!player.queue.current) player.destroy();
+        if (!player.queue.current) {
+          client.logger.log('Stopping player, code 106');
+          player.destroy();
+        }
         if (web)
-          throw String(
-            'Found nothing for: ' + res.query ? res.query : 'unknown'
-          ).substring(0, 253);
-        return client.embeds.error(
-          String(
-            'Found nothing for: `' + res.query ? res.query : 'unknown'
-          ).substring(0, 253) + '`'
+          throw `Found nothing for: \`${
+            res.query ? res.query.substring(0, 253) : 'unknown'
+          }\``;
+        return client.embeds.build(
+          {
+            title: `Found nothing for: \`${
+              res.query ? res.query.substring(0, 253) : 'unknown'
+            }\``
+          },
+          true
         );
       case 'TRACK_LOADED':
       case 'SEARCH_RESULT':
-        if (res.query) {
+        //if res.query is valid url
+        if (res.query && validUrl.isUri(res.query)) {
           const urlParams = new URL(res.query).searchParams;
           if (urlParams.has('t')) {
             const time = parseInt(urlParams.get('t')) * 1000;
@@ -120,6 +116,7 @@ export default class PlayerManager {
           await player.play(res.tracks[0], {
             startTime: res.tracks[0].startTime ? res.tracks[0].startTime : 0
           });
+          client.emit('queueUpdate', player);
           player.pause(false);
           if (web)
             return {
@@ -134,16 +131,16 @@ export default class PlayerManager {
               ],
               nowPlaying: true
             };
-          return client.embeds.message(
-            new MessageEmbed()
-              .setAuthor({ name: 'Now Playing' })
-              .setTitle(`${res.tracks[0].title}`)
-              .setURL(res.tracks[0].uri)
-              .setDescription(`by **${res.tracks[0].author}**`)
-              .setThumbnail(res.tracks[0].thumbnail)
-          );
+          return client.embeds.build({
+            author: { name: 'Now Playing' },
+            title: `${res.tracks[0].title}`,
+            url: res.tracks[0].uri,
+            description: `by **${res.tracks[0].author}**`,
+            thumbnail: { url: res.tracks[0].thumbnail }
+          });
         } else {
           player.queue.add(res.tracks[0]);
+          client.emit('queueUpdate', player);
           if (web)
             return {
               type: 'TRACK',
@@ -157,23 +154,24 @@ export default class PlayerManager {
               ],
               nowPlaying: true
             };
-          return client.embeds.message(
-            new MessageEmbed()
-              .setAuthor({ name: 'Queued' })
-              .setTitle(`${res.tracks[0].title}`)
-              .setURL(res.tracks[0].uri)
-              .setDescription(`by **${res.tracks[0].author}**`)
-              .setThumbnail(res.tracks[0].thumbnail)
-          );
+          return client.embeds.build({
+            author: { name: 'Queued' },
+            title: `${res.tracks[0].title}`,
+            url: res.tracks[0].uri,
+            description: `by **${res.tracks[0].author}**`,
+            thumbnail: { url: res.tracks[0].thumbnail }
+          });
         }
       case 'PLAYLIST_LOADED':
         if (player.state !== 'CONNECTED' || !player.queue.current) {
           if (player.state !== 'CONNECTED') player.connect();
           player.queue.add(res.tracks);
           await player.play();
+          client.emit('queueUpdate', player);
           player.pause(false);
         } else {
           player.queue.add(res.tracks);
+          client.emit('queueUpdate', player);
         }
         if (web)
           return {
@@ -186,23 +184,32 @@ export default class PlayerManager {
             })),
             playlistName: res.playlist.name
           };
-        return client.embeds.message(
-          new MessageEmbed()
-            .setAuthor({ name: 'Queued' })
-            .setTitle(`Playlist **\`${res.playlist.name.substring(0, 256 - 3)}\`**`)
-            .setThumbnail(res.tracks[0].thumbnail)
-            .addField(
-              'Duration: ',
-              `\`${formatDuration(res.playlist.duration, {
-                leading: true
-              })}\``,
-              true
-            )
-            .addField(
-              'Queue length: ',
-              `\`${player.queue.length} Songs\``,
-              true
-            )
+        return client.embeds.build(
+          {
+            author: { name: 'Queued' },
+            title: `Playlist **\`${res.playlist.name.substring(
+              0,
+              256 - 3
+            )}\`**`,
+            url: res.tracks[0].uri,
+            description: `by **${res.tracks[0].author}**`,
+            thumbnail: { url: res.tracks[0].thumbnail },
+            fields: [
+              {
+                name: 'Duration: ',
+                value: `\`${formatDuration(res.playlist.duration, {
+                  leading: true
+                })}\``,
+                inline: true
+              },
+              {
+                name: 'Queue length: ',
+                value: `\`${player.queue.length} Songs\``,
+                inline: true
+              }
+            ]
+          },
+          true
         );
     }
   }
@@ -231,16 +238,16 @@ export default class PlayerManager {
       )[0];
       player.set(`similarQueue`, similarQueue);
       player.queue.add(track);
-      const embed = new MessageEmbed()
-        .setAuthor({ name: 'Autoplay' })
-        .setTitle(`${track.title}`)
-        .setURL(track.uri)
-        .setDescription(`by **${track.author}**`)
-        .setColor(client.config.embed.color)
-        .setThumbnail(track.thumbnail);
-      (client.channels.cache.get(player.textChannel) as TextChannel)
-        .send({ embeds: [embed] })
-        .catch();
+      await client.embeds.info(
+        client.channels.cache.get(player.textChannel) as TextChannel,
+        {
+          author: { name: 'Autoplay' },
+          title: track.title,
+          url: track.uri,
+          description: `by **${track.author}**`,
+          thumbnail: { url: track.thumbnail }
+        }
+      );
       return player.play();
     } catch (e) {
       client.logger.error(e.stack);
@@ -260,52 +267,45 @@ export default class PlayerManager {
         player.set(`autoplayOwner`, previoustrack.requester);
 
       const mixURL = `https://www.youtube.com/watch?v=${previoustrack.identifier}&list=RD${previoustrack.identifier}`;
-      const response: SearchResult = await client.manager.search(
-        mixURL,
-        client.user
-      );
+      const response = await client.manager.search(mixURL, client.user);
       //if !response, send error embed
-      if (
-        !response ||
-        response.loadType === 'LOAD_FAILED' ||
-        response.loadType !== 'PLAYLIST_LOADED'
-      ) {
+      if (!response || response.loadType !== 'PLAYLIST_LOADED') {
+        client.logger.log('Stopping player, code 107');
         player.destroy();
-        return (client.channels.cache.get(player.textChannel) as TextChannel)
-          .send({
-            embeds: [
-              new MessageEmbed()
-                .setColor(client.config.embed.color)
-                .setAuthor({ name: 'Autoplay' })
-                .setTitle('No similar tracks found!')
-            ]
-          })
-          .catch((e) => {
-            client.logger.error(e);
-          });
+        return client.embeds.info(
+          client.channels.cache.get(player.textChannel) as TextChannel,
+          {
+            color: client.config.embed.color,
+            author: { name: 'Autoplay' },
+            title: 'No similar tracks found!'
+          }
+        );
       }
+      //TODO: Fix blacklist
+      /*
       response.tracks = (
         await client.functions.blacklist(client, player, response)
       ).tracks;
-      //remove previous track from tracks, if present
-      response.tracks = response.tracks.filter(
+
+      const filteredTracks = (await client.functions.blacklist(client, player, response)).tracks.filter(track => track.identifier !== previoustrack.identifier);
+      */
+      //remove previous track from tracks
+      const filteredTracks = response.tracks.filter(
         (track) => track.identifier !== previoustrack.identifier
       );
-      //if there are no tracks left in the response, send error message
-      if (!response.tracks.length) {
+      if (!filteredTracks.length) {
+        client.logger.log('Stopping player, code 108');
         player.destroy();
-        return (client.channels.cache.get(player.textChannel) as TextChannel)
-          .send({
-            embeds: [
-              new MessageEmbed()
-                .setColor(client.config.embed.color)
-                .setTitle('Autoplay')
-                .setDescription('No similar tracks found!')
-            ]
-          })
-          .catch();
+        return client.embeds.info(
+          client.channels.cache.get(player.textChannel) as TextChannel,
+          {
+            color: client.config.embed.color,
+            title: 'Autoplay',
+            description: 'No similar tracks found!'
+          }
+        );
       }
-      player.set(`similarQueue`, response.tracks); //set the similar queue
+      player.set(`similarQueue`, filteredTracks);
     } catch (e) {
       client.logger.error(e.stack);
     }
@@ -316,47 +316,47 @@ export default class PlayerManager {
     try {
       const previoustrack: Track = player.get(`previousTrack`);
       if (!previoustrack) return;
-      //update owner
       if (previoustrack.requester !== client.user)
         player.set(`autoplayOwner`, previoustrack.requester);
+
       //find previous track on spotify
-      const sourceTrack = (await (
-        client.manager.options.plugins[0] as Spotify
-      ).resolver.makeRequest(
+      const resolver = (client.manager.options.plugins[0] as Spotify).resolver;
+
+      const sourceTrack = (await resolver.makeRequest(
         `https://api.spotify.com/v1/search?q=${encodeURI(
           previoustrack.title
         )}&type=track&limit=1&offset=0`
       )) as iSpotifySearchResult;
+
       if (!sourceTrack.tracks.items.length) {
+        client.logger.log('Stopping player, code 109');
         player.destroy();
-        return (client.channels.cache.get(player.textChannel) as TextChannel)
-          .send({
-            embeds: [
-              new MessageEmbed()
-                .setColor(client.config.embed.color)
-                .setTitle('Autoplay')
-                .setDescription('No similar tracks found!')
-            ]
-          })
-          .catch();
+        return client.embeds.info(
+          client.channels.cache.get(player.textChannel) as TextChannel,
+          {
+            color: client.config.embed.color,
+            title: 'Autoplay',
+            description: 'No similar tracks found!'
+          }
+        );
       }
+
       const recomm = (await (
         client.manager.options.plugins[0] as Spotify
       ).resolver.makeRequest(
         `https://api.spotify.com/v1/recommendations?limit=15&seed_artists=${sourceTrack.tracks.items[0].artists[0].id}&seed_tracks=${sourceTrack.tracks.items[0].id}`
       )) as iSpotifyRecommResult;
       if (!recomm.tracks.length) {
+        client.logger.log('Stopping player, code 110');
         player.destroy();
-        return (client.channels.cache.get(player.textChannel) as TextChannel)
-          .send({
-            embeds: [
-              new MessageEmbed()
-                .setColor(client.config.embed.color)
-                .setTitle('Autoplay')
-                .setDescription('No similar tracks found!')
-            ]
-          })
-          .catch();
+        return client.embeds.info(
+          client.channels.cache.get(player.textChannel) as TextChannel,
+          {
+            color: client.config.embed.color,
+            title: 'Autoplay',
+            description: 'No similar tracks found!'
+          }
+        );
       }
       //fiter out all track that has type other than "track" and add them to array
       const tracks = recomm.tracks.filter(

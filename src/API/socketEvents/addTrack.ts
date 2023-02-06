@@ -1,37 +1,37 @@
 import { SocketEvent } from 'flavus-api';
 import { Player, SearchResult } from 'erela.js';
-import { Connect } from '../APIFunctions';
+import { Connect } from '../client/APIFunctions';
 
 const PauseEvent: SocketEvent = {
-  name: 'addTrack',
+  name: 'player:addTrack',
   rateLimit: {
     points: 5,
     duration: 1
   },
   async execute(client, socket, data: string): Promise<boolean> {
-    if (!data) return socket.emit('playerError', 'Track is corrupted!');
+    if (!data) return socket.emit('player:error', 'Track is corrupted!');
     const voiceCache = client.apiClient.cache.voiceStates.get(
       socket.request.session.user.id
     );
     if (!voiceCache)
-      return socket.emit('playerError', "I can't see you connected!");
+      return socket.emit('player:error', "I can't see you connected!");
 
     const player: Player =
       client.manager.players.get(
-        client.apiClient.cache.voiceStates.get(socket.request.session.user.id).voiceChannel
-          .guild.id
+        client.apiClient.cache.voiceStates.get(socket.request.session.user.id)
+          .voiceChannel.guild.id
       ) || (await Connect(client, socket.request.session));
 
     if (!player)
-      return socket.emit('playerError', 'Cant add song, there is no player!');
+      return socket.emit('player:error', 'Cant add song, there is no player!');
     const res = await client.PlayerManager.search(
       data,
       player,
       voiceCache.user
     ).catch((err) => {
-      return socket.emit('playerError', err.message.message);
+      return socket.emit('player:error', err.message.message);
     });
-    if (!res) return socket.emit('playerError', 'Track is corrupted!');
+    if (!res) return socket.emit('player:error', 'Track is corrupted!');
     await client.PlayerManager.handleSearchResult(
       client,
       res as SearchResult,
@@ -39,10 +39,10 @@ const PauseEvent: SocketEvent = {
       true
     )
       .then((reply) => {
-        return socket.emit('trackAdded', reply);
+        return socket.emit('player:trackAdded', reply);
       })
       .catch((err) => {
-        return socket.emit('playerError', err);
+        return socket.emit('player:error', err);
       });
   }
 };

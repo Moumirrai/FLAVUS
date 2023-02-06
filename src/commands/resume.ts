@@ -5,7 +5,6 @@ const ResumeCommand: iCommand = {
   name: 'resume',
   aliases: ['rs'],
   voiceRequired: true,
-  joinPermissionRequired: false,
   playerRequired: true,
   sameChannelRequired: true,
   visible: true,

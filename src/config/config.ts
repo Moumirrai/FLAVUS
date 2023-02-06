@@ -1,6 +1,5 @@
 import { config as dotenvConfig } from 'dotenv';
 import { ColorResolvable } from 'discord.js';
-import { resolve } from 'path';
 dotenvConfig();
 
 export type BotConfig = {
@@ -31,14 +30,11 @@ export type BotConfig = {
     };
   };
   maxVolume: number;
-  port: number;
   leaveOnEmptyChannel: number;
   split: RegExp;
   anonymous: boolean;
   debugMode: boolean;
   api: boolean;
-  ssl: boolean;
-  certPath: string;
   ratelimit: {
     socket: {
       //TODO: Use this
@@ -97,13 +93,10 @@ export const config: BotConfig = {
   },
   maxVolume: 100,
   leaveOnEmptyChannel: parseInt(process.env.LEAVE_ON_EMPTY_CHANNEL),
-  port: parseInt(process.env.PORT),
   split: new RegExp(/[ -/<>(){}\[\].,\\*-+=%'´§_:?!°"#&@|˛`˙˝¨¸~•]+/u),
   anonymous: process.env.ANONYMOUS === 'true',
   debugMode: process.env.DEBUGMODE === 'true',
   api: process.env.API === 'true',
-  ssl: process.env.SSL === 'true',
-  certPath: process.env.CERT_PATH || resolve(__dirname, '..', '..', 'certs'),
   ratelimit: {
     socket: {
       hp: {

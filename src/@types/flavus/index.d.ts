@@ -12,10 +12,10 @@ declare module 'flavus' {
     aliases: string[];
     description: string;
     usage: string;
-    voiceRequired: boolean;
-    playerRequired: boolean;
-    sameChannelRequired: boolean;
-    joinPermissionRequired: boolean;
+    voiceRequired?: boolean;
+    playerRequired?: boolean;
+    sameChannelRequired?: boolean;
+    joinPermissionRequired?: boolean;
     visible: boolean;
     execute: (commandArgs: CommandArgs) => Promise<unknown>;
   }

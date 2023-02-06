@@ -4,11 +4,9 @@ import { SearchResult } from 'erela.js';
 
 const PlayCommand: iCommand = {
   name: 'play',
-  voiceRequired: true,
   aliases: ['p'],
   joinPermissionRequired: true,
-  playerRequired: false,
-  sameChannelRequired: false,
+  voiceRequired: true,
   description: 'Searches for a song or playlist and plays it in your channel',
   usage: '<prefix>play <search_query>',
   visible: true,
@@ -20,8 +18,9 @@ const PlayCommand: iCommand = {
     client
   }: CommandArgs): Promise<Message> {
     if (!args[0]) {
-      return message.channel.send(
-        client.embeds.error('No arguments were provided!')
+      return client.embeds.error(
+        message.channel,
+        'No arguments were provided!'
       );
     }
     const player = await client.PlayerManager.connect(
@@ -31,9 +30,7 @@ const PlayCommand: iCommand = {
       vc
     );
     if (!player) {
-      return message.channel.send(
-        client.embeds.error('Player failed to connect!')
-      );
+      return client.embeds.error(message.channel, 'Player failed to connect!');
     }
     const search = args.join(' ');
     const res = await client.PlayerManager.search(
@@ -41,10 +38,10 @@ const PlayCommand: iCommand = {
       player,
       message.author
     ).catch((err) => {
-      //TODO: test this
-      return message.channel.send(
-        client.embeds.error('Error while searching', err.message.message)
-      );
+      return client.embeds.error(message.channel, {
+        title: 'Error while searching',
+        description: err.message.message
+      });
     });
     const embed = await client.PlayerManager.handleSearchResult(
       client,

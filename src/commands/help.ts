@@ -4,10 +4,6 @@ import { CommandArgs, iCommand } from 'flavus';
 const HelpCommand: iCommand = {
   name: 'help',
   aliases: ['?'],
-  voiceRequired: false,
-  joinPermissionRequired: false,
-  playerRequired: false,
-  sameChannelRequired: false,
   visible: true,
   description: 'help',
   usage: 'help',

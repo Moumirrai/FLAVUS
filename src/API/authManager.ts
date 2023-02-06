@@ -1,5 +1,5 @@
 import Cryptr from 'cryptr';
-import { AuthModel, IAuthModel } from '../../models/authModel';
+import { AuthModel, IAuthModel } from '../models/authModel';
 const cryptr = new Cryptr(process.env.SECRET);
 import DiscordOauth2 = require('discord-oauth2');
 const oauth = new DiscordOauth2({
@@ -8,8 +8,8 @@ const oauth = new DiscordOauth2({
   redirectUri: process.env.REDIRECTURI
 });
 import type { AuthResponse, userGuilds, UserInterface } from 'flavus-api';
-import logger from '../Logger';
-import { Core } from '../Core';
+import logger from '../struct/Logger';
+import { Core } from '../struct/Core';
 export async function authUser(
   code: string,
   client: Core

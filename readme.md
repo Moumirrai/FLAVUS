@@ -3,10 +3,12 @@
 Discord music bot powered by Lavalink. Based on [discord.js](https://discord.js.org/#/) and [erela.js](https://erelajs-docs.netlify.app/docs/gettingstarted.html#documentation-guides). Provides an rest/socket API through which remote control is possible (e.g. web client).
 
 ## Features
-- can play music from **YouTube**, **Spotify**, **Twitch**, and more
+- can play music from **YouTube**, **Spotify***, **Twitch**, and more
 - has decent autoplay
 - lots of useful features, like playing on timestamp from YouTube
 - API for controlls
+
+\* spotify tracks are resolved to YouTube links  
 
 ### Lavalink server and MongoDB instance required
  If you dont want to host your own Lavalink use these settings in `.env`:
@@ -54,8 +56,6 @@ GENIUS = <GENIUS_CLIENT_ID>
 API=<BOOLEAN>   # the settings below are required only if this is true
 APIPORT=3030
 SECRET=<SEED_FOR_CRYPTR>
-SSL=<BOOLEAN>   # if set to true, but no valit certificates are found, switches to false
-CERT_PATH=<PATH_TO_YOUR_CERTIFICATES>   # if not provided, uses the "cert" folder in the process root folder
 ```
 
 # TODO
@@ -65,6 +65,5 @@ After a socket is disconnected, it is removed from its rooms, but they are not c
 - [ ] fix sockets and sessions
 
 - [ ] fix dashboard error handling
-- [ ] ?rework queue using [this](https://guides.menudocs.org/topics/erelajs/advanced.html#extending)
 - [ ] combine pause and resume to one function
 - [ ] maybe add equalizer

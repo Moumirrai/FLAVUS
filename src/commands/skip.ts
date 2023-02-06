@@ -5,7 +5,6 @@ const SkipCommand: iCommand = {
   name: 'skip',
   aliases: ['s'],
   voiceRequired: true,
-  joinPermissionRequired: false,
   playerRequired: true,
   sameChannelRequired: true,
   visible: true,

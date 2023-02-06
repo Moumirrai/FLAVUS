@@ -12,16 +12,15 @@ const trackStuckEvent: iManagerEvent = {
     payload: TrackStuckEvent
   ) {
     client.logger.error(`Track stuck: ${track.uri}\n` + payload.toString());
-    return (client.channels.cache.get(player.textChannel) as TextChannel)
-      .send(
-        client.embeds.error(
-          'Track failed to load!',
-          `\`\`\`scala\n${track.title} failed to load within ${
-            payload.thresholdMs ? payload.thresholdMs : 10000
-          } ms\`\`\``
-        )
-      )
-      .catch();
+    return client.embeds.error(
+      client.channels.cache.get(player.textChannel) as TextChannel,
+      {
+        title: 'Track failed to load!',
+        description: `\`\`\`scala\n${track.title} failed to load within ${
+          payload.thresholdMs ? payload.thresholdMs : 10000
+        } ms\`\`\``
+      }
+    );
   }
 };
 

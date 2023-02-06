@@ -5,7 +5,6 @@ const LoopCommand: iCommand = {
   name: 'loop',
   aliases: ['ll', 'lo'],
   voiceRequired: true,
-  joinPermissionRequired: false,
   playerRequired: true,
   sameChannelRequired: true,
   visible: true,

@@ -1,6 +1,5 @@
 import { SocketEvent } from 'flavus-api';
 import { Player } from 'erela.js';
-import { getPlayer } from '../player';
 
 interface IMoveIndex {
   removedIndex: number;
@@ -8,7 +7,7 @@ interface IMoveIndex {
 }
 
 const PauseEvent: SocketEvent = {
-  name: 'moveTrack',
+  name: 'player:moveTrack',
   rateLimit: {
     points: 5,
     duration: 1
@@ -23,12 +22,12 @@ const PauseEvent: SocketEvent = {
     )
       //if data.removedIndex is missing return error
 
-      return socket.emit('playerError', 'Move data is corrupted!');
+      return socket.emit('player:error', 'Move data is corrupted!');
     const voiceCache = client.apiClient.cache.voiceStates.get(
       socket.request.session.user.id
     );
     if (!voiceCache)
-      return socket.emit('playerError', "I can't see you connected!");
+      return socket.emit('player:error', "I can't see you connected!");
 
     const player: Player = client.manager.players.get(
       client.apiClient.cache.voiceStates.get(socket.request.session.user.id).voiceChannel
@@ -36,7 +35,7 @@ const PauseEvent: SocketEvent = {
     );
 
     if (!player)
-      return socket.emit('playerError', 'Cant move track, there is no player!');
+      return socket.emit('player:error', 'Cant move track, there is no player!');
 
     if (
       player.queue.size === 0 ||
@@ -45,12 +44,12 @@ const PauseEvent: SocketEvent = {
       data.removedIndex > player.queue.size ||
       data.addedIndex > player.queue.size
     )
-      return socket.emit('playerError', `Corrupted track index`);
+      return socket.emit('player:error', `Corrupted track index`);
     //remove track from queue according to removedIndex, and add it to the queue according to addedIndex
     const track = player.queue[data.removedIndex];
     player.queue.remove(data.removedIndex);
     player.queue.add(track, data.addedIndex);
-    await getPlayer(client, socket);
+    //await getPlayer(client, socket);
   }
 };
 

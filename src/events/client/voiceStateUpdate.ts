@@ -1,8 +1,6 @@
 import { VoiceState, Permissions } from 'discord.js';
 import { iEvent } from 'flavus';
 
-//TODO: Fix this mess!!!!!!!!!!!!!!!!!!
-
 const VoiceStateUpdateEvent: iEvent = {
   name: 'voiceStateUpdate',
   async execute(client, oldState: VoiceState, newState: VoiceState) {
@@ -33,91 +31,47 @@ const VoiceStateUpdateEvent: iEvent = {
             1 &&
             newState.member.user === client.user))
       ) {
-        client.emit('apiHandleConnect', newState);
-        /*
-        client.apiClient.cache.voiceStates.set(newState.member.id, {
-          voiceChannel: newState.channel as VoiceChannel,
-          user: newState.member.user,
-          guildId: newState.guild.id,
-          deafened: newState.member.voice.deaf || newState.member.voice.selfDeaf
-        });
-        */
+        client.emit('handleConnectVoice', newState);
       } else {
-        client.emit('apiHandleDisconnect', oldState);
-        /*
-        client.apiClient.cache.voiceStates.delete(newState.member.id);
-        */
+        client.emit('handleDisconnectVoice', oldState);
       }
     }
 
     /**
-     * Auto Leave Channel on EMPTY OR EVERYONE IS DEAFED!
+     * Auto Leave Channel on EMPTY
      */
-    if (oldState.channelId && (!newState.channelId || newState.channelId)) {
-      var player = client.manager.players.get(newState.guild.id);
-      if (player && oldState.channelId === player.voiceChannel) {
-        //as long as it's the right voice State
-        if (
-          !(
-            (!oldState.streaming && newState.streaming) ||
-            (oldState.streaming && !newState.streaming) ||
-            (!oldState.serverMute &&
-              newState.serverMute &&
-              !newState.serverDeaf &&
-              !newState.selfDeaf) ||
-            (oldState.serverMute &&
-              !newState.serverMute &&
-              !newState.serverDeaf &&
-              !newState.selfDeaf) ||
-            (!oldState.selfMute &&
-              newState.selfMute &&
-              !newState.serverDeaf &&
-              !newState.selfDeaf) ||
-            (oldState.selfMute &&
-              !newState.selfMute &&
-              !newState.serverDeaf &&
-              !newState.selfDeaf) ||
-            (!oldState.selfVideo && newState.selfVideo) ||
-            (oldState.selfVideo && !newState.selfVideo)
-          )
-        ) {
-          //if player exist, but not connected or channel got empty (for no bots)
-          if (
-            client.config.leaveOnEmptyChannel !== null &&
-            player &&
-            (!oldState.channel.members ||
-              oldState.channel.members.size === 0 ||
-              oldState.channel.members.filter(
-                (mem) => !mem.user.bot && !mem.voice.deaf && !mem.voice.selfDeaf
-              ).size < 1)
-          ) {
-            setTimeout(async () => {
-              try {
-                let vc: any = newState.guild.channels.cache.get(
-                  player.voiceChannel
-                );
-                if (vc) vc = await vc.fetch();
-                if (!vc)
-                  vc =
-                    (await newState.guild.channels
-                      .fetch(player.voiceChannel)
-                      .catch()) || false;
-                if (!vc) return player.destroy();
-                if (
-                  !vc.members ||
-                  vc.members.size === 0 ||
-                  vc.members.filter(
-                    (mem) =>
-                      !mem.user.bot && !mem.voice.deaf && !mem.voice.selfDeaf
-                  ).size < 1
-                ) {
-                  player.destroy();
-                }
-              } catch (e) {
-                console.log(e);
-              }
-            }, client.config.leaveOnEmptyChannel * 1000);
-          }
+
+    if (
+      (oldState.channelId && !newState.channelId) ||
+      (newState.channelId &&
+        oldState.channelId &&
+        oldState.channelId !== newState.channelId &&
+        client.config.leaveOnEmptyChannel !== null)
+    ) {
+      const player = client.manager.players.get(oldState.guild.id);
+      if (
+        player &&
+        (!oldState.channel.members ||
+          oldState.channel.members.size === 0 ||
+          oldState.channel.members.filter((mem) => !mem.user.bot).size < 1)
+      ) {
+        if (player.timeout) return;
+        player.timeout = setTimeout(async () => {
+          client.logger.log('Stopping player, code 102');
+          player.destroy();
+        }, client.config.leaveOnEmptyChannel * 1000);
+      }
+    }
+
+    if (newState.channelId && !oldState.channelId) {
+      const player = client.manager.players.get(newState.guild.id);
+      if (
+        player &&
+        newState.channel.members &&
+        newState.channel.members.filter((mem) => !mem.user.bot).size >= 1
+      ) {
+        if (player.timeout) {
+          player.timeout = null;
         }
       }
     }

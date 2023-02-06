@@ -1,13 +1,13 @@
 import { SocketEvent } from 'flavus-api';
 import type { Player } from 'erela.js';
 
-const StopEvent: SocketEvent = {
-  name: 'player:stop',
+const PauseEvent: SocketEvent = {
+  name: 'player:queueRefresh',
   rateLimit: {
-    points: 1,
+    points: 5,
     duration: 1
   },
-  async execute(client, socket, data: boolean): Promise<boolean> {
+  async execute(client, socket): Promise<boolean> {
     const voiceCache = client.apiClient.cache.voiceStates.get(
       socket.request.session.user.id
     );
@@ -16,11 +16,11 @@ const StopEvent: SocketEvent = {
     const player: Player = client.manager.players.get(
       voiceCache.voiceChannel.guild.id
     );
-    if (!player) return socket.emit('player:error', 'Nothing to stop!');
-    client.logger.log('Stopping player, code 101');
-    player.destroy();
-    //await getPlayer(client, socket);
+    if (!player)
+      return socket.emit('player:error', 'Error fetching queue!');
+    console.log("updating queue")
+    //client.emit('queueUpdate', player)
   }
 };
 
-export default StopEvent;
+export default PauseEvent;

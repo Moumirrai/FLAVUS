@@ -2,13 +2,9 @@ import { Message, MessageEmbed } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 import formatDuration = require('format-duration');
 
-const PingCommand: iCommand = {
+const StatsCommand: iCommand = {
   name: 'stats',
-  aliases: [],
-  voiceRequired: false,
-  joinPermissionRequired: false,
-  playerRequired: false,
-  sameChannelRequired: false,
+  aliases: ['metrics'],
   visible: false,
   description: 'stats_description',
   usage: 'stats',
@@ -46,4 +42,4 @@ const PingCommand: iCommand = {
   }
 };
 
-export default PingCommand;
+export default StatsCommand;

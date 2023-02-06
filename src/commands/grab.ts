@@ -5,10 +5,7 @@ import formatDuration = require('format-duration');
 const GrabCommand: iCommand = {
   name: 'grab',
   aliases: ['g', 'save', 'sv'],
-  voiceRequired: false,
-  joinPermissionRequired: false,
   playerRequired: true,
-  sameChannelRequired: false,
   visible: true,
   description: 'Sends info about the current track to your DM',
   usage: '<prefix>grab',

@@ -1,30 +1,29 @@
 import { SocketEvent } from 'flavus-api';
 import type { Player } from 'erela.js';
-import { getPlayer } from '../player';
 
 const SeekEvent: SocketEvent = {
-  name: 'seek',
+  name: 'player:seek',
   rateLimit: {
-    points: 1,
-    duration: 2
+    points: 2,
+    duration: 1
   },
   async execute(client, socket, data: number): Promise<boolean> {
     const voiceCache = client.apiClient.cache.voiceStates.get(
       socket.request.session.user.id
     );
     if (!voiceCache)
-      return socket.emit('playerError', "I can't see you connected!");
+      return socket.emit('player:error', "I can't see you connected!");
     const player: Player = client.manager.players.get(
       voiceCache.voiceChannel.guild.id
     );
     if (!player || !player.queue.current)
-      return socket.emit('playerError', 'Nothing to seek!');
+      return socket.emit('player:error', 'Nothing to seek!');
     if (typeof data !== 'number')
-      return socket.emit('playerError', 'Seek data must be a number!');
+      return socket.emit('player:error', 'Seek data must be a number!');
     if (data < 0 || data > player.queue.current.duration)
-      return socket.emit('playerError', 'Seek is limited by track duration!');
+      return socket.emit('player:error', 'Seek is limited by track duration!');
     player.seek(data);
-    await getPlayer(client, socket);
+    //await getPlayer(client, socket);
   }
 };
 

@@ -1,18 +1,15 @@
 import { config } from '../config/config';
 import { LavalinkManager } from './Erela/LavalinkManager';
-import Genius from 'genius-lyrics';
 import { Client, Intents, Collection } from 'discord.js';
 import { readdirSync } from 'fs';
 import Logger from './Logger';
 import { resolve } from 'path';
-import type { iCommand, iVoiceCache } from 'flavus';
+import type { iCommand } from 'flavus';
 import { connect, ConnectOptions } from 'mongoose';
 import Functions from './Functions';
 import * as Embeds from './Embeds';
-import Mongo from './Mongo';
 import PlayerManager from './PlayerManager';
-import { APICore } from './APIClient';
-import { Socket } from 'socket.io';
+import { APICore } from '../API/client/APICore';
 
 export class Core extends Client {
   constructor() {
@@ -33,29 +30,15 @@ export class Core extends Client {
 
     this.config = config;
     this.manager = new LavalinkManager(this);
-    if (process.env.GENIUS) {
-      this.lyrics = new Genius.Client(process.env.GENIUS);
-    } else {
-      this.lyrics = new Genius.Client();
-    }
   }
   public logger = Logger;
-  //export logger to be used in other files
 
   public aliases = new Collection<string, iCommand>();
   public commands = new Collection<string, iCommand>();
 
-  /*
-  public APICache = {
-    voice: new Collection<string, iVoiceCache>(),
-    socket: new Collection<string, Socket>()
-  };
-  */
-
   public status = 1;
   public functions = Functions;
   public embeds = Embeds;
-  public mongo = Mongo;
   public PlayerManager = PlayerManager;
   public async main() {
     try {
@@ -127,3 +110,5 @@ export class Core extends Client {
     this.logger.info(`${files.length} manager events loaded!`);
   }
 }
+
+export { Logger };

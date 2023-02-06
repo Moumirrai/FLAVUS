@@ -4,10 +4,6 @@ import { CommandArgs, iCommand } from 'flavus';
 const PingCommand: iCommand = {
   name: 'ping',
   aliases: [],
-  voiceRequired: false,
-  joinPermissionRequired: false,
-  playerRequired: false,
-  sameChannelRequired: false,
   visible: true,
   description: 'ping_description',
   usage: '<prefix>ping',

@@ -12,7 +12,12 @@ const VolumeCommand: iCommand = {
   visible: true,
   description: 'Sets volume or shows current volume if no argument is given',
   usage: '`<prefix>volume <number>` or `<prefix>v`',
-  async execute({ client, message, args, player }: CommandArgs): Promise<Message> {
+  async execute({
+    client,
+    message,
+    args,
+    player
+  }: CommandArgs): Promise<Message> {
     if (!args[0]) {
       return message.channel.send({
         embeds: [

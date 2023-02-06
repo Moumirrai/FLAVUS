@@ -5,7 +5,6 @@ const ShuffleCommand: iCommand = {
   name: 'shuffle',
   aliases: [],
   voiceRequired: true,
-  joinPermissionRequired: false,
   playerRequired: true,
   sameChannelRequired: true,
   visible: true,
@@ -13,6 +12,7 @@ const ShuffleCommand: iCommand = {
   usage: `<prefix>shuffle`,
   async execute({ client, message, player }: CommandArgs): Promise<void|MessageReaction> {
     player.queue.shuffle();
+    client.emit('queueUpdate', player);
     return message.react('🔀').catch((e) => {
       client.logger.error(e);
     });

@@ -30,8 +30,9 @@ const SearchCommand: iCommand = {
     client
   }: CommandArgs): Promise<Message> {
     if (!args) {
-      return message.channel.send(
-        client.embeds.error('No arguments were provided!')
+      return client.embeds.error(
+        message.channel,
+        'No arguments were provided!'
       );
     }
     const search = args.join(' ');
@@ -58,12 +59,10 @@ const SearchCommand: iCommand = {
           };
       } catch (e) {
         client.logger.error(e.stack);
-        return message.channel.send(
-          client.embeds.error(
-            'Error while searching: `' + search + '`',
-            e.stack.toString()
-          )
-        );
+        return client.embeds.error(message.channel, {
+          title: `Error while searching: \`${search}\``,
+          description: `\`\`\`${e.stack.toString()}\`\`\``
+        });
       }
 
       let max = 10;
@@ -189,15 +188,18 @@ const SearchCommand: iCommand = {
               player.connect();
               player.queue.add(toAddTracks);
               await player.play();
+              client.emit('queueUpdate', player);
               player.pause(false);
             } else if (!player.queue || !player.queue.current) {
               //add track
               player.queue.add(toAddTracks);
               //play track
               await player.play();
+              client.emit('queueUpdate', player);
               player.pause(false);
             } else {
               player.queue.add(toAddTracks);
+              client.emit('queueUpdate', player);
               track = toAddTracks[0];
               const embed3 = new MessageEmbed()
                 .setTitle(
@@ -237,10 +239,9 @@ const SearchCommand: iCommand = {
       }
     } catch (e) {
       client.logger.error(e.stack);
-      return message.channel.send(
-        client.embeds.error(
-          ('Nothing found for: `' + search).substring(0, 256 - 3) + '`'
-        )
+      return client.embeds.error(
+        message.channel,
+        `Nothing found for: \`${search.substring(0, 256 - 3)}\``
       );
     }
   }

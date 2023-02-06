@@ -28,13 +28,11 @@
     "express-rate-limit": "^6.4.0",
     "express-session": "^1.17.3",
     "format-duration": "^1.4.0",
-    "genius-lyrics": "^4.3.5",
-    "moment": "^2.29.4",
+    "hash-sum": "^2.0.0",
     "mongoose": "^6.4.6",
     "rate-limiter-flexible": "^2.3.7",
     "scrape-youtube": "^2.2.0",
     "socket.io": "^4.5.1",
-    "undici": "^5.14.0",
     "valid-url": "^1.0.9"
   },
   "devDependencies": {

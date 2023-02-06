@@ -5,7 +5,6 @@ const PauseCommand: iCommand = {
   name: 'pause',
   aliases: ['ps'],
   voiceRequired: true,
-  joinPermissionRequired: false,
   playerRequired: true,
   sameChannelRequired: true,
   visible: true,

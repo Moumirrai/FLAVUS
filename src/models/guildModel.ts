@@ -5,8 +5,8 @@ export interface IGuildModel extends Document {
   volume: number;
   autoplay: {
     active: boolean;
-    mode: "yt" | "spotify";
-  }
+    mode: 'yt' | 'spotify';
+  };
   timestamp: Date;
   statusChannel: {
     name: string;
@@ -31,7 +31,7 @@ export const GuildSchema = new Schema({
     },
     mode: {
       type: String,
-      default: "yt"
+      default: 'yt'
     }
   },
   statusChannel: {

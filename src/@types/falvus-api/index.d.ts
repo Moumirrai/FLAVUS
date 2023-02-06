@@ -59,7 +59,7 @@ declare module 'flavus-api' {
       owner: boolean;
       permissions: number;
       features: string[];
-    }[],
+    }[];
     notActive: {
       id: string;
       name: string;
@@ -67,7 +67,7 @@ declare module 'flavus-api' {
       owner: boolean;
       permissions: number;
       features: string[];
-    }[]
+    }[];
   }
 
   export interface APIInterface {
@@ -81,5 +81,95 @@ declare module 'flavus-api' {
     playlistName?: string;
     nowPlaying?: boolean;
     error?: boolean;
+  }
+
+  export interface PlayerData {
+    state?: boolean;
+    playing?: boolean;
+    position?: number;
+    paused?: boolean;
+    queueRepeat?: boolean;
+    guild?: {
+      name: string;
+      avatar: string;
+    };
+    player?: {
+      current?: {
+        title: string;
+        author: string;
+        duration: number;
+        thumbnail: string;
+        identifier: string;
+      };
+      queue?: {
+        size: number;
+        hash: string;
+      };
+    };
+  }
+
+  export interface QueueData {
+    size: number;
+    hash: string;
+    tracks: {
+      title: string;
+      author: string;
+      duration: number;
+      thumbnail: string;
+    }[];
+  }
+
+  export enum ClientToServerEvents {
+    'player:addTrack' = 'player:addTrack',
+    'player:clearQueue' = 'player:clearQueue',
+    'player:moveTrack' = 'player:moveTrack',
+    'player:pause' = 'player:pause',
+    'player:removeTrack' = 'player:removeTrack',
+    'player:seek' = 'player:seek',
+    'player:skip' = 'player:skip',
+    'player:stop' = 'player:stop',
+    'player:test' = 'player:test',
+  }
+
+  /*
+
+  export type ClientToServerEvents = {
+    'player:addTrack': (payload: string) => void;
+    'player:clearQueue': () => void;
+    'player:moveTrack': (payload: {
+      removedIndex: number;
+      addedIndex: number;
+    }) => void;
+    'player:pause': (payload: boolean) => void;
+    'player:removeTrack': (payload: number) => void;
+    'player:seek': (payload: number) => void;
+    'player:skip': (payload: number) => void;
+    'player:stop': () => void;
+    'player:test': (payload: any) => void;
+  };
+
+  export type ServerToClientEvents = {
+    'player:data': (payload: PlayerData) => void;
+    'player:queueData': (payload: QueueData) => void;
+  };
+
+  export type InterServerEvents = {};
+  export type SocketData = {};
+
+  */
+
+  interface ServerToClientEvents {
+    noArg: () => void;
+    basicEmit: (a: number, b: string, c: Buffer) => void;
+    withAck: (d: string, callback: (e: number) => void) => void;
+  }
+  
+  interface ClientToServerEvents {
+    hello: () => void;
+  }
+  
+  export type InterServerEvents = {};
+  interface SocketData {
+    pepe: string;
   }
 }

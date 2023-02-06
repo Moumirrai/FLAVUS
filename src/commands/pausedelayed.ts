@@ -5,7 +5,6 @@ const PauseOnEndCommand: iCommand = {
   name: 'pausedelayed',
   aliases: ['paused', 'psd'],
   voiceRequired: true,
-  joinPermissionRequired: false,
   playerRequired: true,
   sameChannelRequired: true,
   visible: true,

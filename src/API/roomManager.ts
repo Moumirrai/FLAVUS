@@ -1,4 +1,4 @@
-import { APICore } from '../APIClient';
+import { APICore } from './client/APICore';
 import { Socket } from 'socket.io';
 
 export default class roomManager {
@@ -8,8 +8,9 @@ export default class roomManager {
 
   public api: APICore;
 
-  private destroyRoom(id: string) {
+  public destroyRoom(id: string) {
     const room = this.api.cache.rooms.get(id);
+    if (!room) return;
     if (room.interval) {
       this.api.client.logger.debug('Clearing interval for room ' + room.id);
       clearInterval(room.interval);
@@ -21,9 +22,11 @@ export default class roomManager {
 
 
   private async purgeRooms(socket: Socket, id?: string) {
+    console.log('Purging rooms')
     if (!id) id = 'undefined';
-    if (socket.rooms.size) {
-      socket.rooms.forEach(async (room) => {
+    if (socket && socket.rooms && socket.rooms.size) {
+      console.log('Purging rooms 1')
+      for (const room of socket.rooms) {
         if (room !== id) {
           socket.leave(room);
           if (this.api.cache.rooms.has(room)) {
@@ -38,20 +41,22 @@ export default class roomManager {
             }
           }
         }
-      })
+      }
     }
   }
 
 
   public async leave(socket: Socket) {
     this.api.client.logger.debug('Leaving room');
-    //console.log(socket.rooms);
-    this.purgeRooms(socket);
+    if (socket && socket.connected) socket.emit('playerDestroy');
+    await this.purgeRooms(socket);
   }
 
   public async join(socket: Socket, guildId: string) {
+    console.log('joining room')
     await this.purgeRooms(socket, guildId);
     if (!socket.rooms.has(guildId)) {
+      console.log('joining room' + guildId)
       socket.join(guildId);
     }
     if (!this.api.cache.rooms.has(guildId)) {
@@ -59,7 +64,9 @@ export default class roomManager {
       this.api.cache.rooms.set(guildId, {
         id: guildId,
         members: [socket.request.session.user.id],
-        interval: null
+        interval:  setInterval(() => {
+          this.api.playerPing.playerData(guildId);
+        }, 1000)
       });
     } else if (!this.api.cache.rooms.get(guildId).members.includes(socket.request.session.user.id)) {
       this.api.client.logger.debug('Assigning to existing room in cache ' + guildId);

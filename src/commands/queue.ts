@@ -1,13 +1,10 @@
-import { MessageActionRow, MessageButton } from 'discord.js';
+import { MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 
 const QueueCommand: iCommand = {
   name: 'queue',
   aliases: ['q', 'np'],
-  voiceRequired: false,
-  joinPermissionRequired: false,
   playerRequired: true,
-  sameChannelRequired: false,
   visible: true,
   description: 'Shows queue and current track progress',
   usage: '<prefix>queue',
@@ -27,7 +24,7 @@ const QueueCommand: iCommand = {
     message.channel
       .send({ embeds: [client.functions.createQueueEmbed(player, 0, client)] })
       .then((message) => {
-        const player = client.manager.players.get(message.guild.id);
+        let player = client.manager.players.get(message.guild.id);
         if (player.queue.length <= 15) return;
         message.edit({
           components: [row]
@@ -39,6 +36,20 @@ const QueueCommand: iCommand = {
         collector.on('collect', async (button) => {
           const maxIndex = Math.ceil(player.queue.length / 15) * 15 - 15;
           if (button.message.id !== message.id) return;
+          collector.resetTimer();
+          player = client.manager.players.get(message.guild.id);
+          if (!player) {
+            await button.deferUpdate();
+            await message.edit({
+              embeds: [
+                new MessageEmbed()
+                  .setColor(client.config.embed.color)
+                  .setTitle('There is no player!')
+              ],
+              components: []
+            });
+            return collector.stop();
+          }
           if (button.customId === 'id_1') {
             if (player.queue.length <= 15) return collector.stop();
             if (currentIndex - 15 > maxIndex) {

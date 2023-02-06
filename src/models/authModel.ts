@@ -12,10 +12,10 @@ export interface IAuthModel extends Document {
 export const AuthSchema = new Schema({
   code: {
     type: String,
-    required: true,
+    required: true
   },
   id: {
-    type: String,
+    type: String
   },
   auth: {
     type: Object
