@@ -27,6 +27,7 @@ const queueEndEvent: iManagerEvent = {
           client.logger.error(e);
         });
     }
+    console.log("error:skip:1");
     await client.PlayerManager.autoplay(client, player, guildModel.autoplay.mode);
     client.emit('queueUpdate', player)
   }

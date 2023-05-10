@@ -35,6 +35,7 @@ const PauseEvent: SocketEvent = {
     )
       return socket.emit('player:error', `Corrupted track index: ${data}`);
     player.queue.remove(data);
+    client.emit('queueUpdate', player);
     //await getPlayer(client, socket);
   }
 };

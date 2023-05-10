@@ -90,12 +90,13 @@ export default class roomPing {
   public async getQueueData(player: Player): Promise<QueueData> {
     if (!player || !player.queue.current || !player.queue.size)
       return {
-        hash: hash(null),
+        hash: player.hash,
         size: 0,
         tracks: []
       };
     return {
-      hash: hash(player.queue),
+      //hash: hash(player.queue),
+      hash: player.hash,
       size: player.queue.size,
       tracks: player.queue.map((song) => {
         return {

@@ -18,6 +18,7 @@ const SkipEvent: SocketEvent = {
     );
     if (!player || !player.queue.current)
       return socket.emit('player:error', 'There is nothing playing!');
+    console.log("playerstop")
     player.stop();
     //await getPlayer(client, socket);
   }

@@ -80,5 +80,6 @@ export default class roomManager {
           .members.push(socket.request.session.user.id);
       }
     }
+    this.api.playerPing.queueData(guildId);
   }
 }

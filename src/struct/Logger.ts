@@ -57,7 +57,7 @@ export class Logger {
     process.on('uncaughtException', (err) => {
       this.error(err.stack);
       return;
-    });
+    }); 
   };
 }
 

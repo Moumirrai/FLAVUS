@@ -1,13 +1,13 @@
 import { SocketEvent } from 'flavus-api';
 import type { Player } from 'erela.js';
 
-const PauseEvent: SocketEvent = {
-  name: 'player:queueRefresh',
+const SkipEvent: SocketEvent = {
+  name: 'player:shuffle',
   rateLimit: {
-    points: 5,
+    points: 5, //TODO: REVERT TO 1 !!!!!!!
     duration: 1
   },
-  async execute(client, socket): Promise<boolean> {
+  async execute(client, socket, data?): Promise<boolean> {
     const voiceCache = client.apiClient.cache.voiceStates.get(
       socket.request.session.user.id
     );
@@ -16,11 +16,12 @@ const PauseEvent: SocketEvent = {
     const player: Player = client.manager.players.get(
       voiceCache.voiceChannel.guild.id
     );
-    if (!player)
-      return socket.emit('player:error', 'Error fetching queue!');
-    console.log("updating queue")
-    client.emit('queueUpdate', player)
+    if (!player || !player.queue.current)
+      return socket.emit('player:error', 'There is nothing playing!');
+    player.queue.shuffle();
+    client.emit('queueUpdate', player);
+    //await getPlayer(client, socket);
   }
 };
 
-export default PauseEvent;
+export default SkipEvent;

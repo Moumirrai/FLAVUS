@@ -37,6 +37,7 @@ const SkipCommand: iCommand = {
         if (Number(args[0]) !== 1) player.queue.remove(0, Number(args[0]) - 1); //remove tracks from queue
       }
     }
+    console.log("playerstop")
     player.stop(); // skip the track
     return message.react('⏭').catch((e) => {
       client.logger.error(e);

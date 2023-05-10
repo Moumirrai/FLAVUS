@@ -2,12 +2,7 @@ import bodyParser = require('body-parser');
 import cors = require('cors');
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
-import type {
-  APIInterface,
-  APIEndpoint,
-  SocketEvent,
-  Room
-} from 'flavus-api';
+import type { APIInterface, APIEndpoint, SocketEvent, Room } from 'flavus-api';
 import { Collection } from 'discord.js';
 import { Core, Logger } from '../../struct/Core';
 import express from 'express';
@@ -21,7 +16,7 @@ import rateLimit from 'express-rate-limit';
 import roomManager from '../roomManager';
 import playerPing from '../playerPing';
 
-import { sessionMiddleware } from "../middlewares"
+import { sessionMiddleware } from '../middlewares';
 
 declare module 'http' {
   interface IncomingMessage {
@@ -50,7 +45,6 @@ export class APICore implements APIInterface {
   }
 
   private async main() {
-
     const app = express();
     const server = http.createServer(app);
     //TODO: add cors to config
@@ -115,8 +109,8 @@ export class APICore implements APIInterface {
           req.session.createdAt = new Date().getTime();
           return next();
         }
-        this.client.logger.log('Authentification failed!');
-        return res.status(401).send('Authentification failed!');
+        this.client.logger.log('Authentication failed!');
+        return res.status(401).send('Authentication failed!');
       }
     );
 
@@ -127,7 +121,7 @@ export class APICore implements APIInterface {
 
     this.io.use(async (socket, next) => {
       if (!socket.handshake.query.code)
-        return next(new Error('Authentification failed!'));
+        return next(new Error('Authentication failed!'));
       const code = socket.handshake.query.code.toString();
       if (socket.request.session && socket.request.session.code === code) {
         return next();
@@ -139,7 +133,7 @@ export class APICore implements APIInterface {
         socket.request.session.createdAt = new Date().getTime();
         return next();
       }
-      return next(new Error('Authentification failed!'));
+      return next(new Error('Authentication failed!'));
     });
 
     this.io.on('connection', (socket: Socket) => {
@@ -159,27 +153,27 @@ export class APICore implements APIInterface {
       }
       this.client.emit('handleConnectSocket', socket);
       /*
-      After a socket is disconnected, it is removed from its rooms, 
+      TODO: After a socket is disconnected, it is removed from its rooms, 
       but they are not cleared from the cache because the socket no 
-      longer references it. Fix!!
+      longer references it. Fix it!
       */
-
-      this.io.of('/').adapter.on('create-room', (room) => {
-        console.log('room created ' + room);
-      });
-      this.io.of('/').adapter.on('delete-room', (room) => {
-        this.roomManager.destroyRoom(room);
-      });
-      this.io.of('/').adapter.on('join-room', (room) => {
-        console.log('room joined ' + room);
-      });
-      this.io.of('/').adapter.on('leave-room', (room) => {
-        console.log('room left ' + room);
-      });
 
       socket.on('disconnect', () => {
         this.client.emit('handleDisconnectSocket', socket);
       });
+    });
+
+    this.io.of('/').adapter.on('create-room', (room) => {
+      console.log('room created ' + room);
+    });
+    this.io.of('/').adapter.on('delete-room', (room) => {
+      this.roomManager.destroyRoom(room);
+    });
+    this.io.of('/').adapter.on('join-room', (room) => {
+      console.log('room joined ' + room);
+    });
+    this.io.of('/').adapter.on('leave-room', (room) => {
+      console.log('room left ' + room);
     });
 
     app.post('/api/:path', async (req, res) => {
@@ -192,6 +186,25 @@ export class APICore implements APIInterface {
       );
       if (!endpoint) return res.status(404).send('404 Not Found');
       await endpoint.execute(this.client, req, res);
+    });
+
+    process.stdin.on('data', (data) => {
+      if (data.toString().toLowerCase().trim() === 'r') {
+        process.stdout.clearLine(0);
+        console.log('Rooms:');
+        console.log(this.io.of('/').adapter.rooms);
+      } else if (data.toString().toLowerCase().trim() === 's') {
+        process.stdout.clearLine(0);
+        console.log('Stats:');
+        console.log(
+          `Rooms :${this.io.of('/').adapter.rooms.size} , Clients: ${
+            this.io.of('/').adapter.sockets.length
+          }`
+        );
+      } else if (data.toString().toLowerCase().trim() === 'cls') {
+        //clear console
+        process.stdout.write('\x1Bc');
+      }
     });
 
     server.listen(port, () => Logger.info(`API running on port ${port}`));
