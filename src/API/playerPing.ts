@@ -1,7 +1,7 @@
 import type { Player } from 'erela.js';
-import { Core } from '../struct/Core';
+import type { Core } from '../struct/Core';
 import { PlayerData, QueueData } from 'flavus-api';
-import { APICore } from './client/APICore';
+import type { APICore } from './client/APICore';
 import hash from 'hash-sum';
 
 //TODO: send less data per second - send only whats needed, do not send something that does not need to update
@@ -90,13 +90,13 @@ export default class roomPing {
   public async getQueueData(player: Player): Promise<QueueData> {
     if (!player || !player.queue.current || !player.queue.size)
       return {
-        hash: player.hash,
+        hash: player ? player.hash : undefined,
         size: 0,
         tracks: []
       };
     return {
       //hash: hash(player.queue),
-      hash: player.hash,
+      hash: player ? player.hash : undefined,
       size: player.queue.size,
       tracks: player.queue.map((song) => {
         return {

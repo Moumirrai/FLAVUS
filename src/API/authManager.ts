@@ -50,11 +50,15 @@ export async function authUser(
       }
       return null;
     }
+    console.log('new auth');
     //new auth
     const newCredentials: AuthResponse | null = await newAuth(code);
+    console.log('new credentials ' + newCredentials);
     if (newCredentials) {
       //if code is valid
       const user = await getUser(newCredentials.access_token, client);
+      console.log('new user');
+      console.log(user);
       if (user) {
         try {
           const newuserAuth: IAuthModel = new AuthModel({

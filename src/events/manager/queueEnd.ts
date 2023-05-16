@@ -4,7 +4,6 @@ import { iManagerEvent } from 'flavus';
 import { GuildModel } from '../../models/guildModel';
 
 const queueEndEvent: iManagerEvent = {
-  //TODO: emmit clear queue when destroyed!!!
   name: 'queueEnd',
   async execute(client, _manager, player: Player) {
     const guildModel = await GuildModel.findOne({
@@ -27,7 +26,7 @@ const queueEndEvent: iManagerEvent = {
           client.logger.error(e);
         });
     }
-    console.log("error:skip:1");
+    //console.log("error:skip:1");
     await client.PlayerManager.autoplay(client, player, guildModel.autoplay.mode);
     client.emit('queueUpdate', player)
   }

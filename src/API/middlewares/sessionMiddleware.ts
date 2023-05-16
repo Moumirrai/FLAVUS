@@ -1,12 +1,9 @@
 import session from 'express-session';
 
-//TOTO: !!!!
-/*
 if (!process.env.SECRET) {
   console.error('Secret is not defined!');
   process.exit(1);
 }
-*/
 
 const sessionMiddleware = session({
   cookie: {

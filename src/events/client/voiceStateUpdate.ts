@@ -41,6 +41,15 @@ const VoiceStateUpdateEvent: iEvent = {
      * Auto Leave Channel on EMPTY
      */
 
+    /*
+    if (
+      oldState.channelId === newState.channelId ||
+      (!oldState.channelId && !newState.channelId) ||
+      (!newState.channelId && client.config.leaveOnEmptyChannel === null)
+    ) {
+      return;
+    }
+*/
     if (
       (oldState.channelId && !newState.channelId) ||
       (newState.channelId &&

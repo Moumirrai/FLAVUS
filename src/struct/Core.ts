@@ -40,7 +40,7 @@ export class Core extends Client {
   public functions = Functions;
   public embeds = Embeds;
   public PlayerManager = PlayerManager;
-  public async main() {
+  public async main(): Promise<void> {
     try {
       this.logger.info('Initializing...');
       this.logger.catchErrors();
@@ -70,6 +70,10 @@ export class Core extends Client {
         return this.logger.error('MongoDB connection error: ' + err);
       });
   }
+
+  /**
+   * Loads all commands and aliases from the commands folder
+   */
 
   private async loadCommands(): Promise<void> {
     const files = readdirSync(resolve(__dirname, '..', 'commands'));

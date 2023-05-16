@@ -1,5 +1,6 @@
 import { config as dotenvConfig } from 'dotenv';
 import { ColorResolvable } from 'discord.js';
+import { NodeOptions } from 'erela.js';
 dotenvConfig();
 
 export type BotConfig = {
@@ -7,6 +8,7 @@ export type BotConfig = {
   prefix: string;
   owner: string;
   erela: {
+    /*
     nodes: {
       host: string;
       port: number;
@@ -14,6 +16,8 @@ export type BotConfig = {
       retryDelay: number;
       secure: boolean;
     }[];
+    */
+    nodes: NodeOptions[];
     shards: number;
     clientName: string;
   };
@@ -73,7 +77,8 @@ export const config: BotConfig = {
         port: parseInt(process.env.LAVALINK_PORT),
         password: process.env.LAVALINK_PASSWORD,
         retryDelay: parseInt(process.env.LAVALINK_RETRY_DELAY),
-        secure: process.env.LAVALINK_SECURE === 'true'
+        secure: process.env.LAVALINK_SECURE === 'true',
+        rest: true,
       }
     ],
     shards: parseInt(process.env.SHARD_COUNT),
@@ -95,7 +100,7 @@ export const config: BotConfig = {
   leaveOnEmptyChannel: parseInt(process.env.LEAVE_ON_EMPTY_CHANNEL),
   split: new RegExp(/[ -/<>(){}\[\].,\\*-+=%'´§_:?!°"#&@|˛`˙˝¨¸~•]+/u),
   anonymous: process.env.ANONYMOUS === 'true',
-  debugMode: process.env.DEBUGMODE === 'true',
+  debugMode: true,//process.env.DEBUGMODE === 'true',
   api: process.env.API === 'true',
   ratelimit: {
     socket: {

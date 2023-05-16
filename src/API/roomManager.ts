@@ -1,4 +1,4 @@
-import { APICore } from './client/APICore';
+import type { APICore } from './client/APICore';
 import { Socket } from 'socket.io';
 
 export default class roomManager {
@@ -8,6 +8,11 @@ export default class roomManager {
 
   public api: APICore;
 
+  /**
+   * Stops the room interval and removes it from cache
+   * @param {string} id ID of the room to destroy
+   * @returns {void}
+  */
   public destroyRoom(id: string) {
     const room = this.api.cache.rooms.get(id);
     if (!room) return;
@@ -19,44 +24,60 @@ export default class roomManager {
     this.api.cache.rooms.delete(id);
   }
 
-
-
-  private async purgeRooms(socket: Socket, id?: string) {
-    console.log('Purging rooms')
+  //TF IS THIS???
+  /**
+   * Purges all unnecessary rooms from the socket, also should destroy the room if it's empty but idk about that
+   * @param {Socket} socket Socket
+   * @param {string} id ID of the room to omit from the purge
+   * @returns {Promise<IGuildModel>} GuildModel
+   */
+  private async purgeRooms(socket: Socket, id?: string): Promise<void> {
+    console.log('Purging rooms');
+    this.api.client.logger.debug('Purging rooms');
     if (!id) id = 'undefined';
-    if (socket && socket.rooms && socket.rooms.size) {
-      console.log('Purging rooms 1')
-      for (const room of socket.rooms) {
-        if (room !== id) {
-          socket.leave(room);
-          if (this.api.cache.rooms.has(room)) {
-            this.api.cache.rooms.get(room).members = this.api.cache.rooms
-              .get(room)
-              .members.filter(
-                (member) => member !== socket.request.session.user.id
-              );
-            if (this.api.cache.rooms.get(room).members.length === 0) {
-              this.api.client.logger.debug('Room is empty, destroying');
-              this.destroyRoom(room);
-            }
-          }
+    if (!socket) return;
+    const { rooms } = socket;
+    if (!rooms || !rooms.size) return;
+    this.api.client.logger.debug('Purging rooms 1');
+    const user_id = socket.request.session.user.id;
+    const { cache } = this.api;
+    const { rooms: roomCache } = cache;
+    for (const room of rooms) {
+      if (room !== id) {
+        socket.leave(room);
+        console.log('PEPE1');
+        if (!roomCache.has(room)) return;
+        console.log('PEPE2');
+        const roomData = roomCache.get(room);
+        const roomMembers = roomData.members;
+        const filteredMembers = roomMembers.filter(
+          (member) => member !== user_id
+        );
+        cache.rooms.get(room).members = filteredMembers;
+        if (filteredMembers.length === 0) {
+          this.api.client.logger.debug('Room is empty, destroying');
+          this.destroyRoom(room);
         }
       }
     }
   }
 
-
-  public async leave(socket: Socket) {
+  /**
+   * Checks if socket is still connected, if so it emits a playerDestroy event on client. Then calls purgeRooms
+   * I don't know if this is necessary. Maybe this could be done in purgeRooms?
+   * @param {Socket} socket Socket
+   */
+  public async leave(socket: Socket): Promise<void> {
     this.api.client.logger.debug('Leaving room');
     if (socket && socket.connected) socket.emit('playerDestroy');
     await this.purgeRooms(socket);
   }
 
   public async join(socket: Socket, guildId: string) {
-    console.log('joining room')
+    console.log('joining room');
     await this.purgeRooms(socket, guildId);
     if (!socket.rooms.has(guildId)) {
-      console.log('joining room' + guildId)
+      console.log('joining room' + guildId);
       socket.join(guildId);
     }
     if (!this.api.cache.rooms.has(guildId)) {
@@ -64,12 +85,18 @@ export default class roomManager {
       this.api.cache.rooms.set(guildId, {
         id: guildId,
         members: [socket.request.session.user.id],
-        interval:  setInterval(() => {
+        interval: setInterval(() => {
           this.api.playerPing.playerData(guildId);
         }, 1000)
       });
-    } else if (!this.api.cache.rooms.get(guildId).members.includes(socket.request.session.user.id)) {
-      this.api.client.logger.debug('Assigning to existing room in cache ' + guildId);
+    } else if (
+      !this.api.cache.rooms
+        .get(guildId)
+        .members.includes(socket.request.session.user.id)
+    ) {
+      this.api.client.logger.debug(
+        'Assigning to existing room in cache ' + guildId
+      );
       if (
         !this.api.cache.rooms
           .get(guildId)
@@ -80,6 +107,6 @@ export default class roomManager {
           .members.push(socket.request.session.user.id);
       }
     }
-    this.api.playerPing.queueData(guildId);
+    await this.api.playerPing.queueData(guildId);
   }
 }

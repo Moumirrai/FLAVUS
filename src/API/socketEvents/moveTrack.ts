@@ -50,7 +50,6 @@ const PauseEvent: SocketEvent = {
     player.queue.remove(data.removedIndex);
     player.queue.add(track, data.addedIndex);
     client.emit('queueUpdate', player);
-    //await getPlayer(client, socket);
   }
 };
 

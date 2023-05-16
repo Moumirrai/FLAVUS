@@ -4,7 +4,7 @@ import { readdirSync } from 'fs';
 import { resolve } from 'path';
 import type { APIInterface, APIEndpoint, SocketEvent, Room } from 'flavus-api';
 import { Collection } from 'discord.js';
-import { Core, Logger } from '../../struct/Core';
+import type { Core } from '../../struct/Core';
 import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
@@ -44,7 +44,7 @@ export class APICore implements APIInterface {
     this.main();
   }
 
-  private async main() {
+  private async main(): Promise<APICore> {
     const app = express();
     const server = http.createServer(app);
     //TODO: add cors to config
@@ -70,7 +70,7 @@ export class APICore implements APIInterface {
         }
         if (!req.headers.authorization) {
           this.client.logger.log(
-            'Authentification failed! - No authorization header'
+            'Authentification failed! - No authorization header - Code 1'
           );
           return res.status(401).send('Authentification failed!');
         }
@@ -102,6 +102,7 @@ export class APICore implements APIInterface {
           }
           return next();
         }
+        console.log(req.headers.authorization);
         const user = await authUser(req.headers.authorization, this.client);
         if (user) {
           req.session.code = req.headers.authorization;
@@ -109,7 +110,7 @@ export class APICore implements APIInterface {
           req.session.createdAt = new Date().getTime();
           return next();
         }
-        this.client.logger.log('Authentication failed!');
+        this.client.logger.log('Authentication failed!  - Code 2');
         return res.status(401).send('Authentication failed!');
       }
     );
@@ -121,7 +122,7 @@ export class APICore implements APIInterface {
 
     this.io.use(async (socket, next) => {
       if (!socket.handshake.query.code)
-        return next(new Error('Authentication failed!'));
+        return next(new Error('Authentication failed!  - Code 3'));
       const code = socket.handshake.query.code.toString();
       if (socket.request.session && socket.request.session.code === code) {
         return next();
@@ -207,7 +208,7 @@ export class APICore implements APIInterface {
       }
     });
 
-    server.listen(port, () => Logger.info(`API running on port ${port}`));
+    server.listen(port, () => this.client.logger.info(`API running on port ${port}`));
     return this;
   }
 
@@ -219,7 +220,7 @@ export class APICore implements APIInterface {
       ).default;
       this.EndPoints.set(endpoint.path, endpoint);
     }
-    Logger.info(`${this.EndPoints.size} API endpoints loaded!`);
+    this.client.logger.info(`${this.EndPoints.size} API endpoints loaded!`);
   }
 
   private async loadSocketEvents(): Promise<void> {
@@ -230,8 +231,13 @@ export class APICore implements APIInterface {
       ).default;
       this.SocketEvents.set(socketEvent.name, socketEvent);
     }
-    Logger.info(`${this.SocketEvents.size} socket events loaded!`);
+    this.client.logger.info(`${this.SocketEvents.size} socket events loaded!`);
   }
+
+  /**
+   * Apply middlewares and configs like limiters and to express app
+   * @param app express app
+   */
 
   private static async configApp(app: express.Application): Promise<void> {
     app.use(cors());
