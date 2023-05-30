@@ -1,5 +1,4 @@
-import chalk from 'chalk';
-import { ForegroundColor } from 'chalk';
+import chalk, { ForegroundColor } from 'chalk';
 import fs from 'fs';
 
 interface LoggerOptions {
@@ -57,7 +56,7 @@ export class Logger {
     process.on('uncaughtException', (err) => {
       this.error(err.stack);
       return;
-    }); 
+    });
   };
 }
 
