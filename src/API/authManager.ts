@@ -117,7 +117,8 @@ async function refreshToken(
     .then((response: AuthResponse) => {
       return response;
     })
-    .catch(function () {
+    .catch((err) => {
+      console.log(err);
       return null;
     });
 }
