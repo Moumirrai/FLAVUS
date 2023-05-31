@@ -28,9 +28,7 @@ const ConfigEndpoint: APIEndpoint = {
           }
         )
           .clone()
-          .catch(function (err) {
-            console.log(err);
-          });
+          .catch(err => console.log(err));
         break;
       case 'WRITE':
         await UserModel.findOne(
@@ -66,9 +64,7 @@ const ConfigEndpoint: APIEndpoint = {
           }
         )
           .clone()
-          .catch(function (err) {
-            console.log(err);
-          });
+          .catch(err => console.log(err));
         break;
       default:
         return res.status(401).send('Invalid method');

@@ -53,12 +53,10 @@ export async function authUser(
     console.log('new auth');
     //new auth
     const newCredentials: AuthResponse | null = await newAuth(code);
-    console.log('new credentials ' + newCredentials);
     if (newCredentials) {
       //if code is valid
       const user = await getUser(newCredentials.access_token, client);
-      console.log('new user');
-      console.log(user);
+      //console.log(user);
       if (user) {
         try {
           const newuserAuth: IAuthModel = new AuthModel({
@@ -91,7 +89,8 @@ async function newAuth(code: string): Promise<AuthResponse | null> {
     .then((response: AuthResponse) => {
       return response;
     })
-    .catch(function () {
+    .catch((err) => {
+      console.log(err);
       return null;
     });
 }
@@ -135,7 +134,8 @@ export async function getUser(
       //console.log(response);
       return response;
     })
-    .catch(function () {
+    .catch((err) => {
+      console.log(err);
       return null;
     });
 }
@@ -159,8 +159,8 @@ export async function getGuilds(
         notActive: notActive
       };
     })
-    .catch(function (e) {
-      logger.error(e);
+    .catch((err) => {
+      console.log(err);
       return null;
     });
 }

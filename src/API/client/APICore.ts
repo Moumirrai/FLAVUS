@@ -251,7 +251,7 @@ export class APICore implements APIInterface {
     });
     app.use(limiter);
     //interception of OPTIONS method
-    app.use(function (req, res, next) {
+    app.use((req, res, next) => {
       if (req.method === 'OPTIONS') {
         res.send(200);
       } else {
