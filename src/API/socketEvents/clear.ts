@@ -20,7 +20,7 @@ const StopEvent: SocketEvent = {
     if (!player.queue.size)
       return socket.emit('player:error', 'Queue is empty!');
     player.queue.clear();
-    //await client.apiClient.playerPing.playerData(client, socket);
+    client.emit('queueUpdate', player);
   }
 };
 

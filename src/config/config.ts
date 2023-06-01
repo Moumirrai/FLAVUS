@@ -8,15 +8,6 @@ export type BotConfig = {
   prefix: string;
   owner: string;
   erela: {
-    /*
-    nodes: {
-      host: string;
-      port: number;
-      password: string;
-      retryDelay: number;
-      secure: boolean;
-    }[];
-    */
     nodes: NodeOptions[];
     shards: number;
     clientName: string;
@@ -78,7 +69,7 @@ export const config: BotConfig = {
         password: process.env.LAVALINK_PASSWORD,
         retryDelay: parseInt(process.env.LAVALINK_RETRY_DELAY),
         secure: process.env.LAVALINK_SECURE === 'true',
-        rest: true,
+        rest: process.env.LAVALINK_REST === 'true'
       }
     ],
     shards: parseInt(process.env.SHARD_COUNT),
@@ -100,7 +91,7 @@ export const config: BotConfig = {
   leaveOnEmptyChannel: parseInt(process.env.LEAVE_ON_EMPTY_CHANNEL),
   split: new RegExp(/[ -/<>(){}\[\].,\\*-+=%'´§_:?!°"#&@|˛`˙˝¨¸~•]+/u),
   anonymous: process.env.ANONYMOUS === 'true',
-  debugMode: true,//process.env.DEBUGMODE === 'true',
+  debugMode: process.env.DEBUGMODE === 'true',
   api: process.env.API === 'true',
   ratelimit: {
     socket: {

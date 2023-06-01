@@ -26,36 +26,41 @@ Create `.env` file or set your env variables as follows:
 # Bot config
 TOKEN=<YOUR_DISCORD_BOT_TOKEN>
 OWNER=<OWNER_DISCORD_ID>
-PREFIX=<PREFIX>
+CLIENT_ID=<CLIENT_ID>
+CLIENT_SECRET=<CLIENT_SECRET>
+REDIRECTURI=http://localhost:3000/
+PREFIX=<BOT_PREFIX>
 LEAVE_ON_EMPTY_CHANNEL=<TIME_IN_SECONDS>
-DEBUGMODE=<BOOLEAN>     # whether to print bebug messages
-SAVELOGS=<BOOLEAN>
+SAVELOGS=<BOOLEAN> # whether to save logs to a file
+DEBUGMODE=<BOOLEAN> # whether to print bebug messages
+ 
+# Shard config
+SHARD_COUNT=1 # Sharding is not supported at the moment!!!
 
 # Lavalink credentials
 LAVALINK_HOST=<LAVALINK_HOST>
 LAVALINK_PORT=<LAVALINK_PORT>
 LAVALINK_PASSWORD=<LAVALINK_PASSWORD>
+LAVALINK_REST=<BOOLEAN> # whether to use the new lavalink rest api
 LAVALINK_SECURE=<BOOLEAN>
 LAVALINK_RETRY_DELAY=5000
 
 # Lavalink client config
-CLIENT_NAME=Lavalink
+CLIENT_NAME=Flavus
 CLIENT_VERSION=1.0.0
 
 # Mongodb config
 MONGODB_SRV=<MONGODB_SRV>
 
 # Spotify config
-SPOTIFY_ID=<SPOTIFY_CLIENT_ID>
-SPOTIFY_SECRET=<SPOTIFY_CLIENT_SECRET>
+SPOTIFY_ID=<SHOULD_NOT_BE_NEEDED>
+SPOTIFY_SECRET=<SHOULD_NOT_BE_NEEDED>
 
-# Genius credentials (optional)
-GENIUS = <GENIUS_CLIENT_ID>
-
-# API Config
-API=<BOOLEAN>   # the settings below are required only if this is true
+# Api
+API=false # if you don't need the api, set this to false
 APIPORT=3030
 SECRET=<SEED_FOR_CRYPTR>
+METRICS_TOKEN=<WHATEVER_RANDOM_STRING> # auth code for the metrics endpoint
 ```
 
 # TODO
@@ -63,7 +68,6 @@ SECRET=<SEED_FOR_CRYPTR>
 After a socket is disconnected, it is removed from its rooms, but they are not cleared from the cache because the socket no longer references it. Fix!!
 
 - [ ] fix sockets and sessions
-
 - [ ] fix dashboard error handling
-- [ ] combine pause and resume to one function
+- [ ] rewrite search command, currently it is a mess
 - [ ] maybe add equalizer
