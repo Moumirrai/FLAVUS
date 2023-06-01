@@ -17,14 +17,11 @@ declare module 'flavus' {
     sameChannelRequired?: boolean;
     joinPermissionRequired?: boolean;
     visible: boolean;
-    execute: (commandArgs: CommandArgs) => Promise<unknown>;
+    execute: (commandArgs: CommandArgs) => void;
   }
   export interface iEvent {
     name: string;
-    execute: (
-      client: import('../../struct/Core').Core,
-      ...args: any[]
-    ) => Promise<unknown>;
+    execute: (client: import('../../struct/Core').Core, ...args: any[]) => void;
   }
 
   export interface socketResponse {
@@ -45,7 +42,7 @@ declare module 'flavus' {
       client: import('../../struct/Core').Core,
       manager: import('erela.js').Manager,
       ...args: any[]
-    ) => Promise<unknown>;
+    ) => void;
   }
 
   export interface iSpotifySearchResult {

@@ -1,6 +1,5 @@
 import { Message, MessageEmbed } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
-import { GuildModel } from '../models/guildModel';
 
 const VolumeCommand: iCommand = {
   name: 'volume',
@@ -59,22 +58,14 @@ const VolumeCommand: iCommand = {
           .setColor(client.config.embed.color)
       ]
     });
-    GuildModel.findOne({ guildID: message.guild.id }, (err, settings) => {
-      if (err) return client.logger.error(err);
-      if (!settings) {
-        settings = new GuildModel({
-          guildID: message.guild.id,
-          volume: Number(args[0])
-        });
-        settings.save().catch((err) => console.log(err));
-        return message.react('👌').catch((e) => {
-          client.logger.error(e);
-        });
-      } else {
-        settings.volume = Number(args[0]);
-        settings.save().catch((err) => console.log(err));
-      }
-    });
+    const doc = await client.functions.fetchGuildConfig(message.guild.id);
+    if (!doc) {
+      client.logger.error('Something went wrong! - Doc not found - volume.ts');
+      return client.embeds.error(message.channel, 'Something went wrong! - volume.ts');
+    }
+    doc.volume = Number(args[0]);
+    doc.save().catch((err) => client.logger.error(err));
+    return;
   }
 };
 

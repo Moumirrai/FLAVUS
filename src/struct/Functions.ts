@@ -155,20 +155,18 @@ export default class Functions {
 
   /**
    * Fetches a guild's config from mongodb
+   * @param {string} guildID - guild id
    * @returns {Promise<IGuildModel>} GuildModel
    */
-  public static fetchGuildConfig(guildID: string): Promise<IGuildModel | null> {
+  public static async fetchGuildConfig(guildID: string): Promise<IGuildModel | null> {
     try {
-      GuildModel.findOne({ guildID: guildID }, (err, doc: IGuildModel) => {
-        if (err) {
-          Logger.error(err);
-          return null;
-        } else {
-          return doc;
-        }
-      });
-    } catch (e) {
-      Logger.error(e.stack);
+      const doc = await GuildModel.findOne({ guildID: guildID }).exec();
+      if (doc) return doc;
+      return new GuildModel({
+        guildID: guildID
+      }).save();
+    } catch (err) {
+      Logger.error(err);
       return null;
     }
   }

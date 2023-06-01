@@ -1,15 +1,12 @@
 import { Player } from 'erela.js';
 import { iManagerEvent } from 'flavus';
-import { GuildModel } from '../../models/guildModel';
 
 const playerCreateEvent: iManagerEvent = {
   name: 'playerCreate',
   async execute(client, _manager, player: Player) {
-    GuildModel.findOne({ guildID: player.options.guild }, (err, settings) => {
-      if (err) return client.logger.error(err);
-      if (!settings) return;
-      if (player.volume !== settings.volume) player.setVolume(settings.volume);
-    });
+    const doc = await client.functions.fetchGuildConfig(player.guild);
+    if (!doc) return client.logger.error('Something went wrong! - playerCreateEvent');
+    if (doc.volume !== player.volume) player.setVolume(doc.volume);
     player.queue.history = [];
     if (client.config.debugMode)
       client.logger.info('[EVENT] Player created');

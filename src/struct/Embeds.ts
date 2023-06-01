@@ -7,17 +7,23 @@ import {
   MessageEmbedOptions
 } from 'discord.js';
 import { config } from '../config/config';
+import Logger from './Logger';
 
 export const error = embedFactory(config.embed.errorcolor, 'Error');
 export const info = embedFactory(config.embed.color, 'Info');
 
-function embedFactory(color: ColorResolvable, defaultTitle: string) {
+function embedFactory(
+  color: ColorResolvable,
+  defaultTitle: string,
+  log?: 'error' | 'log'
+) {
   return async (
     channel: TextBasedChannel,
     data?: MessageEmbedOptions | string
   ): Promise<Message> => {
     try {
       if (typeof data === 'string') {
+        if (log) Logger[log](data);
         return channel.send({
           embeds: [
             new MessageEmbed()
@@ -27,6 +33,12 @@ function embedFactory(color: ColorResolvable, defaultTitle: string) {
           ]
         });
       } else {
+        if (log)
+          Logger[log](
+            `Title: ${data.title || 'No Title'} | Description: ${
+              data.description || 'No description'
+            } `
+          );
         return channel.send({
           embeds: [
             new MessageEmbed({ ...data })

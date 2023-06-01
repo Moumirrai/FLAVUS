@@ -1,5 +1,4 @@
 import { CommandArgs, iCommand } from 'flavus';
-import { GuildModel } from '../models/guildModel';
 import { Message, MessageEmbed } from 'discord.js';
 
 const AutoplayCommand: iCommand = {
@@ -17,6 +16,36 @@ const AutoplayCommand: iCommand = {
     message,
     args
   }: CommandArgs): Promise<void | Message> {
+    const doc = await client.functions.fetchGuildConfig(message.guild.id);
+    let newDoc = false;
+    if (!doc) return client.embeds.error(message.channel, 'Something went wrong!');
+    if (!doc.autoplay) {
+      newDoc = true;
+      doc.autoplay = {
+        active: true,
+        mode: 'yt'
+      };
+    }
+    if (args[0] && args[0] === 'switch') {
+      doc.autoplay.mode = doc.autoplay.mode === 'yt' ? 'spotify' : 'yt';
+    }
+    else if (!newDoc) {
+      doc.autoplay.active = !doc.autoplay.active;
+    }
+    doc.save().catch((err) => client.logger.error(err));
+    return message.channel.send({
+      embeds: [
+        new MessageEmbed()
+          .setColor(client.config.embed.color)
+          .setTitle(doc.autoplay.active ? `Autoplay is enabled!` : `Autoplay is disabled!`)
+          .setDescription(
+            `Current mode - **${
+              doc.autoplay.mode === 'yt' ? 'YouTube' : 'Spotify'
+            }**\nTo change mode, use \`<prefix>autoplay switch\``
+          )
+      ]
+    });
+    /*
     GuildModel.findOne({ guildID: message.guild.id }, (err, settings) => {
       if (err) return client.logger.error(err);
       if (!settings) {
@@ -84,6 +113,7 @@ const AutoplayCommand: iCommand = {
         }
       }
     });
+    */
   }
 };
 

@@ -5,7 +5,7 @@ declare module 'flavus-api' {
       client: import('../../struct/Core').Core,
       req: import('express').Request,
       res: import('express').Response
-    ) => Promise<unknown>;
+    ) => Promise<unknown> | unknown;
   }
 
   export interface Room {

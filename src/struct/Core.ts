@@ -90,6 +90,11 @@ export class Core extends Client {
     this.logger.info(`${this.commands.size} commands loaded!`);
   }
 
+  /**
+   * This function loads and executes all client events from the events folder
+   * So all events, like message, ready, etc. will be loaded and executed here
+   */
+
   private async loadEvents(): Promise<void> {
     const files = readdirSync(resolve(__dirname, '..', 'events', 'client'));
     for (const file of files) {
@@ -100,6 +105,10 @@ export class Core extends Client {
     }
     this.logger.info(`${files.length} events loaded!`);
   }
+
+  /**
+   * Same as loadEvents() but for manager (erela) events
+   */
 
   private async loadManagerEvents(): Promise<void> {
     const files = readdirSync(resolve(__dirname, '..', 'events', 'manager'));
