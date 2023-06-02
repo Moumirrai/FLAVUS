@@ -7,7 +7,7 @@ const PauseEvent: SocketEvent = {
     points: 5,
     duration: 1
   },
-  async execute(client, socket, data: number): Promise<boolean> {
+  execute(client, socket, data: number): boolean {
     if (typeof data !== 'number')
       return socket.emit('player:error', 'Track index must be a number!');
     const voiceCache = client.apiClient.cache.voiceStates.get(
@@ -17,8 +17,8 @@ const PauseEvent: SocketEvent = {
       return socket.emit('player:error', "I can't see you connected!");
 
     const player: Player = client.manager.players.get(
-      client.apiClient.cache.voiceStates.get(socket.request.session.user.id).voiceChannel
-        .guild.id
+      client.apiClient.cache.voiceStates.get(socket.request.session.user.id)
+        .voiceChannel.guild.id
     );
 
     if (!player)

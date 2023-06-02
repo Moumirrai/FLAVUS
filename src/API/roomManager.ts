@@ -31,7 +31,7 @@ export default class roomManager {
    * @param {string} id ID of the room to omit from the purge
    * @returns {Promise<IGuildModel>} GuildModel
    */
-  private async purgeRooms(socket: Socket, id?: string): Promise<void> {
+  private purgeRooms(socket: Socket, id?: string): Promise<void> {
     console.log('Purging rooms');
     this.api.client.logger.debug('Purging rooms');
     if (!id) id = 'undefined';

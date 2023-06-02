@@ -1,5 +1,4 @@
 import { CommandArgs, iCommand } from 'flavus';
-import { Message } from 'discord.js';
 
 /*
  * TODO: change name, and embed

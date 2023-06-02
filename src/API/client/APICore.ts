@@ -148,7 +148,7 @@ export class APICore implements APIInterface {
             );
             await event.execute(this.client, socket, data);
           } catch (e) {
-            socket.volatile.emit('api:rateLimit', `Slow down!`);
+            socket.volatile.emit('api:rateLimit', 'Slow down!');
           }
         });
       }
@@ -208,7 +208,9 @@ export class APICore implements APIInterface {
       }
     });
 
-    server.listen(port, () => this.client.logger.info(`API running on port ${port}`));
+    server.listen(port, () =>
+      this.client.logger.info(`API running on port ${port}`)
+    );
     return this;
   }
 
@@ -239,7 +241,7 @@ export class APICore implements APIInterface {
    * @param app express app
    */
 
-  private static async configApp(app: express.Application): Promise<void> {
+  private static configApp(app: express.Application): void {
     app.use(cors());
     app.use(bodyParser.json());
     //use 1sec limit for all requests

@@ -2,7 +2,7 @@ import { iEvent } from 'flavus';
 
 const RawEvent: iEvent = {
   name: 'raw',
-  async execute(client, d) {
+  execute(client, d) {
     client.manager.updateVoiceState(d);
   }
 };

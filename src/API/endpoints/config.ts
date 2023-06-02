@@ -3,7 +3,7 @@ import { UserModel, IUserModel } from '../../models/userModel';
 
 const ConfigEndpoint: APIEndpoint = {
   path: 'config',
-  async execute(client, req, res): Promise<Express.Response> {
+  async execute(client, req, res) {
     switch (req.headers.method) {
       case 'READ':
         await UserModel.findOne(

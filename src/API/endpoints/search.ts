@@ -3,7 +3,7 @@ import { youtube } from 'scrape-youtube';
 
 const SearchEndpoint: APIEndpoint = {
   path: 'search',
-  async execute(client, req, res): Promise<Express.Response> {
+  async execute(client, req, res) {
     const query = req.body.query;
     if (!query) {
       return res.status(400).send('No query provided!');

@@ -3,7 +3,7 @@ import { iEvent } from 'flavus';
 
 const VoiceStateUpdateEvent: iEvent = {
   name: 'voiceStateUpdate',
-  async execute(client, oldState: VoiceState, newState: VoiceState) {
+  execute(client, oldState: VoiceState, newState: VoiceState) {
     if (
       newState.channelId &&
       newState.channel.type === 'GUILD_STAGE_VOICE' &&

@@ -5,7 +5,7 @@ declare module 'flavus-api' {
       client: import('../../struct/Core').Core,
       req: import('express').Request,
       res: import('express').Response
-    ) => Promise<unknown> | unknown;
+    ) => Promise<import('express').Response> | import('express').Response;
   }
 
   export interface Room {
@@ -32,7 +32,7 @@ declare module 'flavus-api' {
       client: import('../../struct/Core').Core,
       io: import('socket.io').Socket,
       data?: unknown
-    ) => Promise<unknown>;
+    ) => Promise<unknown> | void | boolean;
   }
 
   export interface UserInterface {
@@ -52,22 +52,8 @@ declare module 'flavus-api' {
   }
 
   export interface userGuilds {
-    active: {
-      id: string;
-      name: string;
-      icon: string;
-      owner: boolean;
-      permissions: number;
-      features: string[];
-    }[];
-    notActive: {
-      id: string;
-      name: string;
-      icon: string;
-      owner: boolean;
-      permissions: number;
-      features: string[];
-    }[];
+    active: import('discord-oauth2').PartialGuild[];
+    notActive: import('discord-oauth2').PartialGuild[];
   }
 
   export interface APIInterface {

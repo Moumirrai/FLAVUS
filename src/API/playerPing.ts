@@ -87,7 +87,7 @@ export default class roomPing {
     return this.queueEmitter(room, data);
   }
 
-  public async getQueueData(player: Player): Promise<QueueData> {
+  public getQueueData(player: Player): QueueData {
     if (!player || !player.queue.current || !player.queue.size)
       return {
         hash: player ? player.hash : undefined,
@@ -108,12 +108,12 @@ export default class roomPing {
     };
   }
 
-  private async playerEmitter(room: string, data: PlayerData) {
+  private playerEmitter(room: string, data: PlayerData) {
     if (!this.client.apiClient.io.sockets.adapter.rooms.has(room)) return;
     return this.client.apiClient.io.to(room).volatile.emit('player:data', data);
   }
 
-  private async queueEmitter(room: string, data: QueueData) {
+  private queueEmitter(room: string, data: QueueData) {
     if (!this.client.apiClient.io.sockets.adapter.rooms.has(room)) return;
     return this.client.apiClient.io.to(room).emit('player:queueData', data);
   }

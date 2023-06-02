@@ -145,6 +145,23 @@ export async function getGuilds(
   token: string,
   client
 ): Promise<userGuilds | null> {
+  const response = await oauth.getUserGuilds(token);
+  if (!response) {
+    logger.error('Error getting guilds');
+    return null;
+  }
+  const owned = response.filter((guild) => guild.owner);
+  const notActive =
+    owned.filter((guild) => !client.guilds.cache.has(guild.id)) || [];
+  const active =
+    owned.filter((guild) => client.guilds.cache.has(guild.id)) || [];
+  //TODO:remove this
+  //console.log(active);
+  return {
+    active: active,
+    notActive: notActive
+  };
+
   return oauth
     .getUserGuilds(token)
     .then((response: DiscordOauth2.PartialGuild[]) => {
