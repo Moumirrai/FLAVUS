@@ -220,9 +220,9 @@ export default class PlayerManager {
     mode: string
   ): Promise<void | Message> {
     if (
-      (player.get(`previousTrack`) as Track).requester !== client.user ||
-      !player.get(`similarQueue`) ||
-      (player.get(`similarQueue`) as Track[]).length === 0
+      (player.get("previousTrack") as Track).requester !== client.user ||
+      !player.get("similarQueue") ||
+      (player.get("similarQueue") as Track[]).length === 0
     ) {
       if (mode === 'yt') {
         await this.ytAutoplay(client, player);
@@ -231,12 +231,12 @@ export default class PlayerManager {
       }
     }
     try {
-      const similarQueue: Track[] = player.get(`similarQueue`);
+      const similarQueue: Track[] = player.get("similarQueue");
       const track = similarQueue.splice(
         Math.floor(Math.random() * similarQueue.length),
         1
       )[0];
-      player.set(`similarQueue`, similarQueue);
+      player.set("similarQueue", similarQueue);
       player.queue.add(track);
       await client.embeds.info(
         client.channels.cache.get(player.textChannel) as TextChannel,
@@ -260,11 +260,11 @@ export default class PlayerManager {
     player: Player
   ): Promise<void | Message> {
     try {
-      const previoustrack: Track = player.get(`previousTrack`);
+      const previoustrack: Track = player.get("previousTrack");
       if (!previoustrack) return;
       //update owner
       if (previoustrack.requester !== client.user)
-        player.set(`autoplayOwner`, previoustrack.requester);
+        player.set("autoplayOwner", previoustrack.requester);
 
       const mixURL = `https://www.youtube.com/watch?v=${previoustrack.identifier}&list=RD${previoustrack.identifier}`;
       const response = await client.manager.search(mixURL, client.user);
@@ -305,7 +305,7 @@ export default class PlayerManager {
           }
         );
       }
-      player.set(`similarQueue`, filteredTracks);
+      player.set("similarQueue", filteredTracks);
     } catch (e) {
       client.logger.error(e.stack);
     }
@@ -314,10 +314,10 @@ export default class PlayerManager {
 
   public static async spotifyAutoplay(client: Core, player: Player) {
     try {
-      const previoustrack: Track = player.get(`previousTrack`);
+      const previoustrack: Track = player.get("previousTrack");
       if (!previoustrack) return;
       if (previoustrack.requester !== client.user)
-        player.set(`autoplayOwner`, previoustrack.requester);
+        player.set("autoplayOwner", previoustrack.requester);
 
       //find previous track on spotify
       const resolver = (client.manager.options.plugins[0] as Spotify).resolver;
@@ -371,7 +371,7 @@ export default class PlayerManager {
           ) as Track
         );
       }
-      player.set(`similarQueue`, similarQueue);
+      player.set("similarQueue", similarQueue);
     } catch (e) {
       client.logger.error(e.stack);
     }

@@ -44,7 +44,7 @@ const PauseEvent: SocketEvent = {
       data.removedIndex > player.queue.size ||
       data.addedIndex > player.queue.size
     )
-      return socket.emit('player:error', `Corrupted track index`);
+      return socket.emit('player:error', "Corrupted track index");
     //remove track from queue according to removedIndex, and add it to the queue according to addedIndex
     const track = player.queue[data.removedIndex];
     player.queue.remove(data.removedIndex);

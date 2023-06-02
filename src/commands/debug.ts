@@ -17,9 +17,9 @@ const DebugCommand: iCommand = {
     message,
     player
   }: CommandArgs) {
-    const smQueue = player.get(`similarQueue`) as Track[];
+    const smQueue = player.get("similarQueue") as Track[];
     if (!smQueue || smQueue.length === 0) {
-      await message.author.send(`Autoplay temp queue is empty`);
+      await message.author.send("Autoplay temp queue is empty");
     } else {
       let trackString = '';
       //for each track in the queue, add its index number and the track's name to the string at new line
