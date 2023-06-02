@@ -7,7 +7,7 @@ const SkipEvent: SocketEvent = {
     points: 5, //TODO: REVERT TO 1 !!!!!!!
     duration: 1
   },
-  async execute(client, socket, data?): Promise<boolean> {
+  async execute(client, socket): Promise<boolean> {
     const voiceCache = client.apiClient.cache.voiceStates.get(
       socket.request.session.user.id
     );

@@ -1,4 +1,3 @@
-import { MessageReaction } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 
 const ClearCommand: iCommand = {

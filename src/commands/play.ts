@@ -1,4 +1,4 @@
-import { Message, MessageOptions } from 'discord.js';
+import { MessageOptions } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 import { SearchResult } from 'erela.js';
 

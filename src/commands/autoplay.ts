@@ -1,5 +1,5 @@
 import { CommandArgs, iCommand } from 'flavus';
-import { Message, MessageEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 
 const AutoplayCommand: iCommand = {
   name: 'autoplay',

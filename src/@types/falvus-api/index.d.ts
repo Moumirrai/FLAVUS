@@ -31,7 +31,7 @@ declare module 'flavus-api' {
     execute: (
       client: import('../../struct/Core').Core,
       io: import('socket.io').Socket,
-      data: unknown
+      data?: unknown
     ) => Promise<unknown>;
   }
 

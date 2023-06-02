@@ -1,6 +1,5 @@
-import { Message } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
-import formatDuration = require('format-duration');
+import formatDuration from 'format-duration';
 
 const SeekCommand: iCommand = {
   name: 'seek',

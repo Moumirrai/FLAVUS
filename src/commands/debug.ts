@@ -1,4 +1,4 @@
-import { Message, MessageEmbed } from 'discord.js';
+import { MessageEmbed } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 import { Track } from 'erela.js';
 

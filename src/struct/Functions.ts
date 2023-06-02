@@ -83,7 +83,7 @@ const Functions = {
       description += npLine;
     }
 
-    let tracksData: Array<ITrackData> = tracks.map(track => ({
+    const tracksData: Array<ITrackData> = tracks.map(track => ({
       title:
         track.title.length > 37
           ? `${this.escapeRegex(track.title.substr(0, 37))}...`

@@ -1,4 +1,3 @@
-import { Message } from 'discord.js';
 import { CommandArgs, iCommand } from 'flavus';
 
 const DashboardCommand: iCommand = {

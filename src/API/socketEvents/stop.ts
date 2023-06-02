@@ -7,7 +7,7 @@ const StopEvent: SocketEvent = {
     points: 1,
     duration: 1
   },
-  async execute(client, socket, data: boolean): Promise<boolean> {
+  async execute(client, socket): Promise<boolean> {
     const voiceCache = client.apiClient.cache.voiceStates.get(
       socket.request.session.user.id
     );

@@ -94,7 +94,7 @@ const QueueCommand: iCommand = {
             await button.deferUpdate();
           }
         });
-        collector.on('end', async (button) => {
+        collector.on('end', async () => {
           await message.edit({
             embeds: [client.functions.createQueueEmbed(player, 0, client)],
             components: []

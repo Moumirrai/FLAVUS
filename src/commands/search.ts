@@ -1,5 +1,4 @@
 import {
-  Message,
   MessageActionRow,
   MessageEmbed,
   MessageSelectMenu
