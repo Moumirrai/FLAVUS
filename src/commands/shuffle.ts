@@ -8,7 +8,7 @@ const ShuffleCommand: iCommand = {
   sameChannelRequired: true,
   visible: true,
   description: 'Shuffles queue',
-  usage: `<prefix>shuffle`,
+  usage: "<prefix>shuffle",
   async execute({ client, message, player }: CommandArgs) {
     player.queue.shuffle();
     client.emit('queueUpdate', player);

@@ -89,7 +89,7 @@ const Functions = {
           ? `${this.escapeRegex(track.title.substr(0, 37))}...`
           : this.escapeRegex(track.title),
       duration: track.isStream
-        ? `LIVE STREAM`
+        ? "LIVE STREAM"
         : formatDuration(track.duration, { leading: true }),
       uri: track.uri
     }));
@@ -102,7 +102,7 @@ const Functions = {
           'play to add more :^)'
         : '';
     description +=
-      `\n` +
+      "\n" +
       tracksData
         .slice(index, index + 15)
         .map(
@@ -181,7 +181,7 @@ const Functions = {
     player: Player,
     response: SearchResult
   ): Promise<SearchResult> {
-    const owner: User = player.get(`autoplayOwner`);
+    const owner: User = player.get("autoplayOwner");
     if (owner) {
       const userConfig = await UserModel.findOne({
         userID: owner.id

@@ -16,7 +16,7 @@ const GrabCommand: iCommand = {
         embeds: [
           new MessageEmbed()
             .setColor(client.config.embed.errorcolor)
-            .setTitle(`There is no song playing right now!`)
+            .setTitle("There is no song playing right now!")
             .setTimestamp()
             .setFooter({
               text: `Requested in - ${message.guild.name}`,
@@ -38,14 +38,14 @@ const GrabCommand: iCommand = {
           .setColor(client.config.embed.color)
           .setTitle(`${player.queue.current.title}`)
           .addField(
-            `Duration:`,
+            "Duration:",
             `\`${formatDuration(player.queue.current.duration, {
               leading: true
             })}\``,
             true
           )
           .addField(
-            `Current timestamp`,
+            "Current timestamp",
             `\`${formatDuration(player.position, {
               leading: true
             })}\` [LINK](${
@@ -55,7 +55,7 @@ const GrabCommand: iCommand = {
             })`,
             true
           )
-          .addField(`Author`, `\`${player.queue.current.author}\``, true)
+          .addField("Author", `\`${player.queue.current.author}\``, true)
           .setTimestamp()
           .setFooter({
             text: `Requested in - ${message.guild.name}`,

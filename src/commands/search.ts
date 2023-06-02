@@ -111,9 +111,9 @@ const SearchCommand: iCommand = {
             };
           }),
           {
-            value: `Cancel`,
-            label: `Cancel`,
-            description: `Cancel the Searching Process`,
+            value: "Cancel",
+            label: "Cancel",
+            description: "Cancel the Searching Process",
             emoji: '❌'
           }
         ];
@@ -176,7 +176,7 @@ const SearchCommand: iCommand = {
             menumsg.edit({
               embeds: [
                 menumsg.embeds[0]
-                  .setTitle(`Picked Songs:`)
+                  .setTitle("Picked Songs:")
                   .setDescription(picked_songs.join('\n\n'))
               ],
               components: []
@@ -205,7 +205,7 @@ const SearchCommand: iCommand = {
                   `Added ${
                     toAddTracks.length > 1
                       ? `${toAddTracks.length} Tracks, with the first one beeing: `
-                      : ``
+                      : ""
                   }${track.title}`
                 )
                 .setDescription(`**Queued [${track.title}](${track.uri})**`)
