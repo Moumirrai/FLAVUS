@@ -28,7 +28,7 @@ const SearchCommand: iCommand = {
     args,
     vc,
     client
-  }: CommandArgs): Promise<Message> {
+  }: CommandArgs) {
     if (!args) {
       return client.embeds.error(
         message.channel,

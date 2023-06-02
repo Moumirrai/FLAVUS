@@ -7,7 +7,7 @@ const DashboardCommand: iCommand = {
   visible: true,
   description: 'Sends a dashboard url',
   usage: 'config',
-  async execute({ client, message }: CommandArgs): Promise<Message> {
+  async execute({ client, message }: CommandArgs) {
     return client.embeds.info(message.channel, {
       title: 'Web interface',
       url: 'https://flavus.xyz/',

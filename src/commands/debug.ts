@@ -16,7 +16,7 @@ const DebugCommand: iCommand = {
     client,
     message,
     player
-  }: CommandArgs): Promise<void | Message> {
+  }: CommandArgs) {
     const smQueue = player.get(`similarQueue`) as Track[];
     if (!smQueue || smQueue.length === 0) {
       await message.author.send(`Autoplay temp queue is empty`);

@@ -13,7 +13,7 @@ const GrabCommand: iCommand = {
     client,
     message,
     player
-  }: CommandArgs): Promise<void | Message> {
+  }: CommandArgs) {
     if (!player || !player.queue.current) {
       // if there is no player or no current track
       await message.author.send({

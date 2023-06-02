@@ -11,7 +11,7 @@ const BotChannelCommand: iCommand = {
   visible: true,
   description: 'Sets default text channel for bot',
   usage: '<prefix>botchannel',
-  async execute({ client, message }: CommandArgs): Promise<Message> {
+  async execute({ client, message }: CommandArgs) {
     if (!message.inGuild()) {
       client.logger.error('Message is not from guild');
       return client.embeds.error(message.channel, {

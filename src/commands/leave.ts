@@ -8,7 +8,7 @@ const LeaveCommand: iCommand = {
   usage: '<prefix>resume',
   playerRequired: true,
   visible: true,
-  async execute({ client, message, player }: CommandArgs): Promise<void|MessageReaction> {
+  async execute({ client, message, player }: CommandArgs) {
     client.logger.log('Stopping player, code 102');
     player.destroy();
     return message.react('🛑').catch((e) => {

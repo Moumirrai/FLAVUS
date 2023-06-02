@@ -17,7 +17,7 @@ function embedFactory(
   defaultTitle: string,
   log?: 'error' | 'log'
 ) {
-  return async (
+  return (
     channel: TextBasedChannel,
     data?: MessageEmbedOptions | string
   ): Promise<Message> => {

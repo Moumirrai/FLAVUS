@@ -14,7 +14,7 @@ const PauseCommand: iCommand = {
     client,
     message,
     player
-  }: CommandArgs): Promise<void | Message> {
+  }: CommandArgs) {
     if (!player.playing) {
       return message.channel
         .send({

@@ -8,7 +8,7 @@ const StatsCommand: iCommand = {
   visible: false,
   description: 'stats_description',
   usage: 'stats',
-  async execute({ client, message }: CommandArgs): Promise<Message> {
+  async execute({ client, message }: CommandArgs) {
     return message.channel
       .send({
         embeds: [

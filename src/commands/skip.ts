@@ -10,7 +10,7 @@ const SkipCommand: iCommand = {
   visible: true,
   description: 'Skips to next or specific track',
   usage: `\`<prefix>skip\` or \`<prefix>s <position in queue>\``,
-  async execute({ client, message, args, player }: CommandArgs): Promise<void|Message|MessageReaction> {
+  async execute({ client, message, args, player }: CommandArgs) {
     //if queue is empty, it will be handled by the playerManager queueEnd event, so no need to handle it here
     if (args[0] && !isNaN(Number(args[0]))) {
       if (Number(args[0]) > player.queue.size || Number(args[0]) < 1) {

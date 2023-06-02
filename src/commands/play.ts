@@ -16,7 +16,7 @@ const PlayCommand: iCommand = {
     args,
     vc,
     client
-  }: CommandArgs): Promise<Message> {
+  }: CommandArgs) {
     if (!args[0]) {
       return client.embeds.error(
         message.channel,

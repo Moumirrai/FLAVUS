@@ -16,7 +16,7 @@ const SeekCommand: iCommand = {
     message,
     args,
     player
-  }: CommandArgs): Promise<Message> {
+  }: CommandArgs) {
     //TODO: maybe create reusable condition check for player.current in messageCreate event, since multiple commands require it
     if (!player.queue.current) {
       return client.embeds.error(

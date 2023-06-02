@@ -14,7 +14,7 @@ const PauseOnEndCommand: iCommand = {
     client,
     message,
     player
-  }: CommandArgs): Promise<void | MessageReaction> {
+  }: CommandArgs) {
     const pause = player.get('pauseOnEnd');
     if (pause !== undefined) {
       player.set('pauseOnEnd', !pause);

@@ -10,6 +10,7 @@ const playerCreateEvent: iManagerEvent = {
     player.queue.history = [];
     if (client.config.debugMode)
       client.logger.info('[EVENT] Player created');
+    return;
   }
 };
 

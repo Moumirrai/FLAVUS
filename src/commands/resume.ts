@@ -10,7 +10,7 @@ const ResumeCommand: iCommand = {
   visible: true,
   description: 'Resumes music if paused',
   usage: '<prefix>resume',
-  async execute({ client, message, player }: CommandArgs): Promise<void|Message> {
+  async execute({ client, message, player }: CommandArgs) {
     if (player.playing) {
       return message.channel.send({
         embeds: [

@@ -14,7 +14,7 @@ const LoopCommand: iCommand = {
     client,
     message,
     player
-  }: CommandArgs): Promise<MessageReaction | void> {
+  }: CommandArgs) {
     if (!player.trackRepeat) {
       player.setTrackRepeat(true);
       return message.react('🔂').catch((e) => {

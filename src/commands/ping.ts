@@ -7,7 +7,7 @@ const PingCommand: iCommand = {
   visible: true,
   description: 'ping_description',
   usage: '<prefix>ping',
-  async execute({ client, message }: CommandArgs): Promise<Message> {
+  async execute({ client, message }: CommandArgs) {
     return message.channel
       .send({
         embeds: [

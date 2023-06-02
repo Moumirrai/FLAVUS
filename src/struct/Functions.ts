@@ -1,5 +1,5 @@
 import { Client, MessageEmbed, User } from 'discord.js';
-import { Player, Track, SearchResult } from 'erela.js';
+import { Player, SearchResult } from 'erela.js';
 import { GuildModel, IGuildModel } from '../models/guildModel';
 import { UserModel } from '../models/userModel';
 import Logger from './Logger';
@@ -83,7 +83,7 @@ const Functions = {
       description += npLine;
     }
 
-    let tracksData: Array<ITrackData> = tracks.map((track, index) => ({
+    let tracksData: Array<ITrackData> = tracks.map(track => ({
       title:
         track.title.length > 37
           ? `${this.escapeRegex(track.title.substr(0, 37))}...`
@@ -160,10 +160,10 @@ const Functions = {
    */
   async fetchGuildConfig(guildID: string): Promise<IGuildModel | null> {
     try {
-      const doc = await GuildModel.findOne({ guildID: guildID }).exec();
+      const doc = await GuildModel.findOne({ guildID }).exec();
       if (doc) return doc;
       return new GuildModel({
-        guildID: guildID
+        guildID
       }).save();
     } catch (err) {
       Logger.error(err);
@@ -190,9 +190,9 @@ const Functions = {
         //filter tracks
         if (userConfig.model.titleBlacklist.length > 0) {
           response.tracks.forEach((track) => {
-            const title = track.title.split(client.config.split);
-            for (let i = 0; i < title.length; i++) {
-              if (userConfig.model.titleBlacklist.includes(title[i])) {
+            const titles = track.title.split(client.config.split);
+            for (const title of titles) {
+              if (userConfig.model.titleBlacklist.includes(title)) {
                 response.tracks.splice(response.tracks.indexOf(track), 1);
                 break;
               }
@@ -205,8 +205,8 @@ const Functions = {
             userConfig.model.authorBlacklist.map((x) => x.toLowerCase());
           response.tracks = response.tracks.filter((track) => {
             const authors = track.author.toLowerCase().split(' ');
-            for (let i = 0; i < authors.length; i++) {
-              if (userConfig.model.authorBlacklist.includes(authors[i])) {
+            for (const author of authors) {
+              if (userConfig.model.authorBlacklist.includes(author)) {
                 return false;
               }
             }

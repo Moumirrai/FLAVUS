@@ -7,7 +7,7 @@ const HelpCommand: iCommand = {
   visible: true,
   description: 'help',
   usage: 'help',
-  async execute({ client, message, args }: CommandArgs): Promise<Message> {
+  async execute({ client, message, args }: CommandArgs) {
     if (args[0]) {
       const command =
         client.commands.get(args[0]) || client.aliases.get(args[0]);

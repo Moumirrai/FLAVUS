@@ -16,7 +16,7 @@ const VolumeCommand: iCommand = {
     message,
     args,
     player
-  }: CommandArgs): Promise<Message> {
+  }: CommandArgs) {
     if (!args[0]) {
       return message.channel.send({
         embeds: [

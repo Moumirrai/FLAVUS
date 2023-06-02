@@ -15,7 +15,7 @@ const ClearCommand: iCommand = {
     client,
     message,
     player
-  }: CommandArgs): Promise<void | MessageReaction> {
+  }: CommandArgs) {
     if (player.queue.size !== 0) {
       player.queue.clear();
       client.emit('queueUpdate', player);

@@ -11,14 +11,11 @@ const AutoplayCommand: iCommand = {
   visible: true,
   description: 'Toggles or changes autoplay config',
   usage: '`<prefix>autoplay` or `<prefix>autoplay switch`',
-  async execute({
-    client,
-    message,
-    args
-  }: CommandArgs): Promise<void | Message> {
+  async execute({ client, message, args }: CommandArgs) {
     const doc = await client.functions.fetchGuildConfig(message.guild.id);
     let newDoc = false;
-    if (!doc) return client.embeds.error(message.channel, 'Something went wrong!');
+    if (!doc)
+      return client.embeds.error(message.channel, 'Something went wrong!');
     if (!doc.autoplay) {
       newDoc = true;
       doc.autoplay = {
@@ -28,8 +25,7 @@ const AutoplayCommand: iCommand = {
     }
     if (args[0] && args[0] === 'switch') {
       doc.autoplay.mode = doc.autoplay.mode === 'yt' ? 'spotify' : 'yt';
-    }
-    else if (!newDoc) {
+    } else if (!newDoc) {
       doc.autoplay.active = !doc.autoplay.active;
     }
     doc.save().catch((err) => client.logger.error(err));
@@ -37,7 +33,11 @@ const AutoplayCommand: iCommand = {
       embeds: [
         new MessageEmbed()
           .setColor(client.config.embed.color)
-          .setTitle(doc.autoplay.active ? `Autoplay is enabled!` : `Autoplay is disabled!`)
+          .setTitle(
+            doc.autoplay.active
+              ? 'Autoplay is enabled!'
+              : "Autoplay is disabled!"
+          )
           .setDescription(
             `Current mode - **${
               doc.autoplay.mode === 'yt' ? 'YouTube' : 'Spotify'
