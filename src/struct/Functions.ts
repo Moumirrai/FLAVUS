@@ -12,25 +12,25 @@ interface ITrackData {
   uri: string;
 }
 
-export default class Functions {
+const Functions = {
   /**
    * Escapes regex characters in a string
    * @returns {string}
    * @param str
    */
-  public static escapeRegex(str: string): string {
+  escapeRegex(str: string): string {
     try {
       return str.replace(/[.*+?^$`{}()|[\]\\]/g, `\\$&`);
     } catch (e) {
       Logger.error(e.stack);
     }
-  }
+  },
 
   /**
    * Creates a queue embed for given index
    * @returns {MessageEmbed} embed
    */
-  public static createQueueEmbed(
+  createQueueEmbed(
     player: Player,
     index: number,
     client: Client
@@ -125,13 +125,13 @@ export default class Functions {
           ? player.queue.current.thumbnail
           : tracks.current.thumbnail
       );
-  }
+  },
 
   /**
    * Create a progress bar for the current track
    * @returns {string} progress bar
    */
-  public static createProgressBar(player: Player): string {
+  createProgressBar(player: Player): string {
     const { size, arrow, block } = config.embed.progress_bar;
     if (!player.queue.current) return '';
     const current =
@@ -151,14 +151,14 @@ export default class Functions {
         : new Date(player.queue.current.duration).toISOString().substr(11, 8))
     }`;
     return `[${progressString}][${times}]`;
-  }
+  },
 
   /**
    * Fetches a guild's config from mongodb
    * @param {string} guildID - guild id
    * @returns {Promise<IGuildModel>} GuildModel
    */
-  public static async fetchGuildConfig(guildID: string): Promise<IGuildModel | null> {
+  async fetchGuildConfig(guildID: string): Promise<IGuildModel | null> {
     try {
       const doc = await GuildModel.findOne({ guildID: guildID }).exec();
       if (doc) return doc;
@@ -169,14 +169,14 @@ export default class Functions {
       Logger.error(err);
       return null;
     }
-  }
+  },
 
   /**
    * If enabled, filters out tracks from autoplay search according to the user's config
    * @returns {Promise<SearchResult>} filtered response
    */
   //TODO: refactor this
-  public static async blacklist(
+  async blacklist(
     client: Client,
     player: Player,
     response: SearchResult
@@ -223,4 +223,6 @@ export default class Functions {
     }
     return response;
   }
-}
+};
+
+export default Functions;
