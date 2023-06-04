@@ -35,11 +35,9 @@ const GrabCommand: Command = {
                 name: 'Current timestamp',
                 value: `\`${formatDuration(player.position, {
                   leading: true
-                })}\` [LINK](${
-                  player.queue.current.uri +
-                  '&t=' +
-                  String(Math.round(player.position / 1000))
-                })`,
+                })}\` [LINK](${player.queue.current.uri}&t=${String(
+                  Math.round(player.position / 1000)
+                )})`,
                 inline: true
               },
               {

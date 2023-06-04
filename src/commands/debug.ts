@@ -14,23 +14,22 @@ const DebugCommand: Command = {
   async execute({ client, message, player }: CommandArgs) {
     const smQueue = player.get('similarQueue') as Track[];
     if (!smQueue || smQueue.length === 0) {
-      await message.author.send('Autoplay temp queue is empty');
-    } else {
-      let trackString = '';
-      //for each track in the queue, add its index number and the track's name to the string at new line
-      smQueue.forEach((track, index) => {
-        trackString += `\`#${index}\` - ${track.title}`;
-        trackString += '\n';
-      });
-      return message.author.send({
-        embeds: [
-          new MessageEmbed()
-            .setColor(client.config.embed.color)
-            .setTitle('Autoplay temp queue')
-            .setDescription(trackString)
-        ]
-      });
+      return await message.author.send('Autoplay temp queue is empty');
     }
+    let trackString = '';
+    //for each track in the queue, add its index number and the track's name to the string at new line
+    smQueue.forEach((track, index) => {
+      trackString += `\`#${index}\` - ${track.title}`;
+      trackString += '\n';
+    });
+    return message.author.send({
+      embeds: [
+        new MessageEmbed()
+          .setColor(client.config.embed.color)
+          .setTitle('Autoplay temp queue')
+          .setDescription(trackString)
+      ]
+    });
   }
 };
 

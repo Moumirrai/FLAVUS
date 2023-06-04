@@ -20,7 +20,7 @@ export const build = (
 };
 
 class Embed {
-  private color: ColorResolvable;
+  private readonly color: ColorResolvable;
   private readonly defaultTitle: string;
   private readonly log?: LogLevels;
   constructor(color: ColorResolvable, title: string, log?: LogLevels) {
@@ -34,7 +34,7 @@ class Embed {
   ): Promise<Message> => {
     try {
       if (typeof data === 'string') {
-        if (this.log) Logger[this.log]('EMBED - ' + data);
+        if (this.log) Logger[this.log](`EMBED - ${data}`);
         return channel.send({
           embeds: [
             new MessageEmbed()

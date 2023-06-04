@@ -19,7 +19,7 @@ const LoopCommand: Command = {
       });
     }
     player.setTrackRepeat(false);
-    message.react('❌').catch((e) => {
+    return message.react('❌').catch((e) => {
       client.logger.error(e);
     });
   }

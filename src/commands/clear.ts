@@ -18,6 +18,7 @@ const ClearCommand: Command = {
         client.logger.error(e);
       });
     }
+    return;
   }
 };
 
