@@ -1,13 +1,13 @@
 import { MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 
-const QueueCommand: iCommand = {
+const QueueCommand: Command = {
   name: 'queue',
   aliases: ['q', 'np'],
-  playerRequired: true,
-  visible: true,
   description: 'Shows queue and current track progress',
   usage: '<prefix>queue',
+  requirements: { playerRequired: true },
+
   async execute({ client, message, player }: CommandArgs) {
     // create buttons;
     const row = new MessageActionRow().addComponents(

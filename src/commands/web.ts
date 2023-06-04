@@ -1,9 +1,8 @@
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 
-const DashboardCommand: iCommand = {
+const DashboardCommand: Command = {
   name: 'dashboard',
   aliases: ['web'],
-  visible: true,
   description: 'Sends a dashboard url',
   usage: 'config',
   async execute({ client, message }: CommandArgs) {

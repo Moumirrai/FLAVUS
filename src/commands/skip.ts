@@ -1,15 +1,17 @@
 import { MessageEmbed } from 'discord.js';
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 
-const SkipCommand: iCommand = {
+const SkipCommand: Command = {
   name: 'skip',
   aliases: ['s'],
-  voiceRequired: true,
-  playerRequired: true,
-  sameChannelRequired: true,
-  visible: true,
   description: 'Skips to next or specific track',
   usage: "`<prefix>skip` or `<prefix>s <position in queue>`",
+  requirements: {
+    voiceRequired: true,
+    playerRequired: true,
+    sameChannelRequired: true
+  },
+
   async execute({ client, message, args, player }: CommandArgs) {
     //if queue is empty, it will be handled by the playerManager queueEnd event, so no need to handle it here
     if (args[0] && !isNaN(Number(args[0]))) {

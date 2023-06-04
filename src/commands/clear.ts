@@ -1,20 +1,16 @@
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 
-const ClearCommand: iCommand = {
+const ClearCommand: Command = {
   name: 'clear',
-  aliases: [],
-  voiceRequired: true,
-  joinPermissionRequired: false,
-  playerRequired: true,
-  sameChannelRequired: true,
-  visible: true,
   description: 'Clears the queue',
   usage: 'clear',
-  async execute({
-    client,
-    message,
-    player
-  }: CommandArgs) {
+  requirements: {
+    voiceRequired: true,
+    playerRequired: true,
+    sameChannelRequired: true
+  },
+
+  async execute({ client, message, player }: CommandArgs) {
     if (player.queue.size !== 0) {
       player.queue.clear();
       client.emit('queueUpdate', player);

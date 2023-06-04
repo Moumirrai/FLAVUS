@@ -1,4 +1,4 @@
-import { SocketEvent } from 'flavus-api';
+import { ResultHandlerInterface, SocketEvent } from 'flavus-api';
 import { Player, SearchResult } from 'erela.js';
 import { Connect } from '../client/APIFunctions';
 
@@ -38,7 +38,7 @@ const PauseEvent: SocketEvent = {
       player,
       true
     )
-      .then((reply) => {
+      .then((reply: ResultHandlerInterface) => {
         return socket.emit('player:trackAdded', reply);
       })
       .catch((err) => {

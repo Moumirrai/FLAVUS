@@ -1,14 +1,16 @@
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 
-const PauseOnEndCommand: iCommand = {
+const PauseOnEndCommand: Command = {
   name: 'pausedelayed',
   aliases: ['paused', 'psd'],
-  voiceRequired: true,
-  playerRequired: true,
-  sameChannelRequired: true,
-  visible: true,
   description: 'Pauses player when the current track ends',
   usage: '<prefix>paused',
+  requirements: {
+    voiceRequired: true,
+    playerRequired: true,
+    sameChannelRequired: true
+  },
+  
   async execute({
     client,
     message,

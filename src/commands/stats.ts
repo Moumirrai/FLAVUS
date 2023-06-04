@@ -1,8 +1,8 @@
 import { MessageEmbed } from 'discord.js';
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 import formatDuration = require('format-duration');
 
-const StatsCommand: iCommand = {
+const StatsCommand: Command = {
   name: 'stats',
   aliases: ['metrics'],
   visible: false,

@@ -1,21 +1,19 @@
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 import formatDuration from 'format-duration';
 
-const SeekCommand: iCommand = {
+const SeekCommand: Command = {
   name: 'seek',
   aliases: ['sk', 'goto'],
-  voiceRequired: true,
-  playerRequired: true,
-  sameChannelRequired: true,
-  visible: true,
-  description: "Seeks to given time. Time can by provided in `ss`, `mm:ss` or `hh:mm:ss`.\nYou don't have to put zero before one digit number, just divide them using `:`",
-  usage: "`<prefix>seek 10 , <prefix>seek 02:22 or <prefix>seek 1:5:25`",
-  async execute({
-    client,
-    message,
-    args,
-    player
-  }: CommandArgs) {
+  description:
+    "Seeks to given time. Time can by provided in `ss`, `mm:ss` or `hh:mm:ss`.\nYou don't have to put zero before one digit number, just divide them using `:`",
+  usage: '`<prefix>seek 10 , <prefix>seek 02:22 or <prefix>seek 1:5:25`',
+  requirements: {
+    voiceRequired: true,
+    playerRequired: true,
+    sameChannelRequired: true
+  },
+
+  async execute({ client, message, args, player }: CommandArgs) {
     //TODO: maybe create reusable condition check for player.current in messageCreate event, since multiple commands require it
     if (!player.queue.current) {
       return client.embeds.error(

@@ -4,23 +4,23 @@ import {
   MessageSelectMenu
 } from 'discord.js';
 import { Player } from 'erela.js';
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 import formatDuration = require('format-duration');
 
 /*
 TODO: fix this!!!
  */
 
-const SearchCommand: iCommand = {
+const SearchCommand: Command = {
   name: 'search',
-  voiceRequired: true,
   aliases: ['sr'],
-  joinPermissionRequired: true,
-  playerRequired: false,
-  sameChannelRequired: false,
   description: 'search_description',
   usage: '<prefix>sr <search_query>',
-  visible: true,
+  requirements: {
+    voiceRequired: true,
+    joinPermissionRequired: true
+  },
+
   async execute({
     manager,
     message,

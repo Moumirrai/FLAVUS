@@ -1,20 +1,19 @@
 import { MessageEmbed } from 'discord.js';
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 
-const PauseCommand: iCommand = {
+const PauseCommand: Command = {
   name: 'pause',
   aliases: ['ps'],
-  voiceRequired: true,
-  playerRequired: true,
-  sameChannelRequired: true,
   visible: true,
   description: 'Pauses the current track',
   usage: '<prefix>pause',
-  async execute({
-    client,
-    message,
-    player
-  }: CommandArgs) {
+  requirements: {
+    voiceRequired: true,
+    playerRequired: true,
+    sameChannelRequired: true
+  },
+  
+  async execute({ client, message, player }: CommandArgs) {
     if (!player.playing) {
       return message.channel
         .send({

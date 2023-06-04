@@ -2,7 +2,16 @@ import bodyParser = require('body-parser');
 import cors = require('cors');
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
-import type { APIInterface, APIEndpoint, SocketEvent, Room } from 'flavus-api';
+import type {
+  APIInterface,
+  APIEndpoint,
+  SocketEvent,
+  Room,
+  ClientToServerEvents,
+  ServerToClientEvents,
+  InterServerEvents,
+  SocketData
+} from 'flavus-api';
 import { Collection } from 'discord.js';
 import type { Core } from '../../struct/Core';
 import express from 'express';
@@ -29,7 +38,12 @@ export class APICore implements APIInterface {
   public client: Core;
   public roomManager: roomManager;
   public playerPing: playerPing;
-  public io: Server;
+  public io: Server<
+    ClientToServerEvents,
+    ServerToClientEvents,
+    InterServerEvents,
+    SocketData
+  >;
 
   public cache = {
     voiceStates: new Collection<string, iVoiceCache>(),

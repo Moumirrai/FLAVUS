@@ -1,19 +1,17 @@
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 
-const LoopCommand: iCommand = {
+const LoopCommand: Command = {
   name: 'loop',
   aliases: ['ll', 'lo'],
-  voiceRequired: true,
-  playerRequired: true,
-  sameChannelRequired: true,
-  visible: true,
   description: 'Plays the current track in a loop',
   usage: '<prefix>loop',
-  async execute({
-    client,
-    message,
-    player
-  }: CommandArgs) {
+  requirements: {
+    voiceRequired: true,
+    playerRequired: true,
+    sameChannelRequired: true
+  },
+
+  async execute({ client, message, player }: CommandArgs) {
     if (!player.trackRepeat) {
       player.setTrackRepeat(true);
       return message.react('🔂').catch((e) => {

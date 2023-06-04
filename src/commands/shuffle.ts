@@ -1,14 +1,15 @@
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 
-const ShuffleCommand: iCommand = {
+const ShuffleCommand: Command = {
   name: 'shuffle',
-  aliases: [],
-  voiceRequired: true,
-  playerRequired: true,
-  sameChannelRequired: true,
-  visible: true,
   description: 'Shuffles queue',
   usage: "<prefix>shuffle",
+  requirements: {
+    voiceRequired: true,
+    playerRequired: true,
+    sameChannelRequired: true
+  },
+
   async execute({ client, message, player }: CommandArgs) {
     player.queue.shuffle();
     client.emit('queueUpdate', player);

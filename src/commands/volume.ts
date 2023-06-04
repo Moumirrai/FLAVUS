@@ -1,16 +1,17 @@
 import { MessageEmbed } from 'discord.js';
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 
-const VolumeCommand: iCommand = {
+const VolumeCommand: Command = {
   name: 'volume',
   aliases: ['v', 'vol'],
-  voiceRequired: true,
-  joinPermissionRequired: false,
-  playerRequired: true,
-  sameChannelRequired: true,
-  visible: true,
   description: 'Sets volume or shows current volume if no argument is given',
   usage: '`<prefix>volume <number>` or `<prefix>v`',
+  requirements: {
+    voiceRequired: true,
+    playerRequired: true,
+    sameChannelRequired: true
+  },
+  
   async execute({
     client,
     message,

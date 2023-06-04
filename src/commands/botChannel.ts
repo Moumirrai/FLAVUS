@@ -1,13 +1,12 @@
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 
 /*
  * TODO: change name, and embed
  */
 
-const BotChannelCommand: iCommand = {
+const BotChannelCommand: Command = {
   name: 'statuschannel',
   aliases: ['schannel', 'setchannel'],
-  visible: true,
   description: 'Sets default text channel for bot',
   usage: '<prefix>botchannel',
   async execute({ client, message }: CommandArgs) {

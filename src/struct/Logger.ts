@@ -6,11 +6,19 @@ interface LoggerOptions {
   fileOnly?: boolean;
 }
 
+export enum LogLevels {
+  DEBUG = 'debug',
+  INFO = 'info',
+  ERROR = 'error',
+  LOG = 'log'
+}
+
 export class Logger {
   constructor() {
     this.debugMode = process.env.DEBUGMODE === 'true';
     this.logFile =
       process.env.SAVELOGS === 'true' ? this.createLogFile() : null;
+    this.catchErrors();
   }
 
   public debugMode: boolean;
@@ -40,10 +48,10 @@ export class Logger {
     };
   };
 
-  public debug = this.loggerFactory('DEBUG', 'blue', { debug: true });
-  public info = this.loggerFactory('INFO', 'green');
-  public error = this.loggerFactory('ERROR', 'red');
-  public log = this.loggerFactory('LOG', 'white', { fileOnly: true });
+  public [LogLevels.DEBUG] = this.loggerFactory('DEBUG', 'blue', { debug: true });
+  public [LogLevels.INFO] = this.loggerFactory('INFO', 'green');
+  public [LogLevels.ERROR] = this.loggerFactory('ERROR', 'red');
+  public [LogLevels.LOG] = this.loggerFactory('LOG', 'white', { fileOnly: true });
 
   private createLogFile = () => {
     if (!fs.existsSync('./logs')) {

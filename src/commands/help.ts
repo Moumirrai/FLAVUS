@@ -1,12 +1,11 @@
 import { MessageEmbed } from 'discord.js';
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 
-const HelpCommand: iCommand = {
+const HelpCommand: Command = {
   name: 'help',
   aliases: ['?'],
-  visible: true,
   description: 'help',
-  usage: 'help',
+  usage: '<prfix>help [command]',
   async execute({ client, message, args }: CommandArgs) {
     if (args[0]) {
       const command =

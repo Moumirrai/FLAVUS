@@ -1,4 +1,25 @@
 declare module 'flavus' {
+  export interface Command {
+    name: string;
+    description: string;
+    aliases?: string[];
+    usage?: string;
+    requirements?: CommandRequirements;
+    visible?: boolean;
+    execute: (commandArgs: CommandArgs) => void;
+  }
+
+  //conditions for a command to be executed
+  export interface CommandRequirements {
+    voiceRequired?: boolean;
+    playerRequired?: boolean;
+    currentTrackRequired?: boolean;
+    sameChannelRequired?: boolean;
+    joinPermissionRequired?: boolean;
+    devOnly?: boolean;
+  }
+
+  //arguments passed to a command
   export interface CommandArgs {
     client: import('../../struct/Core').Core;
     message: import('discord.js').Message;
@@ -7,35 +28,12 @@ declare module 'flavus' {
     player?: import('erela.js').Player;
     vc?: import('discord.js').VoiceBasedChannel;
   }
-  export interface iCommand {
-    name: string;
-    aliases: string[];
-    description: string;
-    usage: string;
-    voiceRequired?: boolean;
-    playerRequired?: boolean;
-    sameChannelRequired?: boolean;
-    joinPermissionRequired?: boolean;
-    visible: boolean;
-    execute: (commandArgs: CommandArgs) => void;
-  }
+  //client events
   export interface iEvent {
     name: string;
     execute: (client: import('../../struct/Core').Core, ...args: any[]) => void;
   }
-
-  export interface socketResponse {
-    type: 'playerError' | 'playerMessage';
-    content: string;
-  }
-
-  export interface iVoiceCache {
-    voiceChannel: import('discord.js').VoiceChannel;
-    user: import('discord.js').User;
-    guildId: string;
-    deafened: boolean;
-  }
-
+  //manager events
   export interface iManagerEvent {
     name: string;
     execute: (
@@ -43,6 +41,13 @@ declare module 'flavus' {
       manager: import('erela.js').Manager,
       ...args: any[]
     ) => void;
+  }
+
+  export interface iVoiceCache {
+    voiceChannel: import('discord.js').VoiceChannel;
+    user: import('discord.js').User;
+    guildId: string;
+    deafened: boolean;
   }
 
   export interface iSpotifySearchResult {

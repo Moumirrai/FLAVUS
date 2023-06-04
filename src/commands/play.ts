@@ -1,22 +1,18 @@
 import { MessageOptions } from 'discord.js';
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 import { SearchResult } from 'erela.js';
 
-const PlayCommand: iCommand = {
+const PlayCommand: Command = {
   name: 'play',
   aliases: ['p'],
-  joinPermissionRequired: true,
-  voiceRequired: true,
   description: 'Searches for a song or playlist and plays it in your channel',
   usage: '<prefix>play <search_query>',
-  visible: true,
-  async execute({
-    manager,
-    message,
-    args,
-    vc,
-    client
-  }: CommandArgs) {
+  requirements: {
+    voiceRequired: true,
+    joinPermissionRequired: true
+  },
+
+  async execute({ manager, message, args, vc, client }: CommandArgs) {
     if (!args[0]) {
       return client.embeds.error(
         message.channel,

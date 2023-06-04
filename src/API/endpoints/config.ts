@@ -57,7 +57,7 @@ const ConfigEndpoint: APIEndpoint = {
                     titleBlacklist: [],
                     authorBlacklist: [],
                     uriBlacklist: []
-                  }),
+                  })
                 settings.save().catch((err) => console.log(err));
               return res.status(200).send('ok');
             }

@@ -30,7 +30,7 @@ declare module 'flavus-api' {
     };
     execute: (
       client: import('../../struct/Core').Core,
-      io: import('socket.io').Socket,
+      io: import('socket.io').Socket<ClientToServerEvents, ServerToClientEvents>,
       data?: unknown
     ) => Promise<unknown> | void | boolean;
   }
@@ -105,7 +105,8 @@ declare module 'flavus-api' {
     }[];
   }
 
-  export enum ClientToServerEvents {
+  
+  export enum ClientToServerEnum {
     'player:addTrack' = 'player:addTrack',
     'player:clearQueue' = 'player:clearQueue',
     'player:moveTrack' = 'player:moveTrack',
@@ -114,7 +115,7 @@ declare module 'flavus-api' {
     'player:seek' = 'player:seek',
     'player:skip' = 'player:skip',
     'player:stop' = 'player:stop',
-    'player:test' = 'player:test',
+    'player:test' = 'player:test'
   }
 
   /*
@@ -149,13 +150,33 @@ declare module 'flavus-api' {
     basicEmit: (a: number, b: string, c: Buffer) => void;
     withAck: (d: string, callback: (e: number) => void) => void;
   }
-  
+
   interface ClientToServerEvents {
     hello: () => void;
   }
-  
+
   export type InterServerEvents = {};
   interface SocketData {
     pepe: string;
+  }
+
+  export interface ServerToClientEvents {
+    noArg: () => void;
+    basicEmit: (a: number, b: string, c: Buffer) => void;
+    withAck: (d: string, callback: (e: number) => void) => void;
+    ['player:data']: (payload: PlayerData) => void;
+    ['player:queueData']: (payload: QueueData) => void;
+    ['player:trackAdded']: (payload: import('flavus-api').ResultHandlerInterface) => void;
+    ['player:error']: (payload: string) => void;
+    ['api:rateLimit']: (payload: string) => void;
+  }
+
+  export interface ClientToServerEvents {
+    hello: () => void;
+  }
+
+  export interface SocketData {
+    name: string;
+    age: number;
   }
 }

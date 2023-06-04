@@ -4,7 +4,7 @@ import { Client, Intents, Collection } from 'discord.js';
 import { readdirSync } from 'fs';
 import Logger from './Logger';
 import { resolve } from 'path';
-import type { iCommand } from 'flavus';
+import type { Command } from 'flavus';
 import { connect, ConnectOptions } from 'mongoose';
 import Functions from './Functions';
 import * as Embeds from './Embeds';
@@ -33,8 +33,8 @@ export class Core extends Client {
   }
   public logger = Logger;
 
-  public aliases = new Collection<string, iCommand>();
-  public commands = new Collection<string, iCommand>();
+  public aliases = new Collection<string, Command>();
+  public commands = new Collection<string, Command>();
 
   public status = 1;
   public functions = Functions;
@@ -79,13 +79,26 @@ export class Core extends Client {
     const files = readdirSync(resolve(__dirname, '..', 'commands'));
     for (const file of files) {
       const command = (await import(resolve(__dirname, '..', 'commands', file)))
-        .default;
+        .default as Command;
+      if (!command.name || this.commands.has(command.name)) {
+        this.logger.error(
+          `Command ${file} has no name or a command with the same name already exists!`
+        );
+        continue;
+      }
       this.commands.set(command.name, command);
-      if (command.aliases.length > 0) {
+      if (command.aliases?.length > 0) {
         command.aliases.forEach((alias) => {
+          if (this.aliases.has(alias)) {
+            this.logger.error(
+              `Command ${file} has an alias '${alias}' that already exists!`
+            );
+            return;
+          }
           this.aliases.set(alias, command);
         });
       }
+      if (command.visible === undefined ) command.visible = true; // default to true
     }
     this.logger.info(`${this.commands.size} commands loaded!`);
   }

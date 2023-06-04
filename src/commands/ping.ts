@@ -1,12 +1,12 @@
 import { MessageEmbed } from 'discord.js';
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 
-const PingCommand: iCommand = {
+const PingCommand: Command = {
   name: 'ping',
-  aliases: [],
   visible: true,
   description: 'ping_description',
   usage: '<prefix>ping',
+  
   async execute({ client, message }: CommandArgs) {
     return message.channel
       .send({

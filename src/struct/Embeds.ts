@@ -7,51 +7,7 @@ import {
   MessageEmbedOptions
 } from 'discord.js';
 import { config } from '../config/config';
-import Logger from './Logger';
-
-export const error = embedFactory(config.embed.errorcolor, 'Error');
-export const info = embedFactory(config.embed.color, 'Info');
-
-function embedFactory(
-  color: ColorResolvable,
-  defaultTitle: string,
-  log?: 'error' | 'log'
-) {
-  return (
-    channel: TextBasedChannel,
-    data?: MessageEmbedOptions | string
-  ): Promise<Message> => {
-    try {
-      if (typeof data === 'string') {
-        if (log) Logger[log](data);
-        return channel.send({
-          embeds: [
-            new MessageEmbed()
-              .setColor(color)
-              .setTitle(defaultTitle)
-              .setDescription(data)
-          ]
-        });
-      } else {
-        if (log)
-          Logger[log](
-            `Title: ${data.title || 'No Title'} | Description: ${
-              data.description || 'No description'
-            } `
-          );
-        return channel.send({
-          embeds: [
-            new MessageEmbed({ ...data })
-              .setColor(color)
-              .setTitle(data.title || defaultTitle)
-          ]
-        });
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-}
+import Logger, { LogLevels } from './Logger';
 
 export const build = (
   data: MessageEmbedOptions,
@@ -62,3 +18,55 @@ export const build = (
   }).setColor(error ? config.embed.errorcolor : config.embed.color);
   return { embeds: [embed] };
 };
+
+class Embed {
+  private color: ColorResolvable;
+  private readonly defaultTitle: string;
+  private readonly log?: LogLevels;
+  constructor(color: ColorResolvable, title: string, log?: LogLevels) {
+    this.log = log;
+    this.color = color;
+    this.defaultTitle = title;
+  }
+  public create = (
+    channel: TextBasedChannel,
+    data?: MessageEmbedOptions | string
+  ): Promise<Message> => {
+    try {
+      if (typeof data === 'string') {
+        if (this.log) Logger[this.log]('EMBED - ' + data);
+        return channel.send({
+          embeds: [
+            new MessageEmbed()
+              .setColor(this.color)
+              .setTitle(this.defaultTitle)
+              .setDescription(data)
+          ]
+        });
+      } else {
+        if (this.log)
+          Logger[this.log](
+            `Title: ${data.title || 'No Title'} | Description: ${
+              data.description || 'No description'
+            } `
+          );
+        return channel.send({
+          embeds: [
+            new MessageEmbed({ ...data })
+              .setColor(this.color)
+              .setTitle(data.title || this.defaultTitle)
+          ]
+        });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+}
+
+export const error = new Embed(
+  config.embed.errorcolor,
+  'Error',
+  LogLevels.ERROR
+).create;
+export const info = new Embed(config.embed.color, 'Info').create;

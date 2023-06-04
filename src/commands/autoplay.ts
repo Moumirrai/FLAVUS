@@ -1,14 +1,8 @@
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 import { MessageEmbed } from 'discord.js';
 
-const AutoplayCommand: iCommand = {
+const AutoplayCommand: Command = {
   name: 'autoplay',
-  aliases: [],
-  voiceRequired: false,
-  joinPermissionRequired: false,
-  playerRequired: false,
-  sameChannelRequired: false,
-  visible: true,
   description: 'Toggles or changes autoplay config',
   usage: '`<prefix>autoplay` or `<prefix>autoplay switch`',
   async execute({ client, message, args }: CommandArgs) {

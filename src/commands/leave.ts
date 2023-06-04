@@ -1,12 +1,14 @@
-import { CommandArgs, iCommand } from 'flavus';
+import { CommandArgs, Command } from 'flavus';
 
-const LeaveCommand: iCommand = {
+const LeaveCommand: Command = {
   name: 'stop',
   aliases: ['ds', 'leave'],
   description: 'Stops player, and leaves the channel',
   usage: '<prefix>resume',
-  playerRequired: true,
-  visible: true,
+  requirements: {
+    playerRequired: true
+  },
+
   async execute({ client, message, player }: CommandArgs) {
     client.logger.log('Stopping player, code 102');
     player.destroy();
