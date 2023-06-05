@@ -2,6 +2,8 @@
 
 Discord music bot powered by Lavalink. Based on [discord.js](https://discord.js.org/#/) and [erela.js](https://erelajs-docs.netlify.app/docs/gettingstarted.html#documentation-guides). Provides an rest/socket API through which remote control is possible (e.g. web client).
 
+[![DeepSource](https://app.deepsource.com/gh/Moumirrai/FLAVUS.svg/?label=active+issues&show_trend=true&token=s08kSy0CWD7NO4ryOxLjZieN)](https://app.deepsource.com/gh/Moumirrai/FLAVUS/?ref=repository-badge)
+
 ## Features
 - can play music from **YouTube**, **Spotify***, **Twitch**, and more
 - has decent autoplay
