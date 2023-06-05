@@ -20,7 +20,7 @@ const Functions = {
    */
   escapeRegex(str: string): string {
     try {
-      return str.replace(/[.*+?^$`{}()|[\]\\]/g, `\\$&`);
+      return str.replace(/[.*+?^$`{}()|[\]\\]/g, "\\$&");
     } catch (e) {
       Logger.error(e.stack);
     }
