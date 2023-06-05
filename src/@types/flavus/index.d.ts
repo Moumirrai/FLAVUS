@@ -6,7 +6,12 @@ declare module 'flavus' {
     usage?: string;
     requirements?: CommandRequirements;
     visible?: boolean;
-    execute: (commandArgs: CommandArgs) => void;
+    execute: (
+      commandArgs: CommandArgs
+    ) =>
+      | import('discord.js').Message<boolean>
+      | Promise<void | import('discord.js').Message<boolean>>
+      | void;
   }
 
   //conditions for a command to be executed

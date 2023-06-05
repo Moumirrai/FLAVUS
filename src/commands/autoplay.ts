@@ -23,7 +23,7 @@ const AutoplayCommand: Command = {
       doc.autoplay.active = !doc.autoplay.active;
     }
     doc.save().catch((err) => client.logger.error(err));
-    return message.channel.send({
+    message.channel.send({
       embeds: [
         new MessageEmbed()
           .setColor(client.config.embed.color)
@@ -39,6 +39,7 @@ const AutoplayCommand: Command = {
           )
       ]
     });
+    return;
     /*
     GuildModel.findOne({ guildID: message.guild.id }, (err, settings) => {
       if (err) return client.logger.error(err);
