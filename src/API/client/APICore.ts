@@ -69,7 +69,7 @@ export class APICore implements APIInterface {
 
     const port = process.env.APIPORT || 3030;
 
-    await APICore.configApp(app);
+    APICore.configApp(app);
 
     app.use(sessionMiddleware);
 
@@ -203,6 +203,8 @@ export class APICore implements APIInterface {
       await endpoint.execute(this.client, req, res);
     });
 
+    //TODO: remove
+
     process.stdin.on('data', (data) => {
       if (data.toString().toLowerCase().trim() === 'r') {
         process.stdout.clearLine(0);
@@ -222,6 +224,7 @@ export class APICore implements APIInterface {
       }
     });
 
+    //starts api
     server.listen(port, () =>
       this.client.logger.info(`API running on port ${port}`)
     );

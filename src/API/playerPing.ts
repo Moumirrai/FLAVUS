@@ -83,7 +83,7 @@ export default class roomPing {
     )
       return;
     const player: Player = this.client.manager.players.get(room);
-    const data = await this.getQueueData(player);
+    const data = this.getQueueData(player);
     return this.queueEmitter(room, data);
   }
 
