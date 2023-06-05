@@ -10,7 +10,11 @@ declare module 'flavus' {
       commandArgs: CommandArgs
     ) =>
       | import('discord.js').Message<boolean>
-      | Promise<void | import('discord.js').Message<boolean>>
+      | Promise<
+          | void
+          | import('discord.js').Message<boolean>
+          | import('discord.js').MessageReaction
+        >
       | void;
   }
 
