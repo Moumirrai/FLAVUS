@@ -15,7 +15,7 @@ export async function Connect(
     guildID: voiceCache.guildId
   });
   let channel: TextBasedChannel = voiceCache.voiceChannel;
-  if (guildModel && guildModel.statusChannel && guildModel.statusChannel.id)
+  if (guildModel?.statusChannel?.id)
     channel = client.channels.cache.get(
       guildModel.statusChannel.id
     ) as TextBasedChannel;
@@ -33,7 +33,6 @@ export async function Connect(
   });
   return await client.PlayerManager.connect(
     msg,
-    client,
     client.manager,
     voiceCache.voiceChannel
   );

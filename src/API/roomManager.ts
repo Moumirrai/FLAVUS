@@ -12,7 +12,7 @@ export default class roomManager {
    * Stops the room interval and removes it from cache
    * @param {string} id ID of the room to destroy
    * @returns {void}
-  */
+   */
   public destroyRoom(id: string) {
     const room = this.api.cache.rooms.get(id);
     if (!room) return;
@@ -32,7 +32,6 @@ export default class roomManager {
    * @returns {Promise<IGuildModel>} GuildModel
    */
   private purgeRooms(socket: Socket, id?: string): Promise<void> {
-    console.log('Purging rooms');
     this.api.client.logger.debug('Purging rooms');
     if (!id) id = 'undefined';
     if (!socket) return;
@@ -69,12 +68,11 @@ export default class roomManager {
    */
   public async leave(socket: Socket): Promise<void> {
     this.api.client.logger.debug('Leaving room');
-    if (socket && socket.connected) socket.emit('playerDestroy');
+    if (socket && socket.connected) socket.emit('player:destroy');
     await this.purgeRooms(socket);
   }
 
   public async join(socket: Socket, guildId: string) {
-    console.log('joining room');
     await this.purgeRooms(socket, guildId);
     if (!socket.rooms.has(guildId)) {
       console.log('joining room' + guildId);
@@ -107,6 +105,7 @@ export default class roomManager {
           .members.push(socket.request.session.user.id);
       }
     }
+    await this.api.playerPing.playerData(guildId);
     await this.api.playerPing.queueData(guildId);
   }
 }

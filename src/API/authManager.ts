@@ -1,19 +1,79 @@
 import Cryptr from 'cryptr';
-import { AuthModel, IAuthModel } from '../models/authModel';
 const cryptr = new Cryptr(process.env.SECRET);
-import DiscordOauth2 = require('discord-oauth2');
+import { AuthModel, IAuthModel } from '../models/authModel';
+import DiscordOauth2, { User as PartialUser } from 'discord-oauth2';
 const oauth = new DiscordOauth2({
   clientId: process.env.CLIENT_ID,
   clientSecret: process.env.CLIENT_SECRET,
   redirectUri: process.env.REDIRECTURI
 });
-import type { AuthResponse, userGuilds, UserInterface } from 'flavus-api';
+import type { AuthResponse, userGuilds } from 'flavus-api';
 import logger from '../struct/Logger';
 import { Core } from '../struct/Core';
+import { User } from 'discord.js';
+
 export async function authUser(
   code: string,
   client: Core
-): Promise<UserInterface | null> {
+): Promise<User | null> {
+  try {
+    const userAuth: IAuthModel | null = await AuthModel.findOne({ code });
+    if (userAuth) {
+      const currentTime = new Date().getTime();
+      const { createdAt, auth } = userAuth;
+      const { expires_in, access_token, refresh_token } = auth;
+
+      if (createdAt.getTime() + expires_in * 1000 < currentTime) {
+        const newCredentials: AuthResponse | null = await refreshToken(
+          cryptr.decrypt(refresh_token)
+        );
+
+        if (!newCredentials) return null;
+
+        const user = await getUser(newCredentials.access_token, client);
+
+        if (!user) return null;
+
+        userAuth.auth = encrypt(newCredentials);
+        userAuth.createdAt = new Date();
+        await userAuth.save();
+        return user;
+      }
+
+      const user = await getUser(cryptr.decrypt(access_token), client);
+      if (!user) return null;
+
+      userAuth.createdAt = new Date();
+      await userAuth.save();
+      return user;
+    }
+    logger.log('new auth');
+    const newCredentials: AuthResponse | null = await newAuth(code);
+    if (!newCredentials) return null;
+    const user = await getUser(newCredentials.access_token, client);
+    if (!user) return null;
+
+    const newuserAuth: IAuthModel = new AuthModel({
+      code,
+      id: user.id,
+      auth: encrypt(newCredentials),
+      createdAt: new Date()
+    });
+
+    await newuserAuth.save();
+    return user;
+  } catch (error) {
+    logger.error(error.message);
+    return null;
+  }
+}
+
+/*
+TODO: DELETE THIS
+export async function authUser(
+  code: string,
+  client: Core
+): Promise<User | null> {
   try {
     const userAuth: IAuthModel = await AuthModel.findOne({
       code: code
@@ -50,7 +110,7 @@ export async function authUser(
       }
       return null;
     }
-    console.log('new auth');
+    logger.log('new auth');
     //new auth
     const newCredentials: AuthResponse | null = await newAuth(code);
     if (newCredentials) {
@@ -78,6 +138,7 @@ export async function authUser(
     return null;
   }
 }
+*/
 
 async function newAuth(code: string): Promise<AuthResponse | null> {
   return oauth
@@ -125,15 +186,15 @@ async function refreshToken(
 
 export async function getUser(
   token: string,
-  client
-): Promise<UserInterface | null> {
+  client: Core
+): Promise<User | null> {
   return await oauth
     .getUser(token)
-    .then(async (response: UserInterface) => {
-      response.guilds = await getGuilds(token, client);
-      //TODO:remove this
-      //console.log(response);
-      return response;
+    .then(async (response: PartialUser) => {
+      const id = response.id;
+      const user = await client.users.fetch(id);
+      if (!user) return null;
+      return user;
     })
     .catch((err) => {
       console.log(err);
@@ -155,30 +216,8 @@ export async function getGuilds(
     owned.filter((guild) => !client.guilds.cache.has(guild.id)) || [];
   const active =
     owned.filter((guild) => client.guilds.cache.has(guild.id)) || [];
-  //TODO:remove this
-  //console.log(active);
   return {
     active: active,
     notActive: notActive
   };
-
-  return oauth
-    .getUserGuilds(token)
-    .then((response: DiscordOauth2.PartialGuild[]) => {
-      const owned = response.filter((guild) => guild.owner);
-      const notActive =
-        owned.filter((guild) => !client.guilds.cache.has(guild.id)) || [];
-      const active =
-        owned.filter((guild) => client.guilds.cache.has(guild.id)) || [];
-      //TODO:remove this
-      //console.log(active);
-      return {
-        active: active,
-        notActive: notActive
-      };
-    })
-    .catch((err) => {
-      console.log(err);
-      return null;
-    });
 }

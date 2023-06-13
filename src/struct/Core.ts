@@ -39,7 +39,7 @@ export class Core extends Client {
   public status = 1;
   public functions = Functions;
   public embeds = Embeds;
-  public PlayerManager = PlayerManager;
+  public PlayerManager = new PlayerManager(this);
   public async main(): Promise<void> {
     try {
       this.logger.info('Initializing...');

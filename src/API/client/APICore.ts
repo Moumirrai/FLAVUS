@@ -25,7 +25,7 @@ import rateLimit from 'express-rate-limit';
 import roomManager from '../roomManager';
 import playerPing from '../playerPing';
 
-import { sessionMiddleware } from '../middlewares';
+import { sessionMiddleware, authMiddleware } from '../middlewares';
 
 declare module 'http' {
   interface IncomingMessage {
@@ -73,61 +73,7 @@ export class APICore implements APIInterface {
 
     app.use(sessionMiddleware);
 
-    app.use(
-      async (
-        req: express.Request,
-        res: express.Response,
-        next: express.NextFunction
-      ) => {
-        if (!req.url.startsWith('/api')) {
-          return next();
-        }
-        if (!req.headers.authorization) {
-          this.client.logger.log(
-            'Authentification failed! - No authorization header - Code 1'
-          );
-          return res.status(401).send('Authentification failed!');
-        }
-        //allow metrics endpoint to be accessed without auth
-        if (
-          req.url.startsWith('/api/metrics') &&
-          req.headers.authorization === process.env.METRICS_TOKEN
-        ) {
-          return next();
-        }
-        if (req.headers.authorization && req.session.code) {
-          //TODO: parse and inherit expiration from config
-          if (
-            req.session.code !== req.headers.authorization ||
-            !req.session.createdAt ||
-            new Date().getTime() - req.session.createdAt > 604800000
-          ) {
-            const user = await authUser(req.headers.authorization, this.client);
-            if (user) {
-              req.session.code = req.headers.authorization;
-              req.session.user = user;
-              req.session.createdAt = new Date().getTime();
-              return next();
-            }
-            this.client.logger.log(
-              'Authentification failed! - Invalid authorization header'
-            );
-            return res.status(401).send('Authentification failed!');
-          }
-          return next();
-        }
-        console.log(req.headers.authorization);
-        const user = await authUser(req.headers.authorization, this.client);
-        if (user) {
-          req.session.code = req.headers.authorization;
-          req.session.user = user;
-          req.session.createdAt = new Date().getTime();
-          return next();
-        }
-        this.client.logger.log('Authentication failed!  - Code 2');
-        return res.status(401).send('Authentication failed!');
-      }
-    );
+    app.use(authMiddleware(this.client));
 
     const wrap = (middleware: any) => (socket: Socket, next: any) =>
       middleware(socket.request, {}, next);
@@ -155,6 +101,7 @@ export class APICore implements APIInterface {
       for (const [name, event] of this.SocketEvents) {
         const rateLimiter = new RateLimiterMemory(event.rateLimit);
         socket.on(name, async (data) => {
+          console.log('PEPE');
           try {
             await rateLimiter.consume(socket.request.session.user.id);
             this.client.logger.log(
@@ -187,7 +134,9 @@ export class APICore implements APIInterface {
     this.io.of('/').adapter.on('join-room', (room) => {
       console.log('room joined ' + room);
     });
-    this.io.of('/').adapter.on('leave-room', (room) => {
+    this.io.of('/').adapter.on('leave-room', (room, id) => {
+      //get socket from id
+
       console.log('room left ' + room);
     });
 
@@ -205,8 +154,11 @@ export class APICore implements APIInterface {
 
     //TODO: remove
 
+    /*
+
     process.stdin.on('data', (data) => {
       if (data.toString().toLowerCase().trim() === 'r') {
+        //clear line with r
         process.stdout.clearLine(0);
         console.log('Rooms:');
         console.log(this.io.of('/').adapter.rooms);
@@ -223,6 +175,8 @@ export class APICore implements APIInterface {
         process.stdout.write('\x1Bc');
       }
     });
+
+    */
 
     //starts api
     server.listen(port, () =>

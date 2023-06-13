@@ -15,22 +15,35 @@ import {
   UnresolvedTrack,
   TrackUtils
 } from 'erela.js';
-import formatDuration = require('format-duration');
+import formatDuration from 'format-duration';
 import { Core } from './Core';
 import { Spotify } from 'better-erela.js-spotify/dist/plugin';
 import { SpotifyTrack } from 'better-erela.js-spotify/dist/typings';
 import { iSpotifySearchResult, iSpotifyRecommResult } from 'flavus';
 
 import validUrl = require('valid-url');
+import { PMError } from '../errors';
+
+//TODO: move to @types/erela or somewhere else
+interface searchParams {
+  author?: User;
+  handleResult?: boolean;
+  web?: boolean;
+}
 
 export default class PlayerManager {
-  public static async connect(
+  private client: Core;
+
+  constructor(client: Core) {
+    this.client = client;
+  }
+
+  public async connect(
     message: Message,
-    client: Client,
     manager: Manager,
     vc: VoiceBasedChannel
   ): Promise<Player> {
-    let player: Player = client.manager.players.get(message.guild.id);
+    let player: Player = this.client.manager.players.get(message.guild.id);
     if (!player) {
       player = manager.create({
         guild: message.guild.id,
@@ -45,133 +58,107 @@ export default class PlayerManager {
     return player;
   }
 
-  public static async search(
+  public async search(
     query: string,
     player: Player,
-    author: User,
-    yt?: boolean
-  ): Promise<SearchResult> {
-    let res: SearchResult;
-    try {
-      res = await player.search(
-        query.includes('open.spotify.com/') || validUrl.isUri(query)
-          ? query
-          : { query: query, source: 'youtube' },
-        author
-      );
-      if (res.loadType === 'LOAD_FAILED') {
-        throw { message: res.exception };
-      }
-    } catch (err) {
-      throw err;
+    params: searchParams
+  ): Promise<SearchResult | MessageOptions> {
+    const searchQuery =
+      query.includes('open.spotify.com/') || validUrl.isUri(query)
+        ? query
+        : { query, source: 'youtube' };
+    const author = params.author || this.client.user;
+    const res = await player.search(searchQuery, author);
+    if (!params.handleResult) {
+      return res;
     }
-    res.query = query;
-    return res;
+    return this.handleSearchResult(res, player) as
+      | SearchResult
+      | MessageOptions;
   }
 
-  public static async handleSearchResult(
-    client: Core,
+  public async handleSearchResult(
     res: SearchResult,
     player: Player,
     web?: boolean
   ): Promise<MessageOptions | ResultHandlerInterface> {
-    switch (res.loadType) {
+    const { loadType, query, tracks, playlist } = res;
+    const querySubstring = query ? query.slice(0, 253) : 'unknown';
+    const isQueryValidUrl = res.query && validUrl.isUri(res.query);
+    switch (loadType) {
+      case 'LOAD_FAILED':
+        if (!player.queue.current) player.destroy();
+        if (web) throw new PMError(res.exception.message);
+
       case 'NO_MATCHES':
-        if (!player.queue.current) {
-          client.logger.log('Stopping player, code 106');
-          player.destroy();
-        }
-        if (web)
-          throw `Found nothing for: \`${
-            res.query ? res.query.substring(0, 253) : 'unknown'
-          }\``;
-        return client.embeds.build(
+        if (!player.queue.current) player.destroy();
+        if (web) throw `Found nothing for: \`${querySubstring}\``;
+        return this.client.embeds.build(
           {
-            title: `Found nothing for: \`${
-              res.query ? res.query.substring(0, 253) : 'unknown'
-            }\``
+            title: `Found nothing for: \`${querySubstring}\``
           },
           true
         );
       case 'TRACK_LOADED':
       case 'SEARCH_RESULT':
         //if res.query is valid url
-        if (res.query && validUrl.isUri(res.query)) {
+        if (isQueryValidUrl) {
           const urlParams = new URL(res.query).searchParams;
           if (urlParams.has('t')) {
             const time = parseInt(urlParams.get('t')) * 1000;
-            if (
-              !time ||
-              isNaN(time) ||
-              time < 0 ||
-              time > res.tracks[0].duration
-            )
-              return;
-            res.tracks[0].startTime = time;
+            //if time is defined, is number and is between 0 and track duration, set startTime
+            if (time >= 0 && time <= res.tracks[0].duration)
+              res.tracks[0].startTime = time;
           }
         }
-        if (player.state !== 'CONNECTED' || !player.queue.current) {
-          if (player.state !== 'CONNECTED') player.connect();
+
+        if (player.state !== 'CONNECTED') {
+          player.connect();
+        }
+
+        if (!player.queue.current) {
           player.queue.add(res.tracks[0]);
           await player.play(res.tracks[0], {
-            startTime: res.tracks[0].startTime ? res.tracks[0].startTime : 0
+            startTime: res.tracks[0].startTime || 0
           });
-          client.emit('queueUpdate', player);
           player.pause(false);
-          if (web)
-            return {
-              type: 'TRACK',
-              tracks: [
-                {
-                  title: res.tracks[0].title,
-                  author: res.tracks[0].author,
-                  duration: res.tracks[0].duration,
-                  uri: res.tracks[0].uri
-                }
-              ],
-              nowPlaying: true
-            };
-          return client.embeds.build({
-            author: { name: 'Now Playing' },
-            title: `${res.tracks[0].title}`,
-            url: res.tracks[0].uri,
-            description: `by **${res.tracks[0].author}**`,
-            thumbnail: { url: res.tracks[0].thumbnail }
-          });
         } else {
           player.queue.add(res.tracks[0]);
-          client.emit('queueUpdate', player);
-          if (web)
-            return {
-              type: 'TRACK',
-              tracks: [
-                {
-                  title: res.tracks[0].title,
-                  author: res.tracks[0].author,
-                  duration: res.tracks[0].duration,
-                  uri: res.tracks[0].uri
-                }
-              ],
-              nowPlaying: true
-            };
-          return client.embeds.build({
-            author: { name: 'Queued' },
-            title: `${res.tracks[0].title}`,
-            url: res.tracks[0].uri,
-            description: `by **${res.tracks[0].author}**`,
-            thumbnail: { url: res.tracks[0].thumbnail }
-          });
         }
+        this.client.emit('queueUpdate', player);
+        if (web)
+          return {
+            type: 'TRACK',
+            tracks: [
+              {
+                title: res.tracks[0].title,
+                author: res.tracks[0].author,
+                duration: res.tracks[0].duration,
+                uri: res.tracks[0].uri
+              }
+            ],
+            nowPlaying: true
+          };
+        return this.client.embeds.build({
+          author: {
+            name: player.queue.length ? 'Added to queue' : 'Now playing'
+          },
+          title: `${res.tracks[0].title}`,
+          url: res.tracks[0].uri,
+          description: `by **${res.tracks[0].author}**`,
+          thumbnail: { url: res.tracks[0].thumbnail }
+        });
+
       case 'PLAYLIST_LOADED':
         if (player.state !== 'CONNECTED' || !player.queue.current) {
           if (player.state !== 'CONNECTED') player.connect();
           player.queue.add(res.tracks);
           await player.play();
-          client.emit('queueUpdate', player);
+          this.client.emit('queueUpdate', player);
           player.pause(false);
         } else {
           player.queue.add(res.tracks);
-          client.emit('queueUpdate', player);
+          this.client.emit('queueUpdate', player);
         }
         if (web)
           return {
@@ -184,7 +171,7 @@ export default class PlayerManager {
             })),
             playlistName: res.playlist.name
           };
-        return client.embeds.build(
+        return this.client.embeds.build(
           {
             author: { name: 'Queued' },
             title: `Playlist **\`${res.playlist.name.substring(
@@ -214,15 +201,14 @@ export default class PlayerManager {
     }
   }
 
-  public static async autoplay(
+  public async autoplay(
     client: Core,
     player: Player,
     mode: string
   ): Promise<void | Message> {
     if (
-      (player.get("previousTrack") as Track).requester !== client.user ||
-      !player.get("similarQueue") ||
-      (player.get("similarQueue") as Track[]).length === 0
+      (player.get('previousTrack') as Track).requester !== client.user ||
+      (player.get('similarQueue') as Track[])?.length === 0
     ) {
       if (mode === 'yt') {
         await this.ytAutoplay(client, player);
@@ -231,12 +217,12 @@ export default class PlayerManager {
       }
     }
     try {
-      const similarQueue: Track[] = player.get("similarQueue");
+      const similarQueue: Track[] = player.get('similarQueue');
       const track = similarQueue.splice(
         Math.floor(Math.random() * similarQueue.length),
         1
       )[0];
-      player.set("similarQueue", similarQueue);
+      player.set('similarQueue', similarQueue);
       player.queue.add(track);
       await client.embeds.info(
         client.channels.cache.get(player.textChannel) as TextChannel,
@@ -255,16 +241,16 @@ export default class PlayerManager {
     return;
   }
 
-  public static async ytAutoplay(
+  public async ytAutoplay(
     client: Core,
     player: Player
   ): Promise<void | Message> {
     try {
-      const previoustrack: Track = player.get("previousTrack");
+      const previoustrack: Track = player.get('previousTrack');
       if (!previoustrack) return;
       //update owner
       if (previoustrack.requester !== client.user)
-        player.set("autoplayOwner", previoustrack.requester);
+        player.set('autoplayOwner', previoustrack.requester);
 
       const mixURL = `https://www.youtube.com/watch?v=${previoustrack.identifier}&list=RD${previoustrack.identifier}`;
       const response = await client.manager.search(mixURL, client.user);
@@ -305,25 +291,25 @@ export default class PlayerManager {
           }
         );
       }
-      player.set("similarQueue", filteredTracks);
+      player.set('similarQueue', filteredTracks);
     } catch (e) {
       client.logger.error(e.stack);
     }
     return;
   }
 
-  public static async spotifyAutoplay(client: Core, player: Player) {
+  public async spotifyAutoplay(client: Core, player: Player) {
     try {
-      const previoustrack: Track = player.get("previousTrack");
+      const previoustrack: Track = player.get('previousTrack');
       if (!previoustrack) return;
       if (previoustrack.requester !== client.user)
-        player.set("autoplayOwner", previoustrack.requester);
+        player.set('autoplayOwner', previoustrack.requester);
 
       //find previous track on spotify
       const resolver = (client.manager.options.plugins[0] as Spotify).resolver;
 
       const sourceTrack = (await resolver.makeRequest(
-        `https://api.spotify.com/v1/search?q=${encodeURI(
+        `/search?q=${encodeURI(
           previoustrack.title
         )}&type=track&limit=1&offset=0`
       )) as iSpotifySearchResult;
@@ -371,13 +357,13 @@ export default class PlayerManager {
           ) as Track
         );
       }
-      player.set("similarQueue", similarQueue);
+      player.set('similarQueue', similarQueue);
     } catch (e) {
       client.logger.error(e.stack);
     }
   }
 
-  public static spotifyBuildUnresolved(
+  public spotifyBuildUnresolved(
     track: SpotifyTrack,
     client
   ): Omit<UnresolvedTrack, 'resolve'> {

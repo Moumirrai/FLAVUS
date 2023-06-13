@@ -30,25 +30,12 @@ declare module 'flavus-api' {
     };
     execute: (
       client: import('../../struct/Core').Core,
-      io: import('socket.io').Socket<ClientToServerEvents, ServerToClientEvents>,
+      io: import('socket.io').Socket<
+        ClientToServerEvents,
+        ServerToClientEvents
+      >,
       data?: unknown
     ) => Promise<unknown> | void | boolean;
-  }
-
-  export interface UserInterface {
-    id: string;
-    username: string;
-    avatar: string;
-    avatar_decoration: any;
-    discriminator: string;
-    public_flags: number;
-    flags: number;
-    banner: any;
-    banner_color: any;
-    accent_color: any;
-    locale: string;
-    mfa_enabled: boolean;
-    guilds: userGuilds;
   }
 
   export interface userGuilds {
@@ -105,7 +92,6 @@ declare module 'flavus-api' {
     }[];
   }
 
-  
   export enum ClientToServerEnum {
     'player:addTrack' = 'player:addTrack',
     'player:clearQueue' = 'player:clearQueue',
@@ -166,7 +152,9 @@ declare module 'flavus-api' {
     withAck: (d: string, callback: (e: number) => void) => void;
     ['player:data']: (payload: PlayerData) => void;
     ['player:queueData']: (payload: QueueData) => void;
-    ['player:trackAdded']: (payload: import('flavus-api').ResultHandlerInterface) => void;
+    ['player:trackAdded']: (
+      payload: import('flavus-api').ResultHandlerInterface
+    ) => void;
     ['player:error']: (payload: string) => void;
     ['api:rateLimit']: (payload: string) => void;
   }

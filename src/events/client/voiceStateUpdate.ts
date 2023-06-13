@@ -4,6 +4,7 @@ import { iEvent } from 'flavus';
 const VoiceStateUpdateEvent: iEvent = {
   name: 'voiceStateUpdate',
   execute(client, oldState: VoiceState, newState: VoiceState) {
+    if (newState.member.user.bot || oldState.member.user.bot) return;
     if (
       newState.channelId &&
       newState.channel.type === 'GUILD_STAGE_VOICE' &&
@@ -72,7 +73,7 @@ const VoiceStateUpdateEvent: iEvent = {
       }
     }
 
-    if (newState.channelId && !oldState.channelId) {
+    if (newState.channelId) {
       const player = client.manager.players.get(newState.guild.id);
       if (
         player &&
@@ -80,6 +81,7 @@ const VoiceStateUpdateEvent: iEvent = {
         newState.channel.members.filter((mem) => !mem.user.bot).size >= 1
       ) {
         if (player.timeout) {
+          clearTimeout(player.timeout);
           player.timeout = null;
         }
       }

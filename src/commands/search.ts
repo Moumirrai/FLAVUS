@@ -1,11 +1,7 @@
-import {
-  MessageActionRow,
-  MessageEmbed,
-  MessageSelectMenu
-} from 'discord.js';
-import { Player } from 'erela.js';
+import { MessageActionRow, MessageEmbed, MessageSelectMenu } from 'discord.js';
+import { Player, SearchResult } from 'erela.js';
 import { CommandArgs, Command } from 'flavus';
-import formatDuration = require('format-duration');
+import formatDuration from 'format-duration'
 
 /*
 TODO: fix this!!!
@@ -21,13 +17,7 @@ const SearchCommand: Command = {
     joinPermissionRequired: true
   },
 
-  async execute({
-    manager,
-    message,
-    args,
-    vc,
-    client
-  }: CommandArgs) {
+  async execute({ manager, message, args, vc, client }: CommandArgs) {
     if (!args) {
       return client.embeds.error(
         message.channel,
@@ -39,18 +29,15 @@ const SearchCommand: Command = {
     try {
       const player: Player = await client.PlayerManager.connect(
         message,
-        client,
         manager,
         vc
       );
       let res;
       try {
-        res = await client.PlayerManager.search(
-          search,
-          player,
-          message.author,
-          true
-        );
+        res = (await client.PlayerManager.search(search, player, {
+          author: message.author,
+          handleResult: false
+        })) as SearchResult;
         // Check the load type as this command is not that advanced for basics
         if (res.loadType === 'PLAYLIST_LOADED')
           throw {
@@ -65,7 +52,6 @@ const SearchCommand: Command = {
       }
 
       let max = 10;
-      let collected;
       const cmduser = message.author;
       if (res.tracks.length < max) max = res.tracks.length;
       const theresults = res.tracks.slice(0, max);
@@ -111,9 +97,9 @@ const SearchCommand: Command = {
             };
           }),
           {
-            value: "Cancel",
-            label: "Cancel",
-            description: "Cancel the Searching Process",
+            value: 'Cancel',
+            label: 'Cancel',
+            description: 'Cancel the Searching Process',
             emoji: '❌'
           }
         ];
@@ -176,7 +162,7 @@ const SearchCommand: Command = {
             menumsg.edit({
               embeds: [
                 menumsg.embeds[0]
-                  .setTitle("Picked Songs:")
+                  .setTitle('Picked Songs:')
                   .setDescription(picked_songs.join('\n\n'))
               ],
               components: []
@@ -205,7 +191,7 @@ const SearchCommand: Command = {
                   `Added ${
                     toAddTracks.length > 1
                       ? `${toAddTracks.length} Tracks, with the first one beeing: `
-                      : ""
+                      : ''
                   }${track.title}`
                 )
                 .setDescription(`**Queued [${track.title}](${track.uri})**`)

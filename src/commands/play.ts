@@ -21,30 +21,28 @@ const PlayCommand: Command = {
     }
     const player = await client.PlayerManager.connect(
       message,
-      client,
       manager,
       vc
     );
     if (!player) {
       return client.embeds.error(message.channel, 'Player failed to connect!');
     }
-    const search = args.join(' ');
-    const res = await client.PlayerManager.search(
-      search,
-      player,
-      message.author
-    ).catch((err) => {
+    const query = args.join(' ');
+    try {
+      const res = (await client.PlayerManager.search(query, player, {
+        author: message.author,
+        handleResult: true
+      })) as MessageOptions;
+      if (!res) {
+        throw new Error('No results were found!');
+      }
+      return message.channel.send(res);
+    } catch (err) {
       return client.embeds.error(message.channel, {
         title: 'Error while searching',
-        description: err.message.message
+        description: err.message
       });
-    });
-    const embed = await client.PlayerManager.handleSearchResult(
-      client,
-      res as SearchResult,
-      player
-    );
-    return message.channel.send(embed as MessageOptions);
+    }
   }
 };
 

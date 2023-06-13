@@ -8,6 +8,9 @@ const SearchEndpoint: APIEndpoint = {
     if (!query) {
       return res.status(400).send('No query provided!');
     }
+    if (query.length > 120) {
+      return res.status(400).send('Query too long!');
+    }
     const results = await youtube.search(query);
     if (!results.videos.length)
       return res.status(400).send('No results found!');

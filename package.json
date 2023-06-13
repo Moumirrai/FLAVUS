@@ -7,7 +7,9 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "watch:start": "tsc-watch --onSuccess \"node --inspect ./dist/index.js\"",
-    "format": "prettier --config .prettierrc --write \"src/**/*.ts\""
+    "format": "prettier --config .prettierrc --write \"src/**/*.ts\"",
+    "test": "vitest",
+    "test:ui": "vitest --ui"
   },
   "author": "",
   "license": "ISC",
@@ -36,6 +38,8 @@
     "valid-url": "^1.0.9"
   },
   "devDependencies": {
-    "tsc-watch": "^4.6.0"
+    "@vitest/ui": "^0.32.0",
+    "tsc-watch": "^4.6.0",
+    "vitest": "^0.32.0"
   }
 }

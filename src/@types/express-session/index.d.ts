@@ -1,9 +1,9 @@
-import type { UserInterface } from 'flavus-api';
+import { User } from 'discord.js';
 
 declare module 'express-session' {
   export interface SessionData {
     code: string;
-    user: UserInterface;
+    user: User;
     createdAt: number;
   }
 }

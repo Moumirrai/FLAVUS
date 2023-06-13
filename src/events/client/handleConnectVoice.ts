@@ -12,7 +12,6 @@ const handleConnectVoiceEvent: iEvent = {
     });
     const socket = client.apiClient.cache.sockets.get(payload.member.id);
     if (socket) {
-      console.log('connectVoice calling join')
       await client.apiClient.roomManager.join(
         socket,
         payload.guild.id

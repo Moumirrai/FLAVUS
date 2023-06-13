@@ -1,6 +1,7 @@
 import { ResultHandlerInterface, SocketEvent } from 'flavus-api';
-import { Player, SearchResult } from 'erela.js';
+import { Player, SearchResult, SearchQuery } from 'erela.js';
 import { Connect } from '../client/APIFunctions';
+import validUrl from 'valid-url';
 
 const PauseEvent: SocketEvent = {
   name: 'player:addTrack',
@@ -13,37 +14,34 @@ const PauseEvent: SocketEvent = {
     const voiceCache = client.apiClient.cache.voiceStates.get(
       socket.request.session.user.id
     );
-    if (!voiceCache)
+    if (!voiceCache) {
       return socket.emit('player:error', "I can't see you connected!");
+    }
 
     const player: Player =
-      client.manager.players.get(
-        client.apiClient.cache.voiceStates.get(socket.request.session.user.id)
-          .voiceChannel.guild.id
-      ) || (await Connect(client, socket.request.session));
+      client.manager.players.get(voiceCache.voiceChannel.guild.id) ||
+      (await Connect(client, socket.request.session));
 
     if (!player)
       return socket.emit('player:error', 'Cant add song, there is no player!');
-    const res = await client.PlayerManager.search(
-      data,
-      player,
-      voiceCache.user
-    ).catch((err) => {
-      return socket.emit('player:error', err.message.message);
-    });
-    if (!res) return socket.emit('player:error', 'Track is corrupted!');
-    await client.PlayerManager.handleSearchResult(
-      client,
-      res as SearchResult,
-      player,
-      true
-    )
-      .then((reply: ResultHandlerInterface) => {
-        return socket.emit('player:trackAdded', reply);
-      })
-      .catch((err) => {
-        return socket.emit('player:error', err);
-      });
+
+    const searchQuery = validUrl.isUri(data)
+      ? data
+      : { source: 'youtube', query: data };
+    const author = socket.request.session.user;
+    try {
+      const res = await player.search(searchQuery, author);
+      if (!res) return socket.emit('player:error', 'Track is corrupted!');
+      const reply = await client.PlayerManager.handleSearchResult(
+        res as SearchResult,
+        player,
+        true
+      );
+      return socket.emit('player:trackAdded', reply as ResultHandlerInterface);
+    } catch (err) {
+      client.logger.error(err);
+      return socket.emit('player:error', err.message);
+    }
   }
 };
 
