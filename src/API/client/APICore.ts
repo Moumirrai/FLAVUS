@@ -1,5 +1,5 @@
-import bodyParser = require('body-parser');
-import cors = require('cors');
+//import bodyParser from 'body-parser';
+import cors from 'cors';
 import { readdirSync } from 'fs';
 import { resolve } from 'path';
 import type {
@@ -10,20 +10,24 @@ import type {
   ClientToServerEvents,
   ServerToClientEvents,
   InterServerEvents,
-  SocketData
+  SocketData,
+  iVoiceCache
 } from 'flavus-api';
-import { Collection } from 'discord.js';
+import { Collection, Events } from 'discord.js';
 import type { Core } from '../../struct/Core';
 import express from 'express';
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import { authUser } from '../authManager';
 import { Session, SessionData } from 'express-session';
-import type { iVoiceCache } from 'flavus';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import rateLimit from 'express-rate-limit';
 import roomManager from '../roomManager';
 import playerPing from '../playerPing';
+import {
+  handleConnectSocketEvent,
+  handleDisconnectSocketEvent
+} from '../../handlers';
 
 import { sessionMiddleware, authMiddleware } from '../middlewares';
 
@@ -35,7 +39,7 @@ declare module 'http' {
 export class APICore implements APIInterface {
   public readonly EndPoints = new Collection<string, APIEndpoint>();
   public readonly SocketEvents = new Collection<string, SocketEvent>();
-  public client: Core;
+  public readonly client: Core;
   public roomManager: roomManager;
   public playerPing: playerPing;
   public io: Server<
@@ -69,11 +73,7 @@ export class APICore implements APIInterface {
 
     const port = process.env.APIPORT || 3030;
 
-    APICore.configApp(app);
-
-    app.use(sessionMiddleware);
-
-    app.use(authMiddleware(this.client));
+    APICore.configApp(app, this.client);
 
     const wrap = (middleware: any) => (socket: Socket, next: any) =>
       middleware(socket.request, {}, next);
@@ -101,7 +101,6 @@ export class APICore implements APIInterface {
       for (const [name, event] of this.SocketEvents) {
         const rateLimiter = new RateLimiterMemory(event.rateLimit);
         socket.on(name, async (data) => {
-          console.log('PEPE');
           try {
             await rateLimiter.consume(socket.request.session.user.id);
             this.client.logger.log(
@@ -113,7 +112,9 @@ export class APICore implements APIInterface {
           }
         });
       }
-      this.client.emit('handleConnectSocket', socket);
+      console.log('emmitting');
+      handleConnectSocketEvent(this.client, socket);
+      //this.client.emit(Events.HandleConnectSocketWhy, socket);
       /*
       TODO: After a socket is disconnected, it is removed from its rooms, 
       but they are not cleared from the cache because the socket no 
@@ -121,24 +122,27 @@ export class APICore implements APIInterface {
       */
 
       socket.on('disconnect', () => {
-        this.client.emit('handleDisconnectSocket', socket);
+        handleDisconnectSocketEvent(this.client, socket);
+        //this.client.emit(Events.HandleDisconnectSocket, socket);
       });
     });
 
+    /*
     this.io.of('/').adapter.on('create-room', (room) => {
       console.log('room created ' + room);
     });
+    */
     this.io.of('/').adapter.on('delete-room', (room) => {
       this.roomManager.destroyRoom(room);
     });
+    /*
     this.io.of('/').adapter.on('join-room', (room) => {
       console.log('room joined ' + room);
     });
     this.io.of('/').adapter.on('leave-room', (room, id) => {
-      //get socket from id
-
       console.log('room left ' + room);
     });
+    */
 
     app.post('/api/:path', async (req, res) => {
       const path = req.params.path;
@@ -151,32 +155,6 @@ export class APICore implements APIInterface {
       if (!endpoint) return res.status(404).send('404 Not Found');
       await endpoint.execute(this.client, req, res);
     });
-
-    //TODO: remove
-
-    /*
-
-    process.stdin.on('data', (data) => {
-      if (data.toString().toLowerCase().trim() === 'r') {
-        //clear line with r
-        process.stdout.clearLine(0);
-        console.log('Rooms:');
-        console.log(this.io.of('/').adapter.rooms);
-      } else if (data.toString().toLowerCase().trim() === 's') {
-        process.stdout.clearLine(0);
-        console.log('Stats:');
-        console.log(
-          `Rooms :${this.io.of('/').adapter.rooms.size} , Clients: ${
-            this.io.of('/').adapter.sockets.length
-          }`
-        );
-      } else if (data.toString().toLowerCase().trim() === 'cls') {
-        //clear console
-        process.stdout.write('\x1Bc');
-      }
-    });
-
-    */
 
     //starts api
     server.listen(port, () =>
@@ -212,9 +190,11 @@ export class APICore implements APIInterface {
    * @param app express app
    */
 
-  private static configApp(app: express.Application): void {
+  private static configApp(app: express.Application, client: Core): void {
     app.use(cors());
-    app.use(bodyParser.json());
+    //app.use(bodyParser.json());
+    app.use(express.urlencoded({ extended: true }));
+    app.use(express.json());
     //use 1sec limit for all requests
     const limiter = rateLimit({
       windowMs: 1000,
@@ -231,5 +211,8 @@ export class APICore implements APIInterface {
         next();
       }
     });
+    app.use(sessionMiddleware);
+
+    app.use(authMiddleware(client));
   }
 }

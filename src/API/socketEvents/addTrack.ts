@@ -1,5 +1,5 @@
 import { ResultHandlerInterface, SocketEvent } from 'flavus-api';
-import { Player, SearchResult, SearchQuery } from 'erela.js';
+import { Player, SearchResult } from 'erela.js';
 import { Connect } from '../client/APIFunctions';
 import validUrl from 'valid-url';
 

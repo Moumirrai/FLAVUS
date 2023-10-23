@@ -16,10 +16,8 @@ const PauseEvent: SocketEvent = {
     const player: Player = client.manager.players.get(
       voiceCache.voiceChannel.guild.id
     );
-    if (!player)
-      return socket.emit('player:error', 'Error fetching queue!');
-    console.log("updating queue")
-    client.emit('queueUpdate', player)
+    if (!player) return socket.emit('player:error', 'Error fetching queue!');
+    client.emit('queueUpdate', player);
   }
 };
 

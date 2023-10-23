@@ -1,10 +1,10 @@
 import {
-  Client,
   Message,
   VoiceBasedChannel,
   User,
-  MessageOptions,
-  TextChannel
+  TextChannel,
+  GuildTextBasedChannel,
+  EmbedData
 } from 'discord.js';
 import { ResultHandlerInterface } from 'flavus-api';
 import {
@@ -18,10 +18,10 @@ import {
 import formatDuration from 'format-duration';
 import { Core } from './Core';
 import { Spotify } from 'better-erela.js-spotify/dist/plugin';
-import { SpotifyTrack } from 'better-erela.js-spotify/dist/typings';
+import { SpotifyTrack } from 'better-erela.js-spotify';
 import { iSpotifySearchResult, iSpotifyRecommResult } from 'flavus';
 
-import validUrl = require('valid-url');
+import validUrl from 'valid-url';
 import { PMError } from '../errors';
 
 //TODO: move to @types/erela or somewhere else
@@ -39,16 +39,16 @@ export default class PlayerManager {
   }
 
   public async connect(
-    message: Message,
+    textChannel: GuildTextBasedChannel,
     manager: Manager,
     vc: VoiceBasedChannel
   ): Promise<Player> {
-    let player: Player = this.client.manager.players.get(message.guild.id);
+    let player: Player = this.client.manager.players.get(textChannel.guild.id);
     if (!player) {
       player = manager.create({
-        guild: message.guild.id,
+        guild: textChannel.guild.id,
         voiceChannel: vc.id,
-        textChannel: message.channel.id,
+        textChannel: textChannel.id,
         selfDeafen: true
       });
     }
@@ -62,7 +62,7 @@ export default class PlayerManager {
     query: string,
     player: Player,
     params: searchParams
-  ): Promise<SearchResult | MessageOptions> {
+  ): Promise<SearchResult | EmbedData> {
     const searchQuery =
       query.includes('open.spotify.com/') || validUrl.isUri(query)
         ? query
@@ -72,16 +72,14 @@ export default class PlayerManager {
     if (!params.handleResult) {
       return res;
     }
-    return this.handleSearchResult(res, player) as
-      | SearchResult
-      | MessageOptions;
+    return this.handleSearchResult(res, player) as SearchResult | EmbedData;
   }
 
   public async handleSearchResult(
     res: SearchResult,
     player: Player,
     web?: boolean
-  ): Promise<MessageOptions | ResultHandlerInterface> {
+  ): Promise<EmbedData | ResultHandlerInterface> {
     const { loadType, query, tracks, playlist } = res;
     const querySubstring = query ? query.slice(0, 253) : 'unknown';
     const isQueryValidUrl = res.query && validUrl.isUri(res.query);
@@ -93,12 +91,9 @@ export default class PlayerManager {
       case 'NO_MATCHES':
         if (!player.queue.current) player.destroy();
         if (web) throw `Found nothing for: \`${querySubstring}\``;
-        return this.client.embeds.build(
-          {
-            title: `Found nothing for: \`${querySubstring}\``
-          },
-          true
-        );
+        return {
+          title: `Found nothing for: \`${querySubstring}\``
+        };
       case 'TRACK_LOADED':
       case 'SEARCH_RESULT':
         //if res.query is valid url
@@ -117,13 +112,13 @@ export default class PlayerManager {
         }
 
         if (!player.queue.current) {
-          player.queue.add(res.tracks[0]);
-          await player.play(res.tracks[0], {
-            startTime: res.tracks[0].startTime || 0
+          player.queue.add(tracks[0]);
+          await player.play(tracks[0], {
+            startTime: tracks[0].startTime || 0
           });
           player.pause(false);
         } else {
-          player.queue.add(res.tracks[0]);
+          player.queue.add(tracks[0]);
         }
         this.client.emit('queueUpdate', player);
         if (web)
@@ -131,73 +126,67 @@ export default class PlayerManager {
             type: 'TRACK',
             tracks: [
               {
-                title: res.tracks[0].title,
-                author: res.tracks[0].author,
-                duration: res.tracks[0].duration,
-                uri: res.tracks[0].uri
+                title: tracks[0].title,
+                author: tracks[0].author,
+                duration: tracks[0].duration,
+                uri: tracks[0].uri
               }
             ],
             nowPlaying: true
           };
-        return this.client.embeds.build({
+        return {
           author: {
             name: player.queue.length ? 'Added to queue' : 'Now playing'
           },
-          title: `${res.tracks[0].title}`,
-          url: res.tracks[0].uri,
-          description: `by **${res.tracks[0].author}**`,
-          thumbnail: { url: res.tracks[0].thumbnail }
-        });
+          title: `${tracks[0].title}`,
+          url: tracks[0].uri,
+          description: `by **${tracks[0].author}**`,
+          thumbnail: { url: tracks[0].thumbnail }
+        };
 
       case 'PLAYLIST_LOADED':
         if (player.state !== 'CONNECTED' || !player.queue.current) {
           if (player.state !== 'CONNECTED') player.connect();
-          player.queue.add(res.tracks);
+          player.queue.add(tracks);
           await player.play();
           this.client.emit('queueUpdate', player);
           player.pause(false);
         } else {
-          player.queue.add(res.tracks);
+          player.queue.add(tracks);
           this.client.emit('queueUpdate', player);
         }
         if (web)
           return {
             type: 'PLAYLIST',
-            tracks: res.tracks.map((track) => ({
+            tracks: tracks.map((track) => ({
               title: track.title,
               author: track.author,
               duration: track.duration,
               uri: track.uri
             })),
-            playlistName: res.playlist.name
+            playlistName: playlist.name
           };
-        return this.client.embeds.build(
-          {
-            author: { name: 'Queued' },
-            title: `Playlist **\`${res.playlist.name.substring(
-              0,
-              256 - 3
-            )}\`**`,
-            url: res.tracks[0].uri,
-            description: `by **${res.tracks[0].author}**`,
-            thumbnail: { url: res.tracks[0].thumbnail },
-            fields: [
-              {
-                name: 'Duration: ',
-                value: `\`${formatDuration(res.playlist.duration, {
-                  leading: true
-                })}\``,
-                inline: true
-              },
-              {
-                name: 'Queue length: ',
-                value: `\`${player.queue.length} Songs\``,
-                inline: true
-              }
-            ]
-          },
-          true
-        );
+        return {
+          author: { name: 'Queued' },
+          title: `Playlist **\`${playlist.name.substring(0, 256 - 3)}\`**`,
+          url: validUrl.isUri(res.query) ? res.query : tracks[0].uri,
+          description: `by **${tracks[0].author}**`,
+          thumbnail: { url: tracks[0].thumbnail },
+          fields: [
+            {
+              name: 'Duration: ',
+              value: `\`${formatDuration(playlist.duration, {
+                leading: true
+              })}\``,
+              inline: true
+            },
+            {
+              name: 'Queue length: ',
+              value: `\`${player.queue.length} Songs\``,
+              inline: true
+            }
+          ]
+        };
     }
   }
 
@@ -224,7 +213,7 @@ export default class PlayerManager {
       )[0];
       player.set('similarQueue', similarQueue);
       player.queue.add(track);
-      await client.embeds.info(
+      await client.embeds.message.info(
         client.channels.cache.get(player.textChannel) as TextChannel,
         {
           author: { name: 'Autoplay' },
@@ -258,7 +247,7 @@ export default class PlayerManager {
       if (!response || response.loadType !== 'PLAYLIST_LOADED') {
         client.logger.log('Stopping player, code 107');
         player.destroy();
-        return client.embeds.info(
+        return client.embeds.message.info(
           client.channels.cache.get(player.textChannel) as TextChannel,
           {
             color: client.config.embed.color,
@@ -282,7 +271,7 @@ export default class PlayerManager {
       if (!filteredTracks.length) {
         client.logger.log('Stopping player, code 108');
         player.destroy();
-        return client.embeds.info(
+        return client.embeds.message.info(
           client.channels.cache.get(player.textChannel) as TextChannel,
           {
             color: client.config.embed.color,
@@ -317,7 +306,7 @@ export default class PlayerManager {
       if (!sourceTrack.tracks.items.length) {
         client.logger.log('Stopping player, code 109');
         player.destroy();
-        return client.embeds.info(
+        return client.embeds.message.info(
           client.channels.cache.get(player.textChannel) as TextChannel,
           {
             color: client.config.embed.color,
@@ -335,7 +324,7 @@ export default class PlayerManager {
       if (!recomm.tracks.length) {
         client.logger.log('Stopping player, code 110');
         player.destroy();
-        return client.embeds.info(
+        return client.embeds.message.info(
           client.channels.cache.get(player.textChannel) as TextChannel,
           {
             color: client.config.embed.color,

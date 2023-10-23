@@ -21,7 +21,8 @@ export class LavalinkManager extends Manager {
         const guild = client.guilds.cache.get(id);
         if (guild) guild.shard.send(payload);
       },
-      autoPlay: false
+      autoPlay: false,
+      defaultSearchPlatform: 'youtube'
     });
     this.client = client;
   }

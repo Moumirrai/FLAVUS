@@ -1,17 +1,24 @@
-import { VoiceState, Permissions } from 'discord.js';
+import { VoiceState, PermissionFlagsBits, ChannelType } from 'discord.js';
 import { iEvent } from 'flavus';
+import { Events } from 'discord.js';
+import {
+  handleConnectVoiceEvent,
+  handleDisconnectVoiceEvent
+} from '../../handlers';
 
 const VoiceStateUpdateEvent: iEvent = {
-  name: 'voiceStateUpdate',
+  name: Events.VoiceStateUpdate,
   execute(client, oldState: VoiceState, newState: VoiceState) {
     if (newState.member.user.bot || oldState.member.user.bot) return;
+    /*
     if (
       newState.channelId &&
       newState.channel.type === 'GUILD_STAGE_VOICE' &&
       newState.guild.me.voice.suppress
     ) {
       if (
-        newState.guild.me.permissions.has(Permissions.FLAGS.SPEAK) ||
+        newState.guild.client.user.
+        newState.guild.me.permissions.has(PermissionFlagsBits.Speak) ||
         (newState.channel &&
           newState.channel
             .permissionsFor(newState.guild.me)
@@ -20,21 +27,18 @@ const VoiceStateUpdateEvent: iEvent = {
         newState.guild.me.voice.setSuppressed(false).catch();
       }
     }
+    */
 
     if (client.config.api && !newState.member.user.bot) {
       if (
-        newState.channel &&
-        newState.channel.type === 'GUILD_VOICE' &&
-        newState.channel.members &&
-        (newState.channel.members.filter((member) => !member.user.bot).size >
-          0 ||
-          (newState.channel.members.filter((member) => !member.user.bot).size >
-            1 &&
-            newState.member.user === client.user))
+        newState?.channel?.type === ChannelType.GuildVoice &&
+        newState.channel?.members?.some((member) => !member.user.bot) &&
+        newState.channel.members.has(newState.member.id)
       ) {
-        client.emit('handleConnectVoice', newState);
+        handleConnectVoiceEvent(client, newState);
+        //client.emit("handleConnectVoice", newState);
       } else {
-        client.emit('handleDisconnectVoice', oldState);
+        handleDisconnectVoiceEvent(client, newState);
       }
     }
 
@@ -51,6 +55,36 @@ const VoiceStateUpdateEvent: iEvent = {
       return;
     }
 */
+
+    const oldChannelEmpty =
+      oldState.channelId &&
+      (!newState.channelId ||
+        (oldState.channelId !== newState.channelId &&
+          client.config.leaveOnEmptyChannel !== null) ||
+        oldState.channel.members.filter((mem) => !mem.user.bot).size < 1);
+
+    const newChannelNotEmpty =
+      newState.channelId &&
+      newState.channel.members &&
+      newState.channel.members.filter((mem) => !mem.user.bot).size >= 1;
+
+    if (oldChannelEmpty) {
+      const player = client.manager.players.get(oldState.guild.id);
+      if (player && !player.timeout) {
+        player.timeout = setTimeout(() => {
+          client.logger.log('Stopping player, code 102');
+          player.destroy();
+        }, client.config.leaveOnEmptyChannel * 1000);
+      }
+    } else if (newChannelNotEmpty) {
+      const player = client.manager.players.get(newState.guild.id);
+      if (player && player.timeout) {
+        clearTimeout(player.timeout);
+        player.timeout = null;
+      }
+    }
+
+    /*
     if (
       (oldState.channelId && !newState.channelId) ||
       (newState.channelId &&
@@ -86,6 +120,7 @@ const VoiceStateUpdateEvent: iEvent = {
         }
       }
     }
+    */
   }
 };
 

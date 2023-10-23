@@ -1,16 +1,11 @@
-import { Client, MessageEmbed, User } from 'discord.js';
+import { Client, EmbedBuilder, User } from 'discord.js';
 import { Player, SearchResult } from 'erela.js';
 import { GuildModel, IGuildModel } from '../models/guildModel';
 import { UserModel } from '../models/userModel';
 import Logger from './Logger';
-import { config } from '../config/config';
+import { config } from '../config';
+import { TrackData } from '../types/trackData';
 import formatDuration from 'format-duration';
-
-interface ITrackData {
-  title: string;
-  duration: number | string;
-  uri: string;
-}
 
 const Functions = {
   /**
@@ -20,7 +15,7 @@ const Functions = {
    */
   escapeRegex(str: string): string {
     try {
-      return str.replace(/[.*+?^$`{}()|[\]\\]/g, "\\$&");
+      return str.replace(/[*+?^$`{}()|[\]\\]/g, '\\$&');
     } catch (e) {
       Logger.error(e.stack);
     }
@@ -34,7 +29,7 @@ const Functions = {
     player: Player,
     index: number,
     client: Client
-  ): MessageEmbed {
+  ): EmbedBuilder {
     const tracks = player.queue;
     const tDuration = tracks.reduce(
       (acc, track) => {
@@ -60,7 +55,7 @@ const Functions = {
             leading: true
           })}\`${tDuration.stream ? ` + \`${tDuration.stream}\` Streams` : ''}`
         : '';
-    const embed = new MessageEmbed()
+    const embed = new EmbedBuilder()
       .setTitle(
         `Queue${queueLength}${player.trackRepeat ? '  -  LOOP ENABLED' : ''}`
       )
@@ -83,13 +78,13 @@ const Functions = {
       description += npLine;
     }
 
-    const tracksData: Array<ITrackData> = tracks.map(track => ({
+    const tracksData: Array<TrackData> = tracks.map((track) => ({
       title:
         track.title.length > 37
           ? `${this.escapeRegex(track.title.substr(0, 37))}...`
           : this.escapeRegex(track.title),
       duration: track.isStream
-        ? "LIVE STREAM"
+        ? 'LIVE STREAM'
         : formatDuration(track.duration, { leading: true }),
       uri: track.uri
     }));
@@ -102,12 +97,12 @@ const Functions = {
           'play to add more :^)'
         : '';
     description +=
-      "\n" +
+      '\n' +
       tracksData
         .slice(index, index + 15)
         .map(
-          (track, index) =>
-            `**${index + 1})** [${track.title}](${track.uri}) - [${
+          (track, _index) =>
+            `**${_index + index + 1})** [${track.title}](${track.uri}) - [${
               track.duration
             }]\n`
         )
@@ -181,7 +176,7 @@ const Functions = {
     player: Player,
     response: SearchResult
   ): Promise<SearchResult> {
-    const owner: User = player.get("autoplayOwner");
+    const owner: User = player.get('autoplayOwner');
     if (owner) {
       const userConfig = await UserModel.findOne({
         userID: owner.id

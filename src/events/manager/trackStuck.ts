@@ -12,7 +12,7 @@ const trackStuckEvent: iManagerEvent = {
     payload: TrackStuckEvent
   ) {
     client.logger.error(`Track stuck: ${track.uri}\n` + payload.toString());
-    return client.embeds.error(
+    return client.embeds.message.error(
       client.channels.cache.get(player.textChannel) as TextChannel,
       {
         title: 'Track failed to load!',

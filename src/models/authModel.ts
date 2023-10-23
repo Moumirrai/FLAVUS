@@ -1,6 +1,6 @@
 import { Document, Schema, model } from 'mongoose';
 import type { AuthResponse } from 'flavus-api';
-import { config } from '../config/config';
+import { config } from '../config';
 
 export interface IAuthModel extends Document {
   code: string;

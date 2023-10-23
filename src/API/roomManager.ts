@@ -44,9 +44,7 @@ export default class roomManager {
     for (const room of rooms) {
       if (room !== id) {
         socket.leave(room);
-        console.log('PEPE1');
         if (!roomCache.has(room)) return;
-        console.log('PEPE2');
         const roomData = roomCache.get(room);
         const roomMembers = roomData.members;
         const filteredMembers = roomMembers.filter(

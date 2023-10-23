@@ -8,7 +8,7 @@ export interface IGuildModel extends Document {
     mode: 'yt' | 'spotify';
   };
   timestamp: Date;
-  statusChannel: {
+  statusChannel?: {
     name: string;
     id: string;
   };

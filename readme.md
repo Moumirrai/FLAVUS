@@ -21,6 +21,8 @@ LAVALINK_PASSWORD = Raccoon
 LAVALINK_SECURE = false
  ```
 
+ 
+
 ## Configuration
 
 Create `.env` file or set your env variables as follows:

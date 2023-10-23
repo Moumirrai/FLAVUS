@@ -1,7 +1,8 @@
 import { iEvent } from 'flavus';
+import { Events } from 'discord.js'
 
 const RawEvent: iEvent = {
-  name: 'raw',
+  name: Events.Raw,
   execute(client, d) {
     client.manager.updateVoiceState(d);
   }

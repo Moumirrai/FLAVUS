@@ -30,12 +30,15 @@ const PauseEvent: SocketEvent = {
       return socket.emit('player:error', "I can't see you connected!");
 
     const player: Player = client.manager.players.get(
-      client.apiClient.cache.voiceStates.get(socket.request.session.user.id).voiceChannel
-        .guild.id
+      client.apiClient.cache.voiceStates.get(socket.request.session.user.id)
+        .voiceChannel.guild.id
     );
 
     if (!player)
-      return socket.emit('player:error', 'Cant move track, there is no player!');
+      return socket.emit(
+        'player:error',
+        'Cant move track, there is no player!'
+      );
 
     if (
       player.queue.size === 0 ||
@@ -44,7 +47,7 @@ const PauseEvent: SocketEvent = {
       data.removedIndex > player.queue.size ||
       data.addedIndex > player.queue.size
     )
-      return socket.emit('player:error', "Corrupted track index");
+      return socket.emit('player:error', 'Corrupted track index');
     //remove track from queue according to removedIndex, and add it to the queue according to addedIndex
     const track = player.queue[data.removedIndex];
     player.queue.remove(data.removedIndex);

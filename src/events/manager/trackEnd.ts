@@ -5,7 +5,6 @@ const trackEndEvent: iManagerEvent = {
   name: 'trackEnd',
   async execute(client, _manager, player: Player, track: Track) {
     if (!player || !player.queue) return;
-    console.log(track.title)
     client.logger.log(`"${track.title}" has ended.`);
     if (player.queue.current) {
       player.queue.history.push(player.queue.current);
