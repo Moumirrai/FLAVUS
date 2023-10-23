@@ -27,6 +27,8 @@ export class Core extends Client {
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildIntegrations,
         GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildMessages, //TODO: remove this
+        GatewayIntentBits.MessageContent //TODO: remove this
       ],
       presence: {
         status: 'dnd'
