@@ -1,6 +1,6 @@
 import { config } from '../config';
 import { LavalinkManager } from './Erela/LavalinkManager';
-import { Client, GatewayIntentBits, Collection, Partials } from 'discord.js';
+import { Client, GatewayIntentBits, Collection, Partials, ActivityType } from 'discord.js';
 import { readdirSync } from 'fs';
 import Logger from './Logger';
 import { resolve } from 'path';
@@ -31,7 +31,8 @@ export class Core extends Client {
         GatewayIntentBits.MessageContent //TODO: remove this
       ],
       presence: {
-        status: 'dnd'
+        status: 'dnd',
+        shardId: 0,
       }
     });
 
