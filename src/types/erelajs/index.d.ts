@@ -1,6 +1,6 @@
-import { UnresolvedTrack } from 'erela.js';
+import { UnresolvedTrack } from 'magmastream';
 
-declare module 'erela.js' {
+declare module 'magmastream' {
   export interface SearchResult {
     query?: string;
     url?: string;

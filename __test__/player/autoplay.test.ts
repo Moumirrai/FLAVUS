@@ -1,5 +1,5 @@
 import { LavalinkManager } from '../../src/struct/Erela/LavalinkManager';
-import { Node as ErelaNode, NodeOptions, Manager, Player } from 'erela.js';
+import { Node as ErelaNode, NodeOptions, Manager, Player } from 'magmastream';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import Core from '../mocks/client';
 import { config } from '../../src/config/config';

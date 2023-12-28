@@ -19,7 +19,7 @@ declare module 'flavus' {
     name: string;
     execute: (
       client: import('../../struct/Core').Core,
-      manager: import('erela.js').Manager,
+      manager: import('magmastream').Manager,
       ...args: any[]
     ) => void;
   }

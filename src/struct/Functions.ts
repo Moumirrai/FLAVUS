@@ -1,5 +1,5 @@
 import { Client, EmbedBuilder, User } from 'discord.js';
-import { Player, SearchResult } from 'erela.js';
+import { Player, SearchResult } from 'magmastream';
 import { GuildModel, IGuildModel } from '../models/guildModel';
 import { UserModel } from '../models/userModel';
 import Logger from './Logger';

@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits, Events, Partials } from 'discord.js';
-import { Manager } from 'erela.js';
+import { Manager } from 'magmastream';
 import { config, BotConfig } from '../../src/config/config';
 import { LavalinkManager } from '../../src/struct/Erela/LavalinkManager';
 import { Core } from '../../src/struct/Core';

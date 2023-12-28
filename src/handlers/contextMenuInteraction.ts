@@ -3,7 +3,7 @@ import {
   GuildMember,
   PermissionFlagsBits
 } from 'discord.js';
-import { Player } from 'erela.js';
+import { Player } from 'magmastream';
 import type { Core } from '../struct/Core';
 export async function handleContextMenu(
   core: Core,

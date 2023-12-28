@@ -1,4 +1,4 @@
-import { Player, Track } from 'erela.js';
+import { Player, Track } from 'magmastream';
 import { iManagerEvent } from 'flavus';
 
 const trackEndEvent: iManagerEvent = {
@@ -7,7 +7,7 @@ const trackEndEvent: iManagerEvent = {
     if (!player || !player.queue) return;
     client.logger.log(`"${track.title}" has ended.`);
     if (player.queue.current) {
-      player.queue.history.push(player.queue.current);
+      //player.queue.history.push(player.queue.current);
       if (player.queue.current.startTime) {
         await player.play(player.queue.current, {
           startTime: player.queue.current.startTime

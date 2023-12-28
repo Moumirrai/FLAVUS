@@ -1,4 +1,4 @@
-import { Player } from 'erela.js';
+import { Player } from 'magmastream';
 import { EmbedBuilder, TextChannel } from 'discord.js';
 import { iManagerEvent } from 'flavus';
 

@@ -1,6 +1,6 @@
 import { config as dotenvConfig } from 'dotenv';
 import { ColorResolvable } from 'discord.js';
-import { NodeOptions } from 'erela.js';
+import { NodeOptions } from 'magmastream';
 dotenvConfig();
 
 export type BotConfig = {
@@ -71,7 +71,12 @@ export const config: BotConfig = {
         password: process.env.LAVALINK_PASSWORD,
         retryDelay: parseInt(process.env.LAVALINK_RETRY_DELAY),
         secure: process.env.LAVALINK_SECURE === 'true',
-        rest: process.env.LAVALINK_REST === 'true'
+        identifier: process.env.REDIRECTURI, //why not
+        resumeStatus: true,
+        resumeTimeout: 1000,
+        requestTimeout: 1000,
+        retryAmount: 1000,
+        //rest: process.env.LAVALINK_REST === 'true'
       }
     ],
     shards: parseInt(process.env.SHARD_COUNT),

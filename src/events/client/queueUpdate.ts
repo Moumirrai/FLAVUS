@@ -1,5 +1,5 @@
 import { iEvent } from 'flavus';
-import { Player } from 'erela.js';
+import { Player } from 'magmastream';
 import hash from 'hash-sum';
 
 const handleDisconnectVoiceEvent: iEvent = {

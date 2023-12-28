@@ -1,4 +1,4 @@
-import type { Player } from 'erela.js';
+import type { Player } from 'magmastream';
 import type { Core } from '../struct/Core';
 import { PlayerData, QueueData } from 'flavus-api';
 import type { APICore } from './client/APICore';

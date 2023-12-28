@@ -4,7 +4,7 @@ import {
   PermissionFlagsBits
 } from 'discord.js';
 import type { Core } from '../struct/Core';
-import { Player } from 'erela.js';
+import { Player } from 'magmastream';
 
 export async function handleCommand(
   core: Core,

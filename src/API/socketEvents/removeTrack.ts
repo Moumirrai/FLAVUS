@@ -1,5 +1,5 @@
 import { SocketEvent } from 'flavus-api';
-import { Player } from 'erela.js';
+import { Player } from 'magmastream';
 
 const PauseEvent: SocketEvent = {
   name: 'player:removeTrack',

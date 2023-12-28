@@ -1,5 +1,5 @@
 import { SocketEvent } from 'flavus-api';
-import type { Player } from 'erela.js';
+import type { Player } from 'magmastream';
 
 const SkipEvent: SocketEvent = {
   name: 'player:skip',

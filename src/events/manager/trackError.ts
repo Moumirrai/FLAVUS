@@ -1,11 +1,11 @@
-import { Player, Track, TrackExceptionEvent } from 'erela.js';
+import { Player, Track, TrackExceptionEvent } from 'magmastream';
 import { iManagerEvent } from 'flavus';
 import { TextBasedChannel } from 'discord.js';
 
 const trackStartEvent: iManagerEvent = {
   name: 'trackError',
   execute(client, _manager, player: Player, track: Track, payload: TrackExceptionEvent) {
-    client.logger.error(`***\nTrack error: ${payload.error}\n${track.title}\n***`);
+    client.logger.error(`***\nTrack error: ${payload.exception}\n${track.title}\n***`);
     client.embeds.message.error(
       client.channels.cache.get(player.textChannel) as TextBasedChannel,
       {

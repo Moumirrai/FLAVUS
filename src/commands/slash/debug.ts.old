@@ -1,6 +1,6 @@
 import { MessageEmbed } from 'discord.js';
 import { CommandArgs, Command } from 'flavus';
-import { Track } from 'erela.js';
+import { Track } from 'magmastream';
 
 const DebugCommand: Command = {
   name: 'debug',

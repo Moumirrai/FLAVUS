@@ -1,4 +1,4 @@
-import { Node } from 'erela.js';
+import { Node } from 'magmastream';
 import { iManagerEvent } from 'flavus';
 
 const NodeConnectEvent: iManagerEvent = {

@@ -13,12 +13,11 @@ import {
   SearchResult,
   Track,
   UnresolvedTrack,
-  TrackUtils
-} from 'erela.js';
+  TrackUtils,
+  LoadType
+} from 'magmastream';
 import formatDuration from 'format-duration';
 import { Core } from './Core';
-import { Spotify } from 'better-erela.js-spotify/dist/plugin';
-import { SpotifyTrack } from 'better-erela.js-spotify';
 import { iSpotifySearchResult, iSpotifyRecommResult } from 'flavus';
 
 import validUrl from 'valid-url';
@@ -44,12 +43,17 @@ export default class PlayerManager {
     vc: VoiceBasedChannel
   ): Promise<Player> {
     let player: Player = this.client.manager.players.get(textChannel.guild.id);
+    //TODO: VOLUME DOES NOT WORK ATM
+    //const doc = await this.client.functions.fetchGuildConfig(textChannel.guild.id);
+    //if (!doc)
+    //  this.client.logger.error('Something went wrong! - playerCreateEvent');
     if (!player) {
       player = manager.create({
         guild: textChannel.guild.id,
         voiceChannel: vc.id,
         textChannel: textChannel.id,
-        selfDeafen: true
+        selfDeafen: true,
+        //volume: doc.volume || 100,
       });
     }
     if (!player.node.connected) {
@@ -84,18 +88,18 @@ export default class PlayerManager {
     const querySubstring = query ? query.slice(0, 253) : 'unknown';
     const isQueryValidUrl = res.query && validUrl.isUri(res.query);
     switch (loadType) {
-      case 'LOAD_FAILED':
+      case 'error':
         if (!player.queue.current) player.destroy();
-        if (web) throw new PMError(res.exception.message);
+        if (web) throw new PMError(res.loadType);
 
-      case 'NO_MATCHES':
+      case 'empty':
         if (!player.queue.current) player.destroy();
         if (web) throw `Found nothing for: \`${querySubstring}\``;
         return {
           title: `Found nothing for: \`${querySubstring}\``
         };
-      case 'TRACK_LOADED':
-      case 'SEARCH_RESULT':
+      case 'track':
+      case 'search':
         //if res.query is valid url
         if (isQueryValidUrl) {
           const urlParams = new URL(res.query).searchParams;
@@ -144,7 +148,7 @@ export default class PlayerManager {
           thumbnail: { url: tracks[0].thumbnail }
         };
 
-      case 'PLAYLIST_LOADED':
+      case 'playlist':
         if (player.state !== 'CONNECTED' || !player.queue.current) {
           if (player.state !== 'CONNECTED') player.connect();
           player.queue.add(tracks);
@@ -202,7 +206,8 @@ export default class PlayerManager {
       if (mode === 'yt') {
         await this.ytAutoplay(client, player);
       } else if (mode === 'spotify') {
-        await this.spotifyAutoplay(client, player);
+        //await this.spotifyAutoplay(client, player);
+        await this.ytAutoplay(client, player);
       }
     }
     try {
@@ -237,15 +242,14 @@ export default class PlayerManager {
     try {
       const previoustrack: Track = player.get('previousTrack');
       if (!previoustrack) return;
-      //update owner
       if (previoustrack.requester !== client.user)
         player.set('autoplayOwner', previoustrack.requester);
 
       const mixURL = `https://www.youtube.com/watch?v=${previoustrack.identifier}&list=RD${previoustrack.identifier}`;
       const response = await client.manager.search(mixURL, client.user);
       //if !response, send error embed
-      if (!response || response.loadType !== 'PLAYLIST_LOADED') {
-        client.logger.log('Stopping player, code 107');
+      if (!response || response.loadType !== 'playlist') {
+        client.logger.error('Stopping player, code 107');
         player.destroy();
         return client.embeds.message.info(
           client.channels.cache.get(player.textChannel) as TextChannel,
@@ -265,7 +269,7 @@ export default class PlayerManager {
       const filteredTracks = (await client.functions.blacklist(client, player, response)).tracks.filter(track => track.identifier !== previoustrack.identifier);
       */
       //remove previous track from tracks
-      const filteredTracks = response.tracks.filter(
+      const filteredTracks = response.playlist.tracks.filter(
         (track) => track.identifier !== previoustrack.identifier
       );
       if (!filteredTracks.length) {
@@ -287,7 +291,7 @@ export default class PlayerManager {
     return;
   }
 
-  public async spotifyAutoplay(client: Core, player: Player) {
+  /* public async spotifyAutoplay(client: Core, player: Player) {
     try {
       const previoustrack: Track = player.get('previousTrack');
       if (!previoustrack) return;
@@ -350,7 +354,9 @@ export default class PlayerManager {
     } catch (e) {
       client.logger.error(e.stack);
     }
-  }
+  } */
+
+  /*
 
   public spotifyBuildUnresolved(
     track: SpotifyTrack,
@@ -371,4 +377,5 @@ export default class PlayerManager {
         : ' '
     };
   }
+  */
 }

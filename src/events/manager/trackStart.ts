@@ -1,4 +1,4 @@
-import { Player } from 'erela.js';
+import { Player } from 'magmastream';
 import { iManagerEvent } from 'flavus';
 
 const trackStartEvent: iManagerEvent = {

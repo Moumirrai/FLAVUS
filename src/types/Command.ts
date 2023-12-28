@@ -11,7 +11,7 @@ import { SlashCommandBuilder } from '@discordjs/builders';
 
 import { Core } from '../struct/Core';
 
-import { Player } from 'erela.js';
+import { Player } from 'magmastream';
 
 type CommandBuilder = Omit<
   SlashCommandBuilder,

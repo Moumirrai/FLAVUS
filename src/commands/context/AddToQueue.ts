@@ -59,7 +59,7 @@ function scanMessage(target: Message<boolean>): string | undefined {
     const regex = /(audio|video)/gi;
     const testString = attachment.contentType;
     if (regex.test(testString)){
-      console.log(attachment);
+      //console.log(attachment);
       return attachment.url;
     } 
   }

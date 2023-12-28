@@ -1,4 +1,4 @@
-import { Player, TrackStuckEvent, Track } from 'erela.js';
+import { Player, TrackStuckEvent, Track } from 'magmastream';
 import { iManagerEvent } from 'flavus';
 import { TextChannel } from 'discord.js';
 

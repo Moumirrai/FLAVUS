@@ -1,6 +1,6 @@
 import { Core } from '../../struct/Core';
 import { EmbedBuilder, GuildTextBasedChannel } from 'discord.js';
-import type { Player } from 'erela.js';
+import type { Player } from 'magmastream';
 import { Session, SessionData } from 'express-session';
 import { GuildModel, IGuildModel } from '../../models/guildModel';
 
