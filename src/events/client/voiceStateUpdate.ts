@@ -43,7 +43,8 @@ const VoiceStateUpdateEvent: iEvent = {
         (mem) => !mem.user.bot && !mem.voice.selfMute
       ).size >= 1;
 
-    if (oldChannelEmpty) {
+    //TODO: FIX THIS
+    /* if (oldChannelEmpty) {
       const player = client.manager.players.get(oldState.guild.id);
       if (player && !player.timeout) {
         player.timeout = setTimeout(() => {
@@ -57,7 +58,7 @@ const VoiceStateUpdateEvent: iEvent = {
         clearTimeout(player.timeout);
         player.timeout = null;
       }
-    }
+    } */
   }
 };
 

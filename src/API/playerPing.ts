@@ -51,6 +51,7 @@ export default class roomPing {
         }
       });
     }
+    const current = player.queue.current;
     return this.playerEmitter(room, {
       state: true,
       playing: true,
@@ -62,11 +63,11 @@ export default class roomPing {
       },
       player: {
         current: {
-          title: player.queue.current.title,
-          author: player.queue.current.author,
-          duration: player.queue.current.duration,
-          thumbnail: player.queue.current.thumbnail,
-          identifier: player.queue.current.identifier
+          title: current.title,
+          author: current.author,
+          duration: current.duration,
+          thumbnail: current.thumbnail || current.artworkUrl,
+          identifier: current.identifier
         },
         queue: {
           size: player.queue.size,
@@ -102,7 +103,7 @@ export default class roomPing {
           title: song.title,
           author: song.author,
           duration: song.duration,
-          thumbnail: song.thumbnail
+          thumbnail: song.thumbnail || song.artworkUrl,
         };
       })
     };

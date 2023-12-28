@@ -52,7 +52,7 @@ export default class PlayerManager {
         guild: textChannel.guild.id,
         voiceChannel: vc.id,
         textChannel: textChannel.id,
-        selfDeafen: true,
+        selfDeafen: true
         //volume: doc.volume || 100,
       });
     }
@@ -85,6 +85,7 @@ export default class PlayerManager {
     web?: boolean
   ): Promise<EmbedData | ResultHandlerInterface> {
     const { loadType, query, tracks, playlist } = res;
+    console.log(res);
     const querySubstring = query ? query.slice(0, 253) : 'unknown';
     const isQueryValidUrl = res.query && validUrl.isUri(res.query);
     switch (loadType) {
@@ -145,24 +146,24 @@ export default class PlayerManager {
           title: `${tracks[0].title}`,
           url: tracks[0].uri,
           description: `by **${tracks[0].author}**`,
-          thumbnail: { url: tracks[0].thumbnail }
+          thumbnail: { url: tracks[0].thumbnail || tracks[0].artworkUrl }
         };
 
       case 'playlist':
         if (player.state !== 'CONNECTED' || !player.queue.current) {
           if (player.state !== 'CONNECTED') player.connect();
-          player.queue.add(tracks);
+          player.queue.add(playlist.tracks);
           await player.play();
           this.client.emit('queueUpdate', player);
           player.pause(false);
         } else {
-          player.queue.add(tracks);
+          player.queue.add(playlist.tracks);
           this.client.emit('queueUpdate', player);
         }
         if (web)
           return {
             type: 'PLAYLIST',
-            tracks: tracks.map((track) => ({
+            tracks: playlist.tracks.map((track) => ({
               title: track.title,
               author: track.author,
               duration: track.duration,
@@ -173,9 +174,9 @@ export default class PlayerManager {
         return {
           author: { name: 'Queued' },
           title: `Playlist **\`${playlist.name.substring(0, 256 - 3)}\`**`,
-          url: validUrl.isUri(res.query) ? res.query : tracks[0].uri,
-          description: `by **${tracks[0].author}**`,
-          thumbnail: { url: tracks[0].thumbnail },
+          url: validUrl.isUri(res.query) ? res.query : playlist.tracks[0].uri,
+          description: `by **${playlist.tracks[0].author}**`,
+          thumbnail: { url: playlist.tracks[0].thumbnail || playlist.tracks[0].artworkUrl },
           fields: [
             {
               name: 'Duration: ',
@@ -225,7 +226,7 @@ export default class PlayerManager {
           title: track.title,
           url: track.uri,
           description: `by **${track.author}**`,
-          thumbnail: { url: track.thumbnail }
+          thumbnail: { url: track.thumbnail || track.artworkUrl }
         }
       );
       return player.play();

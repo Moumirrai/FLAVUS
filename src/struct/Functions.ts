@@ -117,8 +117,8 @@ const Functions = {
       })
       .setThumbnail(
         player.queue.current
-          ? player.queue.current.thumbnail
-          : tracks.current.thumbnail
+          ? (player.queue.current.thumbnail || player.queue.current.artworkUrl)!
+          : (tracks.current.thumbnail || tracks.current.artworkUrl)!
       );
   },
 
