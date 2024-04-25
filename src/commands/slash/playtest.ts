@@ -34,6 +34,11 @@ const Play: SlashCommand = {
       });
     }
 
+    const pepe = await core.manager.nodes.first().rest.getAllPlayers();
+    const session = await core.manager.nodes.first().sessionId;
+    console.log(session);
+    console.log(pepe);
+
     //if interaction.member is not type GuildMember, then return
 
     const query = interaction.options.getString('query');
@@ -88,7 +93,8 @@ const Play: SlashCommand = {
         player.queue.add(result.tracks[0]);
 
         if (!player.playing && !player.paused && !player.queue.length) {
-          await player.play();
+          console.log('playing');
+          await player.play(result.tracks[0]/*, { position: 60000 }*/);
         }
 
         return await interaction.editReply({

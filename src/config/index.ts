@@ -76,6 +76,7 @@ export const config: BotConfig = {
         resumeTimeout: 1000,
         requestTimeout: 1000,
         retryAmount: 1000,
+        //sessionId: "knn1yufhb0czsq7q"
         //rest: process.env.LAVALINK_REST === 'true'
       }
     ],

@@ -11,14 +11,10 @@ import {
   Manager,
   Player,
   SearchResult,
-  Track,
-  UnresolvedTrack,
-  TrackUtils,
-  LoadType
+  Track
 } from 'magmastream';
 import formatDuration from 'format-duration';
 import { Core } from './Core';
-import { iSpotifySearchResult, iSpotifyRecommResult } from 'flavus';
 
 import validUrl from 'valid-url';
 import { PMError } from '../errors';
@@ -76,15 +72,16 @@ export default class PlayerManager {
     if (!params.handleResult) {
       return res;
     }
-    return this.handleSearchResult(res, player) as SearchResult | EmbedData;
+    return this.handleSearchResult(res, player, query) as SearchResult | EmbedData;
   }
 
   public async handleSearchResult(
     res: SearchResult,
     player: Player,
+    query: string,
     web?: boolean
   ): Promise<EmbedData | ResultHandlerInterface> {
-    const { loadType, query, tracks, playlist } = res;
+    const { loadType, tracks, playlist } = res;
     console.log(res);
     const querySubstring = query ? query.slice(0, 253) : 'unknown';
     const isQueryValidUrl = res.query && validUrl.isUri(res.query);
@@ -118,9 +115,9 @@ export default class PlayerManager {
 
         if (!player.queue.current) {
           player.queue.add(tracks[0]);
-          await player.play(tracks[0], {
-            startTime: tracks[0].startTime || 0
-          });
+          await player.play(tracks[0]/*, {
+            position: tracks[0].startTime || 0
+          }*/);
           player.pause(false);
         } else {
           player.queue.add(tracks[0]);
@@ -291,92 +288,4 @@ export default class PlayerManager {
     }
     return;
   }
-
-  /* public async spotifyAutoplay(client: Core, player: Player) {
-    try {
-      const previoustrack: Track = player.get('previousTrack');
-      if (!previoustrack) return;
-      if (previoustrack.requester !== client.user)
-        player.set('autoplayOwner', previoustrack.requester);
-
-      //find previous track on spotify
-      const resolver = (client.manager.options.plugins[0] as Spotify).resolver;
-
-      const sourceTrack = (await resolver.makeRequest(
-        `/search?q=${encodeURI(
-          previoustrack.title
-        )}&type=track&limit=1&offset=0`
-      )) as iSpotifySearchResult;
-
-      if (!sourceTrack.tracks.items.length) {
-        client.logger.log('Stopping player, code 109');
-        player.destroy();
-        return client.embeds.message.info(
-          client.channels.cache.get(player.textChannel) as TextChannel,
-          {
-            color: client.config.embed.color,
-            title: 'Autoplay',
-            description: 'No similar tracks found!'
-          }
-        );
-      }
-
-      const recomm = (await (
-        client.manager.options.plugins[0] as Spotify
-      ).resolver.makeRequest(
-        `https://api.spotify.com/v1/recommendations?limit=15&seed_artists=${sourceTrack.tracks.items[0].artists[0].id}&seed_tracks=${sourceTrack.tracks.items[0].id}`
-      )) as iSpotifyRecommResult;
-      if (!recomm.tracks.length) {
-        client.logger.log('Stopping player, code 110');
-        player.destroy();
-        return client.embeds.message.info(
-          client.channels.cache.get(player.textChannel) as TextChannel,
-          {
-            color: client.config.embed.color,
-            title: 'Autoplay',
-            description: 'No similar tracks found!'
-          }
-        );
-      }
-      //fiter out all track that has type other than "track" and add them to array
-      const tracks = recomm.tracks.filter(
-        (track) => track.type === 'track'
-      ) as SpotifyTrack[];
-      //now for each track
-      const similarQueue: Track[] = [];
-      for (let i = 0; i < tracks.length; i++) {
-        similarQueue.push(
-          TrackUtils.buildUnresolved(
-            this.spotifyBuildUnresolved(tracks[i], client)
-          ) as Track
-        );
-      }
-      player.set('similarQueue', similarQueue);
-    } catch (e) {
-      client.logger.error(e.stack);
-    }
-  } */
-
-  /*
-
-  public spotifyBuildUnresolved(
-    track: SpotifyTrack,
-    client
-  ): Omit<UnresolvedTrack, 'resolve'> {
-    return {
-      requester: client.user,
-      title: track.name,
-      duration: track.duration_ms,
-      thumbnail: (track as SpotifyTrack).album?.images[0]
-        ? (track as SpotifyTrack).album?.images[0].url
-        : null,
-      uri: track.external_urls.spotify,
-      author: Array.isArray((track as SpotifyTrack).artists)
-        ? (track as SpotifyTrack).artists
-            .map((artist) => artist.name)
-            .join(', ')
-        : ' '
-    };
-  }
-  */
 }

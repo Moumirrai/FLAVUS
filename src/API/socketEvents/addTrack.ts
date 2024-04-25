@@ -32,9 +32,11 @@ const PauseEvent: SocketEvent = {
     try {
       const res = await player.search(searchQuery, author);
       if (!res) return socket.emit('player:error', 'Track is corrupted!');
+      const queryText = typeof searchQuery === 'string' ? searchQuery : searchQuery?.query;
       const reply = await client.PlayerManager.handleSearchResult(
         res as SearchResult,
         player,
+        queryText,
         true
       );
       return socket.emit('player:trackAdded', reply as ResultHandlerInterface);

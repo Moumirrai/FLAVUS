@@ -6,16 +6,6 @@ export class LavalinkManager extends Manager {
   constructor(client: Core) {
     super({
       nodes: client.config.erela.nodes,
-      plugins: [
-        /*
-        new Spotify({
-          clientId: process.env.SPOTIFY_ID!,
-          clientSecret: process.env.SPOTIFY_SECRET!,
-          convertUnresolved: false,
-          strategy: process.env.SPOTIFY_SECRET ? 'API' : 'SCRAPE'
-        })
-        */
-      ],
       shards: client.config.erela.shards,
       clientName: client.config.erela.clientName,
       send: (id, payload) => {

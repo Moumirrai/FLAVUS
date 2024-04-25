@@ -9,11 +9,11 @@ const trackEndEvent: iManagerEvent = {
     if (player.queue.current) {
       //player.queue.history.push(player.queue.current);
       if (player.queue.current.startTime) {
-        await player.play(player.queue.current, {
-          startTime: player.queue.current.startTime
+        await player.play(player.queue.current/*, {
+          position: player.queue.current.startTime
             ? player.queue.current.startTime
             : 0
-        });
+        }*/);
         client.emit('queueUpdate', player);
       } else {
         await player.play();
