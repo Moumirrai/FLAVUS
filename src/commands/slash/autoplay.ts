@@ -19,7 +19,7 @@ const AutoplayCommand: SlashCommand = {
           { name: 'Spotify', value: Options.Spotify },
           { name: 'YouTube', value: Options.YouTube }
         )
-    ),
+    ) as SlashCommandBuilder,
 
   execute: async ({ interaction, core, player }) => {
     const mode = interaction.options.getString('mode') as Options;

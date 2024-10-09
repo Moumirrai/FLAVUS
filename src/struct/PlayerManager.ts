@@ -66,7 +66,7 @@ export default class PlayerManager {
     const searchQuery =
       query.includes('open.spotify.com/') || validUrl.isUri(query)
         ? query
-        : { query, source: 'youtube' };
+        : { query, source: "youtube" };
     const author = params.author || this.client.user;
     const res = await player.search(searchQuery, author);
     if (!params.handleResult) {
@@ -82,7 +82,6 @@ export default class PlayerManager {
     web?: boolean
   ): Promise<EmbedData | ResultHandlerInterface> {
     const { loadType, tracks, playlist } = res;
-    console.log(res);
     const querySubstring = query ? query.slice(0, 253) : 'unknown';
     const isQueryValidUrl = res.query && validUrl.isUri(res.query);
     switch (loadType) {

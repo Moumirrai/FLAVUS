@@ -20,7 +20,7 @@ const Play: SlashCommand = {
         .setDescription('The song or playlist you want to play')
         .setRequired(true)
         .setAutocomplete(true)
-    ),
+    ) as SlashCommandBuilder,
 
   requirements: {
     voiceRequired: true,
@@ -33,11 +33,6 @@ const Play: SlashCommand = {
         ephemeral: false
       });
     }
-
-    const pepe = await core.manager.nodes.first().rest.getAllPlayers();
-    const session = await core.manager.nodes.first().sessionId;
-    console.log(session);
-    console.log(pepe);
 
     //if interaction.member is not type GuildMember, then return
 

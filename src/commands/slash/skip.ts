@@ -11,7 +11,7 @@ const Skip: SlashCommand = {
         .setMinValue(1)
         .setDescription('The track number you want to skip to')
         .setRequired(false)
-    ),
+    )  as SlashCommandBuilder,
 
   requirements: {
     voiceRequired: true,

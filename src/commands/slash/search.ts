@@ -13,7 +13,7 @@ const Search: SlashCommand = {
         .setDescription('What do you want to search for')
         .setRequired(true)
         .setAutocomplete(true)
-    ),
+    ) as SlashCommandBuilder,
 
   requirements: {
     voiceRequired: true,

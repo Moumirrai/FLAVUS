@@ -10,7 +10,7 @@ const PauseDelayed: SlashCommand = {
         .setName('enabled')
         .setDescription('The value you want to set')
         .setRequired(false)
-    ),
+    ) as SlashCommandBuilder,
 
   requirements: {
     voiceRequired: true,

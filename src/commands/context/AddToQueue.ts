@@ -10,6 +10,7 @@ import { ContextCommand } from '../../types/Command';
 const AddToQueue: ContextCommand = {
   builder: new ContextMenuCommandBuilder()
     .setName('Add to queue')
+    // @ts-ignore
     .setType(ApplicationCommandType.Message),
 
   requirements: {

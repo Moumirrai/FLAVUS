@@ -13,7 +13,7 @@ const Seek: SlashCommand = {
           'Timestamp to seek to in format `hh:mm:ss` or `ss` e.g. `1:30` or `90`'
         )
         .setRequired(true)
-    ),
+    ) as SlashCommandBuilder,
 
   requirements: {
     voiceRequired: true,

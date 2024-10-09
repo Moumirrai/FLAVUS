@@ -7,7 +7,10 @@ import {
   BaseMessageOptions,
   ChatInputCommandInteraction,
   InteractionResponse,
-  ContextMenuCommandInteraction
+  ContextMenuCommandInteraction,
+  TextChannel,
+  DMChannel,
+  NewsChannel
 } from 'discord.js';
 import { config } from '../config';
 import Logger, { LogLevels } from './Logger';
@@ -33,7 +36,7 @@ class Embed {
     this.defaultTitle = title;
   }
   public create = (
-    channel: TextBasedChannel,
+    channel: TextChannel | DMChannel | NewsChannel,
     data?: EmbedData | string
   ): Promise<Message> => {
     try {

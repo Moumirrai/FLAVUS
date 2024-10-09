@@ -12,7 +12,7 @@ const DefaultChannel: SlashCommand = {
         .setName('clear')
         .setDescription('Reverts to default value')
         .setRequired(false)
-    ),
+    ) as SlashCommandBuilder,
 
   execute: async ({ interaction, core, player }) => {
     const clear = interaction.options.getBoolean('clear');

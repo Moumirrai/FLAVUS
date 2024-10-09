@@ -14,7 +14,7 @@ const Play: SlashCommand = {
         .setDescription('The song or playlist you want to play')
         .setRequired(true)
         .setAutocomplete(true)
-    ),
+    ) as SlashCommandBuilder,
 
   requirements: {
     voiceRequired: true,
